@@ -1,0 +1,21 @@
+id: zhihu-home
+name: Zhihu Home
+
+browser:
+  session: chrome-main
+
+discovery:
+  type: browser
+  url: https://www.zhihu.com
+  wait: 1
+  scroll: 2
+  scroll_wait: 0.5
+  include_url_regex: "(zhihu\\.com/question/|zhuanlan\\.zhihu\\.com/p/)"
+  exclude_url_regex: "(#|/people/|/search|/signin)"
+
+acquire:
+  type: browser
+  wait: 1
+
+extract:
+  type: trafilatura

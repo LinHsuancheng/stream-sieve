@@ -1,0 +1,15 @@
+delivery:
+  type: filesystem
+  path: /tmp/stream-sieve-brief.html
+
+# delivery:
+#   type: smtp
+#   from: "Stream Sieve <feed@example.com>"
+#   to:
+#     - user@example.com
+#   smtp:
+#     host: smtp.example.com
+#     port: 465
+#     security: ssl
+#     username_env: STREAM_SIEVE_EMAIL_USER
+#     password_env: STREAM_SIEVE_EMAIL_PASSWORD

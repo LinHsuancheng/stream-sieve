@@ -1,0 +1,46 @@
+run:
+  name: full-email-test
+  db: ~/.stream-sieve/stream-sieve.db
+
+  browser_boot:
+    enabled: true
+    executable: /usr/bin/google-chrome
+    user_data_dir: ~/.stream-sieve/chrome-profile
+    remote_debugging_port: 9222
+    url: about:blank
+    startup_wait_seconds: 5
+
+  sources:
+    - id: wsj-home
+      path: sources/wsj-home.yaml
+      sync_limit: 3
+
+    - id: zhihu-follow
+      path: sources/zhihu-follow.yaml
+      sync_limit: 3
+
+    - id: zhihu-home
+      path: sources/zhihu-home.yaml
+      sync_limit: 3
+
+  scoring:
+    interests: interests.md
+    model: deepseek-v4-flash-0731
+    base_url: https://api.openlux.ai/v1/chat/completions
+    limit: 30
+    sample_chars: 50
+    nonthink: true
+    batch_size: 8
+    timeout: 180
+    retries: 2
+
+  brief:
+    min_score: 7
+    limit: 20
+    excerpt_chars: 700
+    output: /tmp/stream-sieve-full-email-test.md
+
+  delivery:
+    config: configs/delivery.gmail.yaml
+    subject: Stream Sieve Full Pipeline Test
+    delivery_key: gmail-full-test

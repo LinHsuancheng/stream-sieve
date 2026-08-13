@@ -1,0 +1,65 @@
+id: zhihu-follow
+name: Zhihu Follow
+
+browser:
+  session: chrome-main
+
+discovery:
+  type: browser
+  url: https://www.zhihu.com/follow
+  wait: 1
+  scroll: 2
+  scroll_wait: 0.5
+  include_url_regex: "(zhihu\\.com/question/[0-9]+/answer/|zhuanlan\\.zhihu\\.com/p/)"
+  exclude_url_regex: "(#|/people/|/search|/signin)"
+
+acquire:
+  type: browser
+  wait: 1
+
+extract:
+  type: trafilatura
+  external_id_regex: "/answer/([0-9]+)"
+  content_xpath:
+    - "//*[@name='{external_id}']//*[contains(concat(' ', normalize-space(@class), ' '), ' RichContent-inner ')]"
+    - "//*[contains(concat(' ', normalize-space(@class), ' '), ' Post-RichTextContainer ')]"
+    - "//*[contains(concat(' ', normalize-space(@class), ' '), ' ztext ')]"
+  metadata_xpath:
+    author:
+      - "//*[@name='{external_id}']//*[contains(concat(' ', normalize-space(@class), ' '), ' AuthorInfo-name ')][1]"
+      - "//*[contains(concat(' ', normalize-space(@class), ' '), ' Post-Author ')]//*[contains(concat(' ', normalize-space(@class), ' '), ' AuthorInfo-name ')][1]"
+      - "//*[contains(concat(' ', normalize-space(@class), ' '), ' AuthorInfo-name ')][1]"
+    published_at:
+      - "//*[@name='{external_id}']//*[contains(concat(' ', normalize-space(@class), ' '), ' ContentItem-time ')][1]"
+      - "//*[contains(concat(' ', normalize-space(@class), ' '), ' ContentItem-time ')][1]"
+  metadata_regex:
+    published_at: "(?:发布于|编辑于)\\s*([^・\\n]+)"
+  cleanup:
+    start_at_title: true
+    drop_lines:
+      - 关注
+      - 推荐
+      - 热榜
+      - 专栏
+      - 圈子
+      - AI Works
+      - Beta
+      - 故事
+      - 直答
+      - 消息
+      - 私信
+      - 创作中心
+      - 关注问题
+      - 写回答
+      - 显示全部
+      - 添加评论
+      - 收藏
+      - 喜欢
+      - 分享
+      - 送礼物
+      - 还没有人送礼物，鼓励一下作者吧
+    stop_before:
+      - 关于作者
+      - 大家都在搜
+      - 查看全部
+      - 想来知乎工作？请发送邮件到 jobs@zhihu.com

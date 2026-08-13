@@ -1,0 +1,11 @@
+delivery:
+  type: smtp
+  from: "Stream Sieve <your-address@gmail.com>"
+  to:
+    - your-address@gmail.com
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    security: starttls
+    username_env: STREAM_SIEVE_EMAIL_USER
+    password_env: STREAM_SIEVE_EMAIL_PASSWORD
