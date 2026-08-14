@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import time
 
@@ -21,11 +22,18 @@ class LinuxChromeCdpBackend(BrowserBackend):
         self.cdp_endpoint = cdp_endpoint
 
     def attach(self) -> BrowserResult:
-        return self._run_playwright(["attach", f"--cdp={self.cdp_endpoint}"], timeout=120)
+        self._run_playwright(["detach"], timeout=10)
+        return self._run_playwright(["attach", f"--cdp={self.cdp_endpoint}", f"--session={self.session}"], timeout=120)
 
     def goto(self, url: str) -> BrowserResult:
         code = f"async page => {{ await page.goto({json.dumps(url)}, {{ waitUntil: 'domcontentloaded', timeout: 30000 }}); }}"
-        return self._run_playwright(["run-code", code], timeout=45)
+        result = self._run_playwright(["run-code", code], timeout=45)
+        if session_lost(result.output):
+            attach = self.attach()
+            if not attach.ok:
+                return attach
+            result = self._run_playwright(["run-code", code], timeout=45)
+        return result
 
     def snapshot(self) -> BrowserResult:
         return self._run_playwright(["snapshot"], timeout=60)
@@ -71,13 +79,25 @@ class LinuxChromeCdpBackend(BrowserBackend):
         return self._run_playwright(["detach"], timeout=30)
 
     def close_tab(self) -> BrowserResult:
-        return self._run_playwright(["tab-close"], timeout=30)
+        return self.detach()
 
     def _run_playwright(self, args: list[str], *, raw: bool = False, timeout: int = 60) -> BrowserResult:
         command = ["playwright-cli", f"--s={self.session}"]
         if raw:
             command.append("--raw")
         command.extend(args)
+        env = os.environ.copy()
+        for key in (
+            "HTTP_PROXY",
+            "HTTPS_PROXY",
+            "ALL_PROXY",
+            "http_proxy",
+            "https_proxy",
+            "all_proxy",
+        ):
+            env.pop(key, None)
+        env["NO_PROXY"] = "127.0.0.1,localhost"
+        env["no_proxy"] = "127.0.0.1,localhost"
         proc = subprocess.run(
             command,
             stdout=subprocess.PIPE,
@@ -85,6 +105,7 @@ class LinuxChromeCdpBackend(BrowserBackend):
             text=True,
             encoding="utf-8",
             errors="replace",
+            env=env,
             timeout=timeout,
         )
         output = proc.stdout.strip()
@@ -101,3 +122,12 @@ def _decode_raw_output(output: str) -> str:
     except json.JSONDecodeError:
         return output
     return value if isinstance(value, str) else output
+
+
+def session_lost(output: str) -> bool:
+    text = output.lower()
+    return (
+        "target page, context or browser has been closed" in text
+        or "the browser" in text and "is not open" in text
+        or "econnrefused" in text
+    )

@@ -8,8 +8,8 @@ discovery:
   type: browser
   url: https://www.wsj.com
   wait: 1
-  include_url_regex: "wsj\\.com/.+"
-  exclude_url_regex: "(subscribe|login|market-data|client/silent-login|#comments)"
+  include_url_regex: "^https://www\\.wsj\\.com/(articles/|world/|business/|finance/|tech/|economy/|politics/|us-news/|opinion/|lifestyle/|arts-culture/|personal-finance/|real-estate/|health/)"
+  exclude_url_regex: "(subscribe|login|market-data|digital-print-edition|client/silent-login|#comments)"
 
 acquire:
   type: browser

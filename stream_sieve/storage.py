@@ -70,6 +70,20 @@ class FeedStore:
                 foreign key(article_id) references articles(id)
             );
 
+            create table if not exists article_analysis (
+                article_id integer primary key,
+                one_liner text not null,
+                summary text not null,
+                key_points_json text not null,
+                topics_json text not null,
+                entities_json text not null,
+                why_care text not null,
+                analyzer_model text not null,
+                analyzed_at text not null,
+                raw_json text not null,
+                foreign key(article_id) references articles(id)
+            );
+
             create table if not exists article_deliveries (
                 article_id integer not null,
                 delivery_key text not null,
@@ -125,6 +139,7 @@ class FeedStore:
     def status(self) -> dict[str, Any]:
         source_count = self.conn.execute("select count(*) from source_state").fetchone()[0]
         article_count = self.conn.execute("select count(*) from articles").fetchone()[0]
+        analysis_count = self.conn.execute("select count(*) from article_analysis").fetchone()[0]
         sources = [
             dict(row)
             for row in self.conn.execute(
@@ -146,7 +161,7 @@ class FeedStore:
                 """
             )
         ]
-        return {"db": self.path, "sources": source_count, "articles": article_count, "by_source": sources}
+        return {"db": self.path, "sources": source_count, "articles": article_count, "analyses": analysis_count, "by_source": sources}
 
     def recent_articles(self, source_id: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
         sql = """
@@ -203,6 +218,58 @@ class FeedStore:
         self.conn.commit()
         return saved
 
+    def unanalyzed_articles(
+        self,
+        source_id: str | None = None,
+        min_score: float = 6.5,
+        limit: int = 20,
+    ) -> list[dict[str, Any]]:
+        sql = """
+            select
+                a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
+                s.relevance, s.importance, s.novelty, s.total_score,
+                s.category, s.reason
+            from article_scores s
+            join articles a on a.id = s.article_id
+            left join article_analysis aa on aa.article_id = a.id
+            where s.total_score >= ? and aa.article_id is null
+        """
+        params: list[Any] = [min_score]
+        if source_id:
+            sql += " and a.source_id = ?"
+            params.append(source_id)
+        sql += " order by s.total_score desc, s.scored_at desc limit ?"
+        params.append(limit)
+        return [dict(row) for row in self.conn.execute(sql, params)]
+
+    def save_analyses(self, analyses: list[dict[str, Any]], model: str) -> int:
+        saved = 0
+        for analysis in analyses:
+            cur = self.conn.execute(
+                """
+                insert or replace into article_analysis (
+                    article_id, one_liner, summary, key_points_json,
+                    topics_json, entities_json, why_care, analyzer_model,
+                    analyzed_at, raw_json
+                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    analysis["article_id"],
+                    analysis["one_liner"],
+                    analysis["summary"],
+                    json_dumps(analysis["key_points"]),
+                    json_dumps(analysis["topics"]),
+                    json_dumps(analysis["entities"]),
+                    analysis["why_care"],
+                    model,
+                    now_iso(),
+                    analysis["raw_json"],
+                ),
+            )
+            saved += cur.rowcount
+        self.conn.commit()
+        return saved
+
     def recent_scores(self, source_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
         sql = """
             select
@@ -220,14 +287,37 @@ class FeedStore:
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
+    def recent_analyses(self, source_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
+        sql = """
+            select
+                a.source_id, a.title, a.author, a.published_at, a.url,
+                s.total_score, s.category,
+                aa.one_liner, aa.summary, aa.key_points_json,
+                aa.topics_json, aa.entities_json, aa.why_care,
+                aa.analyzer_model, aa.analyzed_at
+            from article_analysis aa
+            join articles a on a.id = aa.article_id
+            left join article_scores s on s.article_id = a.id
+        """
+        params: list[Any] = []
+        if source_id:
+            sql += " where a.source_id = ?"
+            params.append(source_id)
+        sql += " order by aa.analyzed_at desc limit ?"
+        params.append(limit)
+        return [dict(row) for row in self.conn.execute(sql, params)]
+
     def brief_articles(self, source_id: str | None = None, min_score: float = 7.0, limit: int = 20) -> list[dict[str, Any]]:
         sql = """
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
                 s.relevance, s.importance, s.novelty, s.total_score,
-                s.category, s.reason
+                s.category, s.reason,
+                aa.one_liner, aa.summary, aa.key_points_json,
+                aa.topics_json, aa.entities_json, aa.why_care
             from article_scores s
             join articles a on a.id = s.article_id
+            left join article_analysis aa on aa.article_id = a.id
             where s.total_score >= ?
         """
         params: list[Any] = [min_score]
@@ -249,9 +339,12 @@ class FeedStore:
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
                 s.relevance, s.importance, s.novelty, s.total_score,
-                s.category, s.reason
+                s.category, s.reason,
+                aa.one_liner, aa.summary, aa.key_points_json,
+                aa.topics_json, aa.entities_json, aa.why_care
             from article_scores s
             join articles a on a.id = s.article_id
+            left join article_analysis aa on aa.article_id = a.id
             left join article_deliveries d on d.article_id = a.id and d.delivery_key = ?
             where s.total_score >= ? and d.article_id is null
         """
@@ -298,6 +391,12 @@ def _demo() -> None:
         assert store.recent_articles("demo", 1)[0]["title"] == "A"
         assert store.unscored_articles("demo", 1)[0]["id"] == 1
         store.close()
+
+
+def json_dumps(value: Any) -> str:
+    import json
+
+    return json.dumps(value, ensure_ascii=False)
 
 
 if __name__ == "__main__":

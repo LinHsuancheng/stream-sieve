@@ -15,6 +15,10 @@ run:
       path: sources/wsj-home.yaml
       sync_limit: 3
 
+    - id: qbitai-feed
+      path: sources/qbitai-feed.yaml
+      sync_limit: 5
+
     - id: zhihu-follow
       path: sources/zhihu-follow.yaml
       sync_limit: 3
@@ -27,17 +31,45 @@ run:
     interests: interests.md
     model: deepseek-v4-flash-0731
     base_url: https://api.openlux.ai/v1/chat/completions
-    limit: 30
-    sample_chars: 50
+    limit: 50
+    prefilter_scan_limit: 500
+    prefilter_min_score: 1
+    sample_chars: 200
+    categories:
+      - tech
+      - society
+      - open_source
+      - life
+      - politics
+      - economics
+      - other
     nonthink: true
-    batch_size: 8
+    batch_size: 50
+    timeout: 180
+    retries: 2
+
+  analysis:
+    model:
+    base_url:
+    min_score: 6.5
+    limit: 25
+    content_chars: 4000
+    batch_size: 5
+    nonthink: true
     timeout: 180
     retries: 2
 
   brief:
-    min_score: 7
-    limit: 20
-    excerpt_chars: 700
+    min_score: 6.5
+    limit: 10
+    category_limits:
+      tech: 2
+      society: 2
+      open_source: 1
+      life: 1
+      politics: 2
+      economics: 2
+    excerpt_chars: 200
     output: /tmp/stream-sieve-full-email-test.md
 
   delivery:

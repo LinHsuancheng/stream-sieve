@@ -20,6 +20,7 @@ def score_batch(
     base_url: str | None = None,
     api_key: str | None = None,
     sample_chars: int = 50,
+    categories: list[str] | None = None,
     nonthink: bool = False,
     timeout: float = 180,
     retries: int = 1,
@@ -34,7 +35,7 @@ def score_batch(
         "model": model,
         "messages": [
             {"role": "system", "content": "You score articles for a personal information feed. Return JSON only."},
-            {"role": "user", "content": build_prompt(rows, interests, sample_chars)},
+            {"role": "user", "content": build_prompt(rows, interests, sample_chars, categories)},
         ],
         "response_format": {"type": "json_object"},
     }
@@ -63,6 +64,7 @@ def build_prompt(
     rows: list[dict[str, Any]],
     interests: str,
     sample_chars: int = 50,
+    categories: list[str] | None = None,
 ) -> str:
     items = []
     for row in rows:
@@ -81,7 +83,8 @@ def build_prompt(
         "For each article, score 0-10:\n"
         "- relevance: relevant to my interests\n"
         "- importance: consequential or useful\n"
-        "- novelty: likely to contain new information rather than repetition\n\n"
+        "- novelty: likely to contain new information rather than repetition\n"
+        f"- category: choose exactly one from {json.dumps(categories or ['tech', 'society', 'open_source', 'life', 'politics', 'economics', 'other'], ensure_ascii=False)}\n\n"
         "Return JSON only in this exact shape:\n"
         '{"items":[{"id":123,"relevance":0,"importance":0,"novelty":0,"category":"Other","reason":"short reason"}]}\n\n'
         "Articles:\n"

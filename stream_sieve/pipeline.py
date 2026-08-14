@@ -153,7 +153,7 @@ def acquire_http(source: dict[str, Any], ref: ItemRef) -> RawDocument:
     except ModuleNotFoundError as exc:
         raise RuntimeError("httpx is required for HTTP acquire. Install requirements.txt.") from exc
 
-    response = httpx.get(ref.url, follow_redirects=True, timeout=30)
+    response = httpx.get(ref.url, headers=http_headers(source), follow_redirects=True, timeout=30)
     text = response.text
     return RawDocument(
         source_id=source["id"],
@@ -165,6 +165,15 @@ def acquire_http(source: dict[str, Any], ref: ItemRef) -> RawDocument:
         status_code=response.status_code,
         content_hash=content_hash(text),
     )
+
+
+def http_headers(source: dict[str, Any]) -> dict[str, str]:
+    headers = dict((source.get("acquire") or {}).get("headers") or {})
+    headers.setdefault(
+        "User-Agent",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    )
+    return headers
 
 
 def acquire_browser(source: dict[str, Any], ref: ItemRef) -> RawDocument:
@@ -221,9 +230,8 @@ def extract_article(source: dict[str, Any], raw: RawDocument, title: str | None 
 def run_once(source: dict[str, Any], limit: int) -> list[Article]:
     articles: list[Article] = []
     for ref in discover(source)[:limit]:
-        raw = acquire(source, ref)
-        article = extract_article(source, raw, title=ref.title)
-        if article.content:
+        article = acquire_extract_or_none(source, ref)
+        if article and article.content:
             articles.append(article)
     return articles
 
@@ -239,9 +247,8 @@ def sync_source(source: dict[str, Any], limit: int, db_path: str) -> tuple[SyncS
     try:
         new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
         for ref in new_refs[:limit]:
-            raw = acquire(source, ref)
-            article = extract_article(source, raw, title=ref.title)
-            if not article.content.strip():
+            article = acquire_extract_or_none(source, ref)
+            if not article or not article.content.strip():
                 continue
             articles.append(article)
             if store.save_article(article):
@@ -276,9 +283,8 @@ def sync_source_browser_reuse(source: dict[str, Any], limit: int, db_path: str) 
         refs = discover_browser_links_with_backend(source, backend)
         new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
         for ref in new_refs[:limit]:
-            raw = acquire_browser_with_backend(source, ref, backend)
-            article = extract_article(source, raw, title=ref.title)
-            if not article.content.strip():
+            article = acquire_extract_or_none(source, ref, backend)
+            if not article or not article.content.strip():
                 continue
             articles.append(article)
             if store.save_article(article):
@@ -300,6 +306,18 @@ def sync_source_browser_reuse(source: dict[str, Any], limit: int, db_path: str) 
         store.close()
 
 
+def acquire_extract_or_none(source: dict[str, Any], ref: ItemRef, backend: LinuxChromeCdpBackend | None = None, progress=None) -> Article | None:
+    try:
+        raw = acquire_browser_with_backend(source, ref, backend) if backend else acquire(source, ref)
+        if not raw.content.strip():
+            raise ValueError("empty document")
+        return extract_article(source, raw, title=ref.title)
+    except Exception as exc:
+        if progress:
+            progress(f"skip article: {ref.url} ({type(exc).__name__}: {exc})")
+        return None
+
+
 def sync_sources(
     sources: list[tuple[dict[str, Any], int]],
     db_path: str,
@@ -307,7 +325,12 @@ def sync_sources(
 ) -> list[tuple[SyncStats, list[Article]]]:
     browser_sources = [(source, limit) for source, limit in sources if _can_reuse_browser(source)]
     if len(browser_sources) != len(sources):
-        return [sync_source(source, limit, db_path) for source, limit in sources]
+        results = []
+        for source, limit in sources:
+            if progress:
+                progress(f"sync source: {source['id']}")
+            results.append(sync_source(source, limit, db_path))
+        return results
     if not sources:
         return []
 
@@ -324,9 +347,8 @@ def sync_sources(
             refs = discover_browser_links_with_backend(source, backend)
             new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
             for ref in new_refs[:limit]:
-                raw = acquire_browser_with_backend(source, ref, backend)
-                article = extract_article(source, raw, title=ref.title)
-                if not article.content.strip():
+                article = acquire_extract_or_none(source, ref, backend, progress)
+                if not article or not article.content.strip():
                     continue
                 articles.append(article)
                 if store.save_article(article):
@@ -401,6 +423,8 @@ def extract_by_xpath(html: str, extract_cfg: dict[str, Any], url: str = "") -> s
 
 
 def extract_metadata(html: str, extract_cfg: dict[str, Any], url: str = "") -> dict[str, str]:
+    if not html.strip():
+        return {}
     metadata_xpath = extract_cfg.get("metadata_xpath") or {}
     metadata_regex = extract_cfg.get("metadata_regex") or {}
     if not metadata_xpath:
@@ -559,6 +583,20 @@ def _demo() -> None:
     raw = RawDocument("demo", "https://example.com/b", "<p>ok</p>", "text/html", now_iso(), "browser", None, "h")
     article = Article("demo", raw.url, "B", "short", raw.fetched_at, raw.content_hash)
     assert article.content.strip()
+    wsj_opts = {
+        "include_url_regex": r"^https://www\.wsj\.com/(articles/|world/|business/|finance/|tech/|economy/|politics/|us-news/|opinion/|lifestyle/|arts-culture/|personal-finance/|real-estate/|health/)",
+        "exclude_url_regex": r"(subscribe|login|market-data|digital-print-edition|client/silent-login|#comments)",
+    }
+    refs = parse_dom_links(
+        "wsj-home",
+        "https://www.wsj.com",
+        [
+            {"title": "Print Edition", "url": "https://www.wsj.com/digital-print-edition?mod=wsjheader"},
+            {"title": "Real Article", "url": "https://www.wsj.com/tech/ai/example-story-123"},
+        ],
+        wsj_opts,
+    )
+    assert [ref.title for ref in refs] == ["Real Article"]
 
 
 if __name__ == "__main__":

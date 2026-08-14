@@ -13,7 +13,8 @@ This repository currently supports:
 - HTML/article extraction with Trafilatura and optional XPath selectors.
 - SQLite incremental storage and deduplication.
 - OpenAI-compatible LLM relevance scoring.
-- Markdown brief generation.
+- Structured article analysis.
+- LLM-synthesized Markdown brief generation with lightweight topic clustering.
 - Delivery through filesystem or SMTP.
 
 The working end-to-end loop is:
@@ -25,6 +26,8 @@ Source YAML
   -> extract Article
   -> save/dedup in SQLite
   -> LLM score
+  -> article analysis
+  -> cluster/synthesize
   -> brief
   -> delivery
 ```
@@ -58,12 +61,16 @@ Article
       v
 SQLite
   articles / source_state / article_scores
+  article_analysis
       |
       v
 LLM scorer
       |
       v
-Brief renderer
+Article analyzer
+      |
+      v
+Brief synthesizer
       |
       v
 Delivery
@@ -80,6 +87,9 @@ stream_sieve/
   delivery/                filesystem and SMTP delivery
   render/                  Markdown-to-HTML rendering
   cli.py                   command-line entrypoint
+  analyze.py               OpenAI-compatible structured article analyzer
+  cluster.py               Lightweight article clustering helpers
+  digest.py                LLM digest synthesis and Markdown rendering
   llm_scorer.py            OpenAI-compatible batch scorer
   models.py                ItemRef / RawDocument / Article
   pipeline.py              discover/acquire/extract/sync
@@ -186,6 +196,7 @@ The sync step does not try to classify login, verification, paywall, or other pa
 - `scoring.limit`, `scoring.batch_size`, `scoring.timeout`, `scoring.retries`: LLM throughput and retry behavior.
 - `scoring.nonthink`: request non-thinking mode from compatible OpenAI-style providers.
 - `scoring.sample_chars`: max content sample characters per article. Scoring sends title plus this sample, not the full article.
+- `analysis.min_score`, `analysis.limit`, `analysis.content_chars`: article analysis selection and context size.
 - `brief.min_score`, `brief.limit`, `brief.excerpt_chars`: email selection and display length.
 - `delivery.config`, `delivery.delivery_key`, `delivery.resend`: destination and resend behavior.
 
@@ -312,6 +323,21 @@ STREAM_SIEVE_LLM_API_KEY='...' \
   --nonthink
 ```
 
+Analyze high-scored articles:
+
+```bash
+STREAM_SIEVE_LLM_API_KEY='...' \
+.venv/bin/python -m stream_sieve.cli analyze \
+  --source wsj-home \
+  --min-score 6.5 \
+  --limit 10 \
+  --model deepseek-v4-flash-0731 \
+  --base-url https://api.openlux.ai/v1/chat/completions \
+  --content-chars 4000 \
+  --batch-size 5 \
+  --nonthink
+```
+
 Build a brief:
 
 ```bash
@@ -338,6 +364,7 @@ Inspect state:
 .venv/bin/python -m stream_sieve.cli status
 .venv/bin/python -m stream_sieve.cli articles --source wsj-home --limit 10
 .venv/bin/python -m stream_sieve.cli scores --source wsj-home --limit 10
+.venv/bin/python -m stream_sieve.cli analyses --source wsj-home --limit 10
 ```
 
 ## Multi-Source Run Config
@@ -361,6 +388,7 @@ The run config executes:
 ```text
 sync all browser sources with one attach/tab
 score unscored articles in merged batches
+analyze high-scored articles into reusable briefing notes
 brief all sources together
 send one delivery
 status
@@ -422,7 +450,7 @@ DRY_RUN
 
 - Browser sources intentionally support Linux Google Chrome CDP only.
 - Source onboarding is still manual YAML editing.
-- LLM scoring is implemented; LLM synthesis/digest clustering is not yet implemented.
+- LLM article analysis and digest synthesis are implemented; clustering is a lightweight lexical MVP, not embedding-backed semantic clustering.
 - SMTP and filesystem delivery exist; Gmail/Outlook API integrations are intentionally not included.
 - SQLite migrations are minimal and suitable for the MVP stage.
 

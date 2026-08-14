@@ -1,0 +1,12 @@
+id: qbitai-feed
+name: QbitAI Feed
+
+discovery:
+  type: rss
+  url: https://www.qbitai.com/feed
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura
