@@ -176,7 +176,12 @@ class FeedStore:
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
-    def unscored_articles(self, source_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:
+    def unscored_articles(
+        self,
+        source_id: str | None = None,
+        limit: int = 20,
+        source_ids: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
         sql = """
             select a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content, length(a.content) as content_chars
             from articles a
@@ -187,6 +192,7 @@ class FeedStore:
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
+        sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
         sql += " order by a.id desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
@@ -223,6 +229,7 @@ class FeedStore:
         source_id: str | None = None,
         min_score: float = 6.5,
         limit: int = 20,
+        source_ids: list[str] | None = None,
     ) -> list[dict[str, Any]]:
         sql = """
             select
@@ -238,6 +245,7 @@ class FeedStore:
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
+        sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
         sql += " order by s.total_score desc, s.scored_at desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
@@ -307,7 +315,13 @@ class FeedStore:
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
-    def brief_articles(self, source_id: str | None = None, min_score: float = 7.0, limit: int = 20) -> list[dict[str, Any]]:
+    def brief_articles(
+        self,
+        source_id: str | None = None,
+        min_score: float = 7.0,
+        limit: int = 20,
+        source_ids: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
         sql = """
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
@@ -324,6 +338,7 @@ class FeedStore:
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
+        sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
         sql += " order by s.total_score desc, s.scored_at desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
@@ -334,6 +349,7 @@ class FeedStore:
         min_score: float = 7.0,
         limit: int = 20,
         delivery_key: str = "default",
+        source_ids: list[str] | None = None,
     ) -> list[dict[str, Any]]:
         sql = """
             select
@@ -352,6 +368,7 @@ class FeedStore:
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
+        sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
         sql += " order by s.total_score desc, s.scored_at desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
@@ -397,6 +414,13 @@ def json_dumps(value: Any) -> str:
     import json
 
     return json.dumps(value, ensure_ascii=False)
+
+
+def add_source_ids_filter(sql: str, params: list[Any], column: str, source_ids: list[str] | None) -> tuple[str, list[Any]]:
+    ids = [str(item).strip() for item in source_ids or [] if str(item).strip()]
+    if not ids:
+        return sql, params
+    return f"{sql} and {column} in ({','.join('?' for _ in ids)})", [*params, *ids]
 
 
 if __name__ == "__main__":

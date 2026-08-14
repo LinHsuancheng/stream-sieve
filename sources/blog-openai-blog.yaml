@@ -1,0 +1,9 @@
+id: blog-openai-blog
+name: OpenAI Blog
+discovery:
+  type: rss
+  url: https://openai.com/news/rss.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

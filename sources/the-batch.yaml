@@ -1,0 +1,9 @@
+id: the-batch
+name: deeplearning.ai
+discovery:
+  type: rss
+  url: https://rsshub.bestblogs.dev/deeplearning/the-batch
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: reason
+name: Reason
+discovery:
+  type: rss
+  url: https://reason.com/feed/
+acquire:
+  type: http
+extract:
+  type: trafilatura

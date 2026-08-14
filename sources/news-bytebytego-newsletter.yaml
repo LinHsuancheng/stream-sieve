@@ -1,0 +1,9 @@
+id: news-bytebytego-newsletter
+name: ByteByteGo Newsletter
+discovery:
+  type: rss
+  url: https://blog.bytebytego.com/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

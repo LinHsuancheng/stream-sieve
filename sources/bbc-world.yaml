@@ -1,0 +1,9 @@
+id: bbc-world
+name: BBC World
+discovery:
+  type: rss
+  url: https://feeds.bbci.co.uk/news/world/rss.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

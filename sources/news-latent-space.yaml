@@ -1,0 +1,9 @@
+id: news-latent-space
+name: Latent Space
+discovery:
+  type: rss
+  url: https://www.latent.space/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

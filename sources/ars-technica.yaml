@@ -1,0 +1,9 @@
+id: ars-technica
+name: Ars Technica
+discovery:
+  type: rss
+  url: https://feeds.arstechnica.com/arstechnica/index
+acquire:
+  type: http
+extract:
+  type: trafilatura

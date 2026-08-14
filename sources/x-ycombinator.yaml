@@ -1,0 +1,9 @@
+id: x-ycombinator
+name: Y Combinator(@ycombinator)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/b1ab109f6afd42ab8ea32e17a19a3a3e
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: jiqizhixin
+name: 机器之心
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/8d97af31b0de9e48da74558af128a4673d78c9a3.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

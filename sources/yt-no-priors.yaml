@@ -1,0 +1,12 @@
+id: yt-no-priors
+name: No Priors
+discovery:
+  type: browser
+  url: https://www.youtube.com/@NoPriorsPodcast/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

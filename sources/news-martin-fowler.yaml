@@ -1,0 +1,9 @@
+id: news-martin-fowler
+name: Martin Fowler
+discovery:
+  type: rss
+  url: https://martinfowler.com/feed.atom
+acquire:
+  type: http
+extract:
+  type: trafilatura

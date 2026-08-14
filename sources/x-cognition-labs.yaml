@@ -1,0 +1,9 @@
+id: x-cognition-labs
+name: Cognition(@cognition_labs)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/4cc14cbd15c74e189d537c415369e1a7
+acquire:
+  type: http
+extract:
+  type: trafilatura

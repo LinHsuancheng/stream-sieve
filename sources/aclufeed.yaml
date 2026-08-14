@@ -1,0 +1,9 @@
+id: aclufeed
+name: ACLU
+discovery:
+  type: rss
+  url: https://www.aclu.org/news/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

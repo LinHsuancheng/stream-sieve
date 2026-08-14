@@ -1,0 +1,9 @@
+id: baoyu-share
+name: 宝玉的分享
+discovery:
+  type: rss
+  url: https://baoyu.io/feed.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

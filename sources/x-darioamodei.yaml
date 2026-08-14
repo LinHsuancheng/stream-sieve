@@ -1,0 +1,9 @@
+id: x-darioamodei
+name: Dario Amodei(@DarioAmodei)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/49666ce6fe3e4cb786c6574684542ec5
+acquire:
+  type: http
+extract:
+  type: trafilatura

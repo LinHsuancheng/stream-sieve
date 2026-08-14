@@ -1,0 +1,12 @@
+id: yt-andrej-karpathy
+name: Andrej Karpathy
+discovery:
+  type: browser
+  url: https://www.youtube.com/@AndrejKarpathy/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

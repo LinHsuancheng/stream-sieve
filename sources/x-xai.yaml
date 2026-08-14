@@ -1,0 +1,9 @@
+id: x-xai
+name: xAI(@xai)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/3953aa71e87a422eb9d7bf6ff1c7c43e
+acquire:
+  type: http
+extract:
+  type: trafilatura

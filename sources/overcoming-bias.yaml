@@ -1,0 +1,9 @@
+id: overcoming-bias
+name: Overcoming Bias
+discovery:
+  type: rss
+  url: https://www.overcomingbias.com/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

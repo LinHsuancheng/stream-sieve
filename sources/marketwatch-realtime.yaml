@@ -1,0 +1,9 @@
+id: marketwatch-realtime
+name: MarketWatch Real-Time Headlines
+discovery:
+  type: rss
+  url: https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines
+acquire:
+  type: http
+extract:
+  type: trafilatura

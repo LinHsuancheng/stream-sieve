@@ -1,0 +1,9 @@
+id: x-andrewyng
+name: Andrew Ng(@AndrewYNg)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/08b5488b20bc437c8bfc317a52e5c26d
+acquire:
+  type: http
+extract:
+  type: trafilatura

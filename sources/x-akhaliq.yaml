@@ -1,0 +1,9 @@
+id: x-akhaliq
+name: AK(@_akhaliq)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/341f7b9f8d9b477e8bb200caa7f32c6e
+acquire:
+  type: http
+extract:
+  type: trafilatura

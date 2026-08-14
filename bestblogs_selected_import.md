@@ -1,0 +1,151 @@
+# BestBlogs Selected Import
+
+Imported source definitions from the user-approved BestBlogs shortlist.
+
+## big_vendor_blogs (9)
+
+- `blog-openai-blog` — OpenAI Blog
+  - feed: `https://openai.com/news/rss.xml`
+- `blog-anthropic-news` — Anthropic News
+  - feed: `https://rsshub.bestblogs.dev/anthropic/news`
+- `blog-google-deepmind-blog` — Google DeepMind Blog
+  - feed: `https://deepmind.com/blog/feed/basic/`
+- `meta-ai-blog` — AI at Meta Blog
+  - feed: `https://rsshub.app/meta/ai/blog`
+- `blog-microsoft-research-blog` — Microsoft Research Blog
+  - feed: `http://research.microsoft.com/rss/news.xml`
+- `aws-ml-blog` — AWS Machine Learning Blog
+  - feed: `https://aws.amazon.com/blogs/amazon-ai/feed/`
+- `blog-hugging-face-blog` — Hugging Face Blog
+  - feed: `https://huggingface.co/blog/feed.xml`
+- `cloudflare-blog` — The Cloudflare Blog
+  - feed: `https://blog.cloudflare.com/rss`
+- `github-blog` — The GitHub Blog
+  - feed: `https://github.blog/feed/`
+
+## tech_ai_news (14)
+
+- `news-last-week-in-ai` — Last Week in AI
+  - feed: `https://lastweekin.ai/feed/`
+- `the-batch` — deeplearning.ai
+  - feed: `https://rsshub.bestblogs.dev/deeplearning/the-batch`
+- `news-latent-space` — Latent Space
+  - feed: `https://www.latent.space/feed`
+- `news-bytebytego-newsletter` — ByteByteGo Newsletter
+  - feed: `https://blog.bytebytego.com/feed`
+- `simon-willison-blog` — Simon Willison's Weblog
+  - feed: `https://simonwillison.net/atom/everything/`
+- `news-martin-fowler` — Martin Fowler
+  - feed: `https://martinfowler.com/feed.atom`
+- `qbitai-feed` — 量子位
+  - feed: `https://www.qbitai.com/feed`
+- `xinzhiyuan` — 新智元
+  - feed: `https://wechat2rss.bestblogs.dev/feed/e531a18b21c34cf787b83ab444eef659d7a980de.xml`
+- `jiqizhixin` — 机器之心
+  - feed: `https://wechat2rss.bestblogs.dev/feed/8d97af31b0de9e48da74558af128a4673d78c9a3.xml`
+- `ai-keji-pinglun` — AI科技评论
+  - feed: `https://wechat2rss.bestblogs.dev/feed/789e5fefb9cc2646ba7b680cb7a88378a34eb7a4.xml`
+- `ai-frontier-cn` — AI前线
+  - feed: `https://wechat2rss.bestblogs.dev/feed/25185b01482da0f485418ecb92e208b4416712fb.xml`
+- `news-ainlp` — AINLP
+  - feed: `https://wechat2rss.bestblogs.dev/feed/875df1d1a991bf9250ba9813e3148f58ef2240d4.xml`
+- `baoyu-share` — 宝玉的分享
+  - feed: `https://baoyu.io/feed.xml`
+- `guizang-ai-toolbox` — 歸藏的AI工具箱
+  - feed: `https://wechat2rss.bestblogs.dev/feed/1c3e3571b1627d23ee9c64521a0b0a41d3fe2987.xml`
+
+## youtube_channels (19)
+
+- `yt-openai` — OpenAI
+  - discovery: `https://www.youtube.com/@OpenAI/videos`
+- `yt-anthropic` — Anthropic
+  - discovery: `https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/videos`
+- `yt-google-deepmind` — Google DeepMind
+  - discovery: `https://www.youtube.com/@GoogleDeepMind/videos`
+- `yt-andrej-karpathy` — Andrej Karpathy
+  - discovery: `https://www.youtube.com/@AndrejKarpathy/videos`
+- `yt-ai-explained` — AI Explained
+  - discovery: `https://www.youtube.com/@aiexplained-official/videos`
+- `yt-last-week-in-ai` — Last Week in AI
+  - discovery: `https://www.youtube.com/@LastWeekinAI/videos`
+- `yt-two-minute-papers` — Two Minute Papers
+  - discovery: `https://www.youtube.com/@TwoMinutePapers/videos`
+- `yt-dwarkesh-patel` — Dwarkesh Patel
+  - discovery: `https://www.youtube.com/@DwarkeshPatel/videos`
+- `yt-lex-fridman` — Lex Fridman
+  - discovery: `https://www.youtube.com/@lexfridman/videos`
+- `yt-no-priors` — No Priors
+  - discovery: `https://www.youtube.com/@NoPriorsPodcast/videos`
+- `yt-ai-engineer` — AI Engineer
+  - discovery: `https://www.youtube.com/@aiDotEngineer/videos`
+- `yt-langchain` — LangChain
+  - discovery: `https://www.youtube.com/@LangChain/videos`
+- `yt-bytebytego` — ByteByteGo
+  - discovery: `https://www.youtube.com/@ByteByteGo/videos`
+- `yt-a16z` — a16z
+  - discovery: `https://www.youtube.com/@a16z/videos`
+- `yt-y-combinator` — Y Combinator
+  - discovery: `https://www.youtube.com/@ycombinator/videos`
+- `yt-sequoia-capital` — Sequoia Capital
+  - discovery: `https://www.youtube.com/@sequoiacapital/videos`
+- `yt-matthew-berman` — Matthew Berman
+  - discovery: `https://www.youtube.com/@matthew_berman/videos`
+- `yt-matt-wolfe` — Matt Wolfe
+  - discovery: `https://www.youtube.com/@mreflow/videos`
+- `yt-wes-roth` — Wes Roth
+  - discovery: `https://www.youtube.com/@WesRoth/videos`
+
+## x_high_signal (26)
+
+- `x-openai` — OpenAI(@OpenAI)
+  - feed: `https://api.xgo.ing/rss/user/0c0856a69f9f49cf961018c32a0b0049`
+- `x-anthropicai` — Anthropic(@AnthropicAI)
+  - feed: `https://api.xgo.ing/rss/user/fc28a211471b496682feff329ec616e5`
+- `x-googledeepmind` — Google DeepMind(@GoogleDeepMind)
+  - feed: `https://api.xgo.ing/rss/user/a99538443a484fcc846bdcc8f50745ec`
+- `x-sama` — Sam Altman(@sama)
+  - feed: `https://api.xgo.ing/rss/user/e30d4cd223f44bed9d404807105c8927`
+- `x-darioamodei` — Dario Amodei(@DarioAmodei)
+  - feed: `https://api.xgo.ing/rss/user/49666ce6fe3e4cb786c6574684542ec5`
+- `x-karpathy` — Andrej Karpathy(@karpathy)
+  - feed: `https://api.xgo.ing/rss/user/edf707b5c0b248579085f66d7a3c5524`
+- `x-andrewyng` — Andrew Ng(@AndrewYNg)
+  - feed: `https://api.xgo.ing/rss/user/08b5488b20bc437c8bfc317a52e5c26d`
+- `x-lilianweng` — Lilian Weng(@lilianweng)
+  - feed: `https://api.xgo.ing/rss/user/a8f7e2238039461cbc8bf55f5f194498`
+- `x-akhaliq` — AK(@_akhaliq)
+  - feed: `https://api.xgo.ing/rss/user/341f7b9f8d9b477e8bb200caa7f32c6e`
+- `x-simonw` — Simon Willison(@simonw)
+  - feed: `https://api.xgo.ing/rss/user/30ad80be93c84e44acc37d5ddf31db57`
+- `x-huggingface` — Hugging Face(@huggingface)
+  - feed: `https://api.xgo.ing/rss/user/fc16750ce50741f1b1f05ea1fb29436f`
+- `x-thom-wolf` — Thomas Wolf(@Thom_Wolf)
+  - feed: `https://api.xgo.ing/rss/user/4918efb13c47459b8dcaa79cfdf72d09`
+- `x-langchainai` — LangChain(@LangChainAI)
+  - feed: `https://api.xgo.ing/rss/user/862fee50a745423c87e2633b274caf1d`
+- `x-llama-index` — LlamaIndex 🦙(@llama_index)
+  - feed: `https://api.xgo.ing/rss/user/67e259bd5be544ce84bbc867eace54c2`
+- `x-deepseek-ai` — DeepSeek(@deepseek_ai)
+  - feed: `https://api.xgo.ing/rss/user/68b610deb24b47ae9a236811563cda86`
+- `x-alibaba-qwen` — Qwen(@Alibaba_Qwen)
+  - feed: `https://api.xgo.ing/rss/user/80032d016d654eb4afe741ff34b7643d`
+- `x-mistralai` — Mistral AI(@MistralAI)
+  - feed: `https://api.xgo.ing/rss/user/8d2d03aea8af49818096da4ea00409d1`
+- `x-xai` — xAI(@xai)
+  - feed: `https://api.xgo.ing/rss/user/3953aa71e87a422eb9d7bf6ff1c7c43e`
+- `x-cursor-ai` — Cursor(@cursor_ai)
+  - feed: `https://api.xgo.ing/rss/user/5287b4e0e13a4ab7ab7b1d56f9d88960`
+- `x-cognition-labs` — Cognition(@cognition_labs)
+  - feed: `https://api.xgo.ing/rss/user/4cc14cbd15c74e189d537c415369e1a7`
+- `x-nvidiaai` — NVIDIA AI(@NVIDIAAI)
+  - feed: `https://api.xgo.ing/rss/user/05f1492e43514dc3862a076d3697c390`
+- `x-paulg` — Paul Graham(@paulg)
+  - feed: `https://api.xgo.ing/rss/user/900549ddadf04e839d3f7a17ebaba3fc`
+- `x-ycombinator` — Y Combinator(@ycombinator)
+  - feed: `https://api.xgo.ing/rss/user/b1ab109f6afd42ab8ea32e17a19a3a3e`
+- `x-a16z` — a16z(@a16z)
+  - feed: `https://api.xgo.ing/rss/user/f3fedf817599470dbf8d8d11f0872475`
+- `x-dotey` — 宝玉(@dotey)
+  - feed: `https://api.xgo.ing/rss/user/97f1484ae48c430fbbf3438099743674`
+- `x-guizang` — 歸藏(guizang.ai)(@op7418)
+  - feed: `https://api.xgo.ing/rss/user/831fac36aa0a49a9af79f35dc1c9b5d9`

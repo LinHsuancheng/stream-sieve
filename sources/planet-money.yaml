@@ -1,0 +1,9 @@
+id: planet-money
+name: NPR Planet Money
+discovery:
+  type: rss
+  url: https://feeds.npr.org/510289/podcast.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: politico-playbook
+name: POLITICO Playbook
+discovery:
+  type: rss
+  url: https://rss.politico.com/playbook.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

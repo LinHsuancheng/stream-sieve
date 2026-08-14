@@ -1,0 +1,9 @@
+id: blog-google-deepmind-blog
+name: Google DeepMind Blog
+discovery:
+  type: rss
+  url: https://deepmind.com/blog/feed/basic/
+acquire:
+  type: http
+extract:
+  type: trafilatura

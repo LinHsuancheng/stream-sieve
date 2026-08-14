@@ -1,0 +1,9 @@
+id: meta-ai-blog
+name: AI at Meta Blog
+discovery:
+  type: rss
+  url: https://rsshub.app/meta/ai/blog
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -12,7 +12,7 @@ This repository currently supports:
 - YAML source recipes for WSJ and Zhihu examples.
 - HTML/article extraction with Trafilatura and optional XPath selectors.
 - SQLite incremental storage and deduplication.
-- OpenAI-compatible LLM relevance scoring.
+- OpenAI-compatible LLM editorial scoring.
 - Structured article analysis.
 - LLM-synthesized Markdown brief generation with lightweight topic clustering.
 - Delivery through filesystem or SMTP.
@@ -196,6 +196,7 @@ The sync step does not try to classify login, verification, paywall, or other pa
 - `scoring.limit`, `scoring.batch_size`, `scoring.timeout`, `scoring.retries`: LLM throughput and retry behavior.
 - `scoring.nonthink`: request non-thinking mode from compatible OpenAI-style providers.
 - `scoring.sample_chars`: max content sample characters per article. Scoring sends title plus this sample, not the full article.
+- `source_pool`: optional source registry path. Defaults to `sourcepool.yaml` and adds source tier/type/quality priors to LLM-stage inputs.
 - `analysis.min_score`, `analysis.limit`, `analysis.content_chars`: article analysis selection and context size.
 - `brief.min_score`, `brief.limit`, `brief.excerpt_chars`: email selection and display length.
 - `delivery.config`, `delivery.delivery_key`, `delivery.resend`: destination and resend behavior.
@@ -367,6 +368,8 @@ Inspect state:
 .venv/bin/python -m stream_sieve.cli analyses --source wsj-home --limit 10
 ```
 
+`sourcepool.yaml` classifies sources by tier, type, domains, quality priors, and policy flags. Those priors are added to the scoring, analysis, and digest inputs so the LLM can distinguish primary reporting, professional editorial sources, curated technical sources, and social discovery.
+
 ## Multi-Source Run Config
 
 Edit `config.yaml` for the daily run. `.env` is only for secrets and environment overrides.
@@ -389,7 +392,7 @@ The run config executes:
 sync all browser sources with one attach/tab
 score unscored articles in merged batches
 analyze high-scored articles into reusable briefing notes
-brief all sources together
+brief all sources together using source metadata and article clusters
 send one delivery
 status
 ```

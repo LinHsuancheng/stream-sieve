@@ -1,0 +1,9 @@
+id: x-cursor-ai
+name: Cursor(@cursor_ai)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/5287b4e0e13a4ab7ab7b1d56f9d88960
+acquire:
+  type: http
+extract:
+  type: trafilatura

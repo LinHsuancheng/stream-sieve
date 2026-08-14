@@ -1,0 +1,9 @@
+id: x-dotey
+name: 宝玉(@dotey)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/97f1484ae48c430fbbf3438099743674
+acquire:
+  type: http
+extract:
+  type: trafilatura

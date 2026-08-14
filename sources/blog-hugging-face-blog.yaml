@@ -1,0 +1,9 @@
+id: blog-hugging-face-blog
+name: Hugging Face Blog
+discovery:
+  type: rss
+  url: https://huggingface.co/blog/feed.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

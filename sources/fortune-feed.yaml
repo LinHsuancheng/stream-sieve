@@ -1,0 +1,9 @@
+id: fortune-feed
+name: Fortune
+discovery:
+  type: rss
+  url: https://fortune.com/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

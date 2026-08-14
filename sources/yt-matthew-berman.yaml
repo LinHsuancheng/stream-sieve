@@ -1,0 +1,12 @@
+id: yt-matthew-berman
+name: Matthew Berman
+discovery:
+  type: browser
+  url: https://www.youtube.com/@matthew_berman/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: simon-willison-blog
+name: Simon Willison's Weblog
+discovery:
+  type: rss
+  url: https://simonwillison.net/atom/everything/
+acquire:
+  type: http
+extract:
+  type: trafilatura

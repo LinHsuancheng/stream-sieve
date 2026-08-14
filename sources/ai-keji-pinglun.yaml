@@ -1,0 +1,9 @@
+id: ai-keji-pinglun
+name: AI科技评论
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/789e5fefb9cc2646ba7b680cb7a88378a34eb7a4.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

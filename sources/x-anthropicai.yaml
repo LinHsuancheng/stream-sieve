@@ -1,0 +1,9 @@
+id: x-anthropicai
+name: Anthropic(@AnthropicAI)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/fc28a211471b496682feff329ec616e5
+acquire:
+  type: http
+extract:
+  type: trafilatura

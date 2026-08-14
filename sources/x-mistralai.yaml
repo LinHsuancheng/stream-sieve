@@ -1,0 +1,9 @@
+id: x-mistralai
+name: Mistral AI(@MistralAI)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/8d2d03aea8af49818096da4ea00409d1
+acquire:
+  type: http
+extract:
+  type: trafilatura

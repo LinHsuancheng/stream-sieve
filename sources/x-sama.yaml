@@ -1,0 +1,9 @@
+id: x-sama
+name: Sam Altman(@sama)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/e30d4cd223f44bed9d404807105c8927
+acquire:
+  type: http
+extract:
+  type: trafilatura

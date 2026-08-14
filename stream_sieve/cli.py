@@ -14,6 +14,7 @@ from stream_sieve.llm_scorer import DEFAULT_BASE_URL, DEFAULT_MODEL, build_promp
 from stream_sieve.pipeline import article_markdown, acquire, discover, extract_article, load_source, run_once, sync_source, sync_sources
 from stream_sieve.relevance import rank_articles
 from stream_sieve.render.html import markdown_to_html
+from stream_sieve.source_pool import DEFAULT_SOURCE_POOL, enrich_rows, load_source_pool
 from stream_sieve.storage import DEFAULT_DB, FeedStore
 
 
@@ -223,14 +224,16 @@ def command_rank(args: argparse.Namespace) -> int:
 
 
 def command_score(args: argparse.Namespace) -> int:
-    interests = Path(args.interests).read_text(encoding="utf-8")
+    interests = args.field_profile or Path(args.interests).read_text(encoding="utf-8")
+    source_pool = load_source_pool(args.source_pool)
     model = args.model or DEFAULT_MODEL
     store = FeedStore(args.db)
     try:
-        rows = store.unscored_articles(args.source, args.prefilter_scan_limit or args.limit)
+        rows = store.unscored_articles(args.source, args.prefilter_scan_limit or args.limit, parse_csv(args.source_ids))
+        rows = enrich_rows(rows, source_pool)
         ignored_scores = []
         if args.prefilter_min_score is not None:
-            ranked = rank_articles(rows, args.interests)
+            ranked = rank_articles(rows, args.interests, interests)
             rows = [item.article for item in ranked if item.score >= args.prefilter_min_score][: args.limit]
             ignored_scores = [
                 local_prefilter_score(item.article, item.score)
@@ -240,7 +243,7 @@ def command_score(args: argparse.Namespace) -> int:
         else:
             rows = rows[: args.limit]
         if args.dry_run:
-            print(build_prompt(rows, interests, args.sample_chars, parse_csv(args.categories)))
+            print(build_prompt(rows, interests, args.sample_chars, parse_csv(args.categories), field_context(args)))
             return 0
         ignored = store.save_scores(ignored_scores, model) if ignored_scores else 0
         if not rows:
@@ -258,6 +261,7 @@ def command_score(args: argparse.Namespace) -> int:
                 base_url=args.base_url,
                 sample_chars=args.sample_chars,
                 categories=parse_csv(args.categories),
+                field_context=field_context(args),
                 nonthink=args.nonthink,
                 timeout=args.timeout,
                 retries=args.retries,
@@ -280,9 +284,9 @@ def command_score(args: argparse.Namespace) -> int:
         print(f"score: {score['total_score']}")
         print(f"title: {title}")
         print(f"source: {row.get('source_id', '')}")
-        print(f"relevance: {score['relevance']}")
-        print(f"importance: {score['importance']}")
-        print(f"novelty: {score['novelty']}")
+        print(f"personal_relevance: {score['relevance']}")
+        print(f"information_value: {score['importance']}")
+        print(f"timeliness: {score['novelty']}")
         print(f"category: {score['category']}")
         print(f"reason: {score['reason']}")
         print(f"url: {row.get('url', '')}")
@@ -318,9 +322,9 @@ def command_scores(args: argparse.Namespace) -> int:
         print(f"title: {row['title']}")
         print(f"source: {row['source_id']}")
         print(f"category: {row['category']}")
-        print(f"relevance: {row['relevance']}")
-        print(f"importance: {row['importance']}")
-        print(f"novelty: {row['novelty']}")
+        print(f"personal_relevance: {row['relevance']}")
+        print(f"information_value: {row['importance']}")
+        print(f"timeliness: {row['novelty']}")
         print(f"reason: {row['reason']}")
         print(f"url: {row['url']}")
         print()
@@ -329,9 +333,11 @@ def command_scores(args: argparse.Namespace) -> int:
 
 def command_analyze(args: argparse.Namespace) -> int:
     model = args.model or DEFAULT_MODEL
+    source_pool = load_source_pool(args.source_pool)
     store = FeedStore(args.db)
     try:
-        rows = store.unanalyzed_articles(args.source, args.min_score, args.limit)
+        rows = store.unanalyzed_articles(args.source, args.min_score, args.limit, parse_csv(args.source_ids))
+        rows = enrich_rows(rows, source_pool)
         if args.dry_run:
             for row in rows:
                 print(f"id: {row['id']}")
@@ -392,13 +398,17 @@ def command_analyses(args: argparse.Namespace) -> int:
 
 
 def command_brief(args: argparse.Namespace) -> int:
+    source_pool = load_source_pool(args.source_pool)
     store = FeedStore(args.db)
     try:
         if args.delivery_key:
-            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, args.delivery_key)
+            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, args.delivery_key, parse_csv(args.source_ids))
         else:
-            rows = store.brief_articles(args.source, args.min_score, 500)
-        rows = select_category_limits(rows, args.category_limits, args.limit)
+            rows = store.brief_articles(args.source, args.min_score, 500, parse_csv(args.source_ids))
+        rows = enrich_rows(rows, source_pool)
+        rows = select_field_limits(rows, args.field_limits, args.limit)
+        if not args.field_limits:
+            rows = select_category_limits(rows, args.category_limits, args.limit)
     finally:
         store.close()
     output = digest_markdown(rows, args)
@@ -412,13 +422,17 @@ def command_brief(args: argparse.Namespace) -> int:
 
 def command_send(args: argparse.Namespace) -> int:
     delivery_key = args.delivery_key or args.config
+    source_pool = load_source_pool(args.source_pool)
     store = FeedStore(args.db)
     try:
         if args.resend:
-            rows = store.brief_articles(args.source, args.min_score, 500)
+            rows = store.brief_articles(args.source, args.min_score, 500, parse_csv(args.source_ids))
         else:
-            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, delivery_key)
-        rows = select_category_limits(rows, args.category_limits, args.limit)
+            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, delivery_key, parse_csv(args.source_ids))
+        rows = enrich_rows(rows, source_pool)
+        rows = select_field_limits(rows, args.field_limits, args.limit)
+        if not args.field_limits:
+            rows = select_category_limits(rows, args.category_limits, args.limit)
         if not rows:
             print("delivered: skipped")
             print("reason: no undelivered scored articles matched the threshold")
@@ -457,6 +471,16 @@ def parse_csv(value: str | None) -> list[str] | None:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def field_context(args: argparse.Namespace) -> dict[str, object] | None:
+    if not getattr(args, "field", None):
+        return None
+    return {
+        "field": args.field,
+        "mode": getattr(args, "field_mode", None),
+        "horizon": getattr(args, "field_horizon", None),
+    }
+
+
 def select_category_limits(rows: list[dict[str, object]], spec: str | None, limit: int) -> list[dict[str, object]]:
     if not spec:
         return rows[:limit]
@@ -476,6 +500,25 @@ def select_category_limits(rows: list[dict[str, object]], spec: str | None, limi
         if int(row["id"]) not in used:
             selected.append(row)
             used.add(int(row["id"]))
+    return selected[:limit]
+
+
+def select_field_limits(rows: list[dict[str, object]], spec: str | None, limit: int) -> list[dict[str, object]]:
+    if not spec:
+        return rows[:limit]
+    limits = json.loads(spec)
+    selected: list[dict[str, object]] = []
+    used: set[int] = set()
+    for field, count in limits.items():
+        for row in rows:
+            source_meta = row.get("source_meta") if isinstance(row.get("source_meta"), dict) else {}
+            if source_meta.get("briefing_category") != field:
+                continue
+            if len([item for item in selected if (item.get("source_meta") or {}).get("briefing_category") == field]) >= int(count):
+                break
+            if int(row["id"]) not in used:
+                selected.append(row)
+                used.add(int(row["id"]))
     return selected[:limit]
 
 
@@ -558,6 +601,11 @@ def build_parser() -> argparse.ArgumentParser:
     score_cmd = subparsers.add_parser("score", help="Score unscored articles with an OpenAI-compatible LLM.")
     score_cmd.add_argument("--db", default=DEFAULT_DB)
     score_cmd.add_argument("--source", default=None)
+    score_cmd.add_argument("--source-ids", default=None)
+    score_cmd.add_argument("--field", default=None)
+    score_cmd.add_argument("--field-mode", default=None)
+    score_cmd.add_argument("--field-horizon", default=None)
+    score_cmd.add_argument("--field-profile", default=None)
     score_cmd.add_argument("--interests", default="interests.md")
     score_cmd.add_argument("--limit", type=int, default=10)
     score_cmd.add_argument("--prefilter-scan-limit", type=int, default=None)
@@ -566,6 +614,7 @@ def build_parser() -> argparse.ArgumentParser:
     score_cmd.add_argument("--base-url", default=None)
     score_cmd.add_argument("--sample-chars", type=int, default=50)
     score_cmd.add_argument("--categories", default=None)
+    add_source_pool_arg(score_cmd)
     score_cmd.add_argument("--excerpt-chars", type=int, default=None, help=argparse.SUPPRESS)
     score_cmd.add_argument("--text-snippets", type=int, default=None, help=argparse.SUPPRESS)
     score_cmd.add_argument("--snippet-chars", type=int, default=None, help=argparse.SUPPRESS)
@@ -585,11 +634,13 @@ def build_parser() -> argparse.ArgumentParser:
     analyze_cmd = subparsers.add_parser("analyze", help="Analyze high-scored articles into structured briefing notes.")
     analyze_cmd.add_argument("--db", default=DEFAULT_DB)
     analyze_cmd.add_argument("--source", default=None)
+    analyze_cmd.add_argument("--source-ids", default=None)
     analyze_cmd.add_argument("--min-score", type=float, default=6.5)
     analyze_cmd.add_argument("--limit", type=int, default=20)
     analyze_cmd.add_argument("--model", default=None)
     analyze_cmd.add_argument("--base-url", default=None)
     analyze_cmd.add_argument("--content-chars", type=int, default=4000)
+    add_source_pool_arg(analyze_cmd)
     analyze_cmd.add_argument("--batch-size", type=int, default=5)
     analyze_cmd.add_argument("--nonthink", action="store_true")
     analyze_cmd.add_argument("--timeout", type=float, default=180)
@@ -606,6 +657,7 @@ def build_parser() -> argparse.ArgumentParser:
     brief_cmd = subparsers.add_parser("brief", help="Print a markdown briefing from high-scored articles.")
     brief_cmd.add_argument("--db", default=DEFAULT_DB)
     brief_cmd.add_argument("--source", default=None)
+    brief_cmd.add_argument("--source-ids", default=None)
     brief_cmd.add_argument("--min-score", type=float, default=7.0)
     brief_cmd.add_argument("--limit", type=int, default=20)
     brief_cmd.add_argument("--excerpt-chars", type=int, default=700)
@@ -616,6 +668,8 @@ def build_parser() -> argparse.ArgumentParser:
     brief_cmd.add_argument("--retries", type=int, default=1)
     brief_cmd.add_argument("--delivery-key", default=None)
     brief_cmd.add_argument("--category-limits", default=None)
+    brief_cmd.add_argument("--field-limits", default=None)
+    add_source_pool_arg(brief_cmd)
     brief_cmd.add_argument("--output", default=None)
     brief_cmd.set_defaults(func=command_brief)
 
@@ -623,6 +677,7 @@ def build_parser() -> argparse.ArgumentParser:
     send_cmd.add_argument("--config", default="configs/delivery.example.yaml")
     send_cmd.add_argument("--db", default=DEFAULT_DB)
     send_cmd.add_argument("--source", default=None)
+    send_cmd.add_argument("--source-ids", default=None)
     send_cmd.add_argument("--min-score", type=float, default=7.0)
     send_cmd.add_argument("--limit", type=int, default=20)
     send_cmd.add_argument("--excerpt-chars", type=int, default=700)
@@ -634,10 +689,16 @@ def build_parser() -> argparse.ArgumentParser:
     send_cmd.add_argument("--subject", default="Stream Sieve Brief")
     send_cmd.add_argument("--body-file", default=None)
     send_cmd.add_argument("--category-limits", default=None)
+    send_cmd.add_argument("--field-limits", default=None)
+    add_source_pool_arg(send_cmd)
     send_cmd.add_argument("--delivery-key", default=None)
     send_cmd.add_argument("--resend", action="store_true")
     send_cmd.set_defaults(func=command_send)
     return parser
+
+
+def add_source_pool_arg(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--source-pool", default=DEFAULT_SOURCE_POOL)
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -1,0 +1,9 @@
+id: news-ainlp
+name: AINLP
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/875df1d1a991bf9250ba9813e3148f58ef2240d4.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

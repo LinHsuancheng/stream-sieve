@@ -1,0 +1,9 @@
+id: astral-codex-ten
+name: Astral Codex Ten
+discovery:
+  type: rss
+  url: https://www.astralcodexten.com/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

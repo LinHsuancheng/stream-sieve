@@ -1,0 +1,9 @@
+id: github-blog
+name: The GitHub Blog
+discovery:
+  type: rss
+  url: https://github.blog/feed/
+acquire:
+  type: http
+extract:
+  type: trafilatura

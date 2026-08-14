@@ -1,0 +1,9 @@
+id: x-huggingface
+name: Hugging Face(@huggingface)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/fc16750ce50741f1b1f05ea1fb29436f
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: cloudflare-blog
+name: The Cloudflare Blog
+discovery:
+  type: rss
+  url: https://blog.cloudflare.com/rss
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: x-thom-wolf
+name: Thomas Wolf(@Thom_Wolf)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/4918efb13c47459b8dcaa79cfdf72d09
+acquire:
+  type: http
+extract:
+  type: trafilatura

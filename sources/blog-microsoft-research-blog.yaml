@@ -1,0 +1,9 @@
+id: blog-microsoft-research-blog
+name: Microsoft Research Blog
+discovery:
+  type: rss
+  url: http://research.microsoft.com/rss/news.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

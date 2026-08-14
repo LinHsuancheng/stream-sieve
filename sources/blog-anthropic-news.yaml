@@ -1,0 +1,9 @@
+id: blog-anthropic-news
+name: Anthropic News
+discovery:
+  type: rss
+  url: https://rsshub.bestblogs.dev/anthropic/news
+acquire:
+  type: http
+extract:
+  type: trafilatura

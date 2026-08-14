@@ -1,0 +1,9 @@
+id: hn-high-points
+name: Hacker News High Points
+discovery:
+  type: rss
+  url: https://hnrss.org/newest?points=200
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: sixth-tone
+name: Sixth Tone
+discovery:
+  type: rss
+  url: https://www.sixthtone.com/rss
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: x-deepseek-ai
+name: DeepSeek(@deepseek_ai)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/68b610deb24b47ae9a236811563cda86
+acquire:
+  type: http
+extract:
+  type: trafilatura

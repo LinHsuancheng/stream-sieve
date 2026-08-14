@@ -1,0 +1,9 @@
+id: x-lilianweng
+name: Lilian Weng(@lilianweng)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/a8f7e2238039461cbc8bf55f5f194498
+acquire:
+  type: http
+extract:
+  type: trafilatura

@@ -1,0 +1,9 @@
+id: bea-news
+name: BEA News Releases
+discovery:
+  type: rss
+  url: https://apps.bea.gov/rss/rss.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

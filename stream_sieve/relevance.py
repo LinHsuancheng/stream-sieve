@@ -20,8 +20,8 @@ class RankedArticle:
     ignored: list[str]
 
 
-def load_interests(path: str = "interests.md") -> tuple[list[WeightedTerm], list[WeightedTerm]]:
-    text = Path(path).read_text(encoding="utf-8")
+def load_interests(path: str = "interests.md", text: str | None = None) -> tuple[list[WeightedTerm], list[WeightedTerm]]:
+    text = text if text is not None else Path(path).read_text(encoding="utf-8")
     positive: list[WeightedTerm] = []
     negative: list[WeightedTerm] = []
     section = "positive"
@@ -42,8 +42,8 @@ def load_interests(path: str = "interests.md") -> tuple[list[WeightedTerm], list
     return positive, negative
 
 
-def rank_articles(rows: list[dict[str, Any]], interests_path: str = "interests.md") -> list[RankedArticle]:
-    terms, ignore_terms = load_interests(interests_path)
+def rank_articles(rows: list[dict[str, Any]], interests_path: str = "interests.md", interests_text: str | None = None) -> list[RankedArticle]:
+    terms, ignore_terms = load_interests(interests_path, interests_text)
     ranked = [score_article(row, terms, ignore_terms) for row in rows]
     return sorted(ranked, key=lambda item: item.score, reverse=True)
 

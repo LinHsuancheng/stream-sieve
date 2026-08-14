@@ -108,6 +108,7 @@ def _analysis_items(rows: list[dict[str, Any]], content_chars: int) -> list[dict
             "article_id": row["id"],
             "title": row["title"],
             "source": row["source_id"],
+            "source_meta": compact_source_meta(row.get("source_meta")),
             "author": row.get("author"),
             "published_at": row.get("published_at"),
             "score": row.get("total_score"),
@@ -123,6 +124,20 @@ def _string_list(value: Any) -> list[str]:
     if not isinstance(value, list):
         return []
     return [str(item).strip() for item in value if str(item).strip()]
+
+
+def compact_source_meta(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    return {
+        "tier": value.get("tier"),
+        "source_type": value.get("source_type"),
+        "briefing_category": value.get("briefing_category"),
+        "domains": value.get("domains"),
+        "seed_origin": value.get("seed_origin"),
+        "quality": value.get("quality"),
+        "policy": value.get("policy"),
+    }
 
 
 def _strip_json_fence(text: str) -> str:

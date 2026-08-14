@@ -27,6 +27,8 @@ def main(argv: list[str] | None = None) -> int:
     config = load_yaml(ROOT / args.config)["run"]
     py = env.get("PY", ".venv/bin/python")
     db = expand(need(config, "db"))
+    source_pool = config.get("source_pool", "sourcepool.yaml")
+    source_pool_data = load_yaml(ROOT / source_pool).get("sources", {})
     browser_boot = config.get("browser_boot") or {}
     boot_command = build_browser_boot_command(browser_boot)
     cdp_endpoint = f"http://127.0.0.1:{need(browser_boot, 'remote_debugging_port')}"
@@ -49,8 +51,13 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     scoring = config.get("scoring", {})
-    commands.append(
-        [
+    fields = config.get("fields") or {}
+    field_limits = {field: need(field_config, "target_items") for field, field_config in fields.items()}
+    field_runs = build_field_runs(fields, source_pool_data)
+    if not field_runs:
+        field_runs = [(None, {}, None)]
+    for field, field_config, source_ids in field_runs:
+        command = [
             py,
             "-m",
             "stream_sieve.cli",
@@ -58,11 +65,11 @@ def main(argv: list[str] | None = None) -> int:
             "--db",
             db,
             "--limit",
-            str(need(scoring, "limit")),
+            str(field_config.get("score_limit") or need(scoring, "limit")),
             "--prefilter-scan-limit",
-            str(need(scoring, "prefilter_scan_limit")),
+            str(field_config.get("prefilter_scan_limit") or need(scoring, "prefilter_scan_limit")),
             "--prefilter-min-score",
-            str(need(scoring, "prefilter_min_score")),
+            str(field_config.get("prefilter_min_score", need(scoring, "prefilter_min_score"))),
             "--interests",
             need(scoring, "interests"),
             "--model",
@@ -72,7 +79,9 @@ def main(argv: list[str] | None = None) -> int:
             "--sample-chars",
             str(need(scoring, "sample_chars")),
             "--categories",
-            ",".join(need(scoring, "categories")),
+            ",".join([field] if field else need(scoring, "categories")),
+            "--source-pool",
+            source_pool,
             "--batch-size",
             str(need(scoring, "batch_size")),
             "--timeout",
@@ -80,13 +89,21 @@ def main(argv: list[str] | None = None) -> int:
             "--retries",
             str(need(scoring, "retries")),
         ]
-    )
-    if need(scoring, "nonthink"):
-        commands[-1].append("--nonthink")
+        if field:
+            command.extend(["--field", field])
+            command.extend(["--field-mode", str(field_config.get("mode") or "")])
+            command.extend(["--field-horizon", str(field_config.get("horizon") or "")])
+            if field_config.get("profile"):
+                command.extend(["--field-profile", str(field_config["profile"])])
+        if source_ids:
+            command.extend(["--source-ids", ",".join(source_ids)])
+        if need(scoring, "nonthink"):
+            command.append("--nonthink")
+        commands.append(command)
 
     analysis = config.get("analysis", {})
-    commands.append(
-        [
+    for field, field_config, source_ids in field_runs:
+        command = [
             py,
             "-m",
             "stream_sieve.cli",
@@ -96,13 +113,15 @@ def main(argv: list[str] | None = None) -> int:
             "--min-score",
             str(need(analysis, "min_score")),
             "--limit",
-            str(need(analysis, "limit")),
+            str(field_config.get("analyze_limit") or need(analysis, "limit")),
             "--model",
             need(analysis, "model") if analysis.get("model") else need(scoring, "model"),
             "--base-url",
             need(analysis, "base_url") if analysis.get("base_url") else need(scoring, "base_url"),
             "--content-chars",
             str(need(analysis, "content_chars")),
+            "--source-pool",
+            source_pool,
             "--batch-size",
             str(need(analysis, "batch_size")),
             "--timeout",
@@ -110,9 +129,11 @@ def main(argv: list[str] | None = None) -> int:
             "--retries",
             str(need(analysis, "retries")),
         ]
-    )
-    if analysis.get("nonthink", need(scoring, "nonthink")):
-        commands[-1].append("--nonthink")
+        if source_ids:
+            command.extend(["--source-ids", ",".join(source_ids)])
+        if analysis.get("nonthink", need(scoring, "nonthink")):
+            command.append("--nonthink")
+        commands.append(command)
 
     brief = config.get("brief", {})
     brief_output = need(brief, "output")
@@ -144,6 +165,10 @@ def main(argv: list[str] | None = None) -> int:
             delivery_key,
             "--category-limits",
             json.dumps(need(brief, "category_limits"), ensure_ascii=False),
+            "--field-limits",
+            json.dumps(field_limits or need(brief, "category_limits"), ensure_ascii=False),
+            "--source-pool",
+            source_pool,
             "--output",
             brief_output,
         ]
@@ -172,6 +197,10 @@ def main(argv: list[str] | None = None) -> int:
         brief_output,
         "--category-limits",
         json.dumps(need(brief, "category_limits"), ensure_ascii=False),
+        "--field-limits",
+        json.dumps(field_limits or need(brief, "category_limits"), ensure_ascii=False),
+        "--source-pool",
+        source_pool,
     ]
     send_command.extend(["--delivery-key", delivery_key])
     if delivery.get("resend"):
@@ -295,6 +324,21 @@ def set_sync_many_cdp_endpoint(commands: list[list[str]], cdp_endpoint: str) -> 
     for command in commands:
         if len(command) > 4 and command[3] == "sync-many" and "--cdp-endpoint" in command:
             command[command.index("--cdp-endpoint") + 1] = cdp_endpoint
+
+
+def build_field_runs(fields: dict, source_pool: dict) -> list[tuple[str, dict, list[str]]]:
+    runs = []
+    for field, config in fields.items():
+        source_ids = list(config.get("sources") or [])
+        if not source_ids:
+            source_ids = [
+                source_id
+                for source_id, meta in source_pool.items()
+                if isinstance(meta, dict) and meta.get("briefing_category") == field
+            ]
+        if source_ids:
+            runs.append((str(field), config, source_ids))
+    return runs
 
 
 def stop_process(proc: subprocess.Popen, name: str) -> None:

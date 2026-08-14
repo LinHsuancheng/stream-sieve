@@ -1,0 +1,12 @@
+id: yt-lex-fridman
+name: Lex Fridman
+discovery:
+  type: browser
+  url: https://www.youtube.com/@lexfridman/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

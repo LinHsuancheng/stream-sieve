@@ -1,0 +1,9 @@
+id: guizang-ai-toolbox
+name: 歸藏的AI工具箱
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/1c3e3571b1627d23ee9c64521a0b0a41d3fe2987.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

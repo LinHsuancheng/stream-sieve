@@ -1,0 +1,9 @@
+id: fed-speeches
+name: Federal Reserve Speeches
+discovery:
+  type: rss
+  url: https://www.federalreserve.gov/feeds/speeches.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

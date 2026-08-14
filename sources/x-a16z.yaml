@@ -1,0 +1,9 @@
+id: x-a16z
+name: a16z(@a16z)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/f3fedf817599470dbf8d8d11f0872475
+acquire:
+  type: http
+extract:
+  type: trafilatura

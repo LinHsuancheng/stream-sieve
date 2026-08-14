@@ -1,7 +1,7 @@
 run:
   name: daily
   db: ~/.stream-sieve/stream-sieve.db
-
+  source_pool: sourcepool.yaml
   browser_boot:
     enabled: true
     executable: /usr/bin/google-chrome
@@ -9,24 +9,349 @@ run:
     remote_debugging_port: 9222
     url: about:blank
     startup_wait_seconds: 5
-
   sources:
-    - id: wsj-home
-      path: sources/wsj-home.yaml
-      sync_limit: 3
-
-    - id: qbitai-feed
-      path: sources/qbitai-feed.yaml
-      sync_limit: 5
-
-    - id: zhihu-follow
-      path: sources/zhihu-follow.yaml
-      sync_limit: 3
-
-    - id: zhihu-home
-      path: sources/zhihu-home.yaml
-      sync_limit: 3
-
+  - id: wsj-home
+    path: sources/wsj-home.yaml
+    sync_limit: 3
+  - id: qbitai-feed
+    path: sources/qbitai-feed.yaml
+    sync_limit: 2
+  - id: zhihu-follow
+    path: sources/zhihu-follow.yaml
+    sync_limit: 3
+  - id: zhihu-home
+    path: sources/zhihu-home.yaml
+    sync_limit: 3
+  - id: blog-openai-blog
+    path: sources/blog-openai-blog.yaml
+    sync_limit: 2
+  - id: blog-anthropic-news
+    path: sources/blog-anthropic-news.yaml
+    sync_limit: 2
+  - id: blog-google-deepmind-blog
+    path: sources/blog-google-deepmind-blog.yaml
+    sync_limit: 2
+  - id: meta-ai-blog
+    path: sources/meta-ai-blog.yaml
+    sync_limit: 2
+  - id: blog-microsoft-research-blog
+    path: sources/blog-microsoft-research-blog.yaml
+    sync_limit: 2
+  - id: aws-ml-blog
+    path: sources/aws-ml-blog.yaml
+    sync_limit: 2
+  - id: blog-hugging-face-blog
+    path: sources/blog-hugging-face-blog.yaml
+    sync_limit: 2
+  - id: cloudflare-blog
+    path: sources/cloudflare-blog.yaml
+    sync_limit: 2
+  - id: github-blog
+    path: sources/github-blog.yaml
+    sync_limit: 2
+  - id: news-last-week-in-ai
+    path: sources/news-last-week-in-ai.yaml
+    sync_limit: 2
+  - id: the-batch
+    path: sources/the-batch.yaml
+    sync_limit: 2
+  - id: news-latent-space
+    path: sources/news-latent-space.yaml
+    sync_limit: 2
+  - id: news-bytebytego-newsletter
+    path: sources/news-bytebytego-newsletter.yaml
+    sync_limit: 2
+  - id: simon-willison-blog
+    path: sources/simon-willison-blog.yaml
+    sync_limit: 2
+  - id: news-martin-fowler
+    path: sources/news-martin-fowler.yaml
+    sync_limit: 2
+  - id: xinzhiyuan
+    path: sources/xinzhiyuan.yaml
+    sync_limit: 2
+  - id: jiqizhixin
+    path: sources/jiqizhixin.yaml
+    sync_limit: 2
+  - id: ai-keji-pinglun
+    path: sources/ai-keji-pinglun.yaml
+    sync_limit: 2
+  - id: ai-frontier-cn
+    path: sources/ai-frontier-cn.yaml
+    sync_limit: 2
+  - id: news-ainlp
+    path: sources/news-ainlp.yaml
+    sync_limit: 2
+  - id: baoyu-share
+    path: sources/baoyu-share.yaml
+    sync_limit: 2
+  - id: guizang-ai-toolbox
+    path: sources/guizang-ai-toolbox.yaml
+    sync_limit: 2
+  - id: yt-openai
+    path: sources/yt-openai.yaml
+    sync_limit: 1
+  - id: yt-anthropic
+    path: sources/yt-anthropic.yaml
+    sync_limit: 1
+  - id: yt-google-deepmind
+    path: sources/yt-google-deepmind.yaml
+    sync_limit: 1
+  - id: yt-andrej-karpathy
+    path: sources/yt-andrej-karpathy.yaml
+    sync_limit: 1
+  - id: yt-ai-explained
+    path: sources/yt-ai-explained.yaml
+    sync_limit: 1
+  - id: yt-last-week-in-ai
+    path: sources/yt-last-week-in-ai.yaml
+    sync_limit: 1
+  - id: yt-two-minute-papers
+    path: sources/yt-two-minute-papers.yaml
+    sync_limit: 1
+  - id: yt-dwarkesh-patel
+    path: sources/yt-dwarkesh-patel.yaml
+    sync_limit: 1
+  - id: yt-lex-fridman
+    path: sources/yt-lex-fridman.yaml
+    sync_limit: 1
+  - id: yt-no-priors
+    path: sources/yt-no-priors.yaml
+    sync_limit: 1
+  - id: yt-ai-engineer
+    path: sources/yt-ai-engineer.yaml
+    sync_limit: 1
+  - id: yt-langchain
+    path: sources/yt-langchain.yaml
+    sync_limit: 1
+  - id: yt-bytebytego
+    path: sources/yt-bytebytego.yaml
+    sync_limit: 1
+  - id: yt-a16z
+    path: sources/yt-a16z.yaml
+    sync_limit: 1
+  - id: yt-y-combinator
+    path: sources/yt-y-combinator.yaml
+    sync_limit: 1
+  - id: yt-sequoia-capital
+    path: sources/yt-sequoia-capital.yaml
+    sync_limit: 1
+  - id: yt-matthew-berman
+    path: sources/yt-matthew-berman.yaml
+    sync_limit: 1
+  - id: yt-matt-wolfe
+    path: sources/yt-matt-wolfe.yaml
+    sync_limit: 1
+  - id: yt-wes-roth
+    path: sources/yt-wes-roth.yaml
+    sync_limit: 1
+  - id: x-openai
+    path: sources/x-openai.yaml
+    sync_limit: 1
+  - id: x-anthropicai
+    path: sources/x-anthropicai.yaml
+    sync_limit: 1
+  - id: x-googledeepmind
+    path: sources/x-googledeepmind.yaml
+    sync_limit: 1
+  - id: x-sama
+    path: sources/x-sama.yaml
+    sync_limit: 1
+  - id: x-darioamodei
+    path: sources/x-darioamodei.yaml
+    sync_limit: 1
+  - id: x-karpathy
+    path: sources/x-karpathy.yaml
+    sync_limit: 1
+  - id: x-andrewyng
+    path: sources/x-andrewyng.yaml
+    sync_limit: 1
+  - id: x-lilianweng
+    path: sources/x-lilianweng.yaml
+    sync_limit: 1
+  - id: x-akhaliq
+    path: sources/x-akhaliq.yaml
+    sync_limit: 1
+  - id: x-simonw
+    path: sources/x-simonw.yaml
+    sync_limit: 1
+  - id: x-huggingface
+    path: sources/x-huggingface.yaml
+    sync_limit: 1
+  - id: x-thom-wolf
+    path: sources/x-thom-wolf.yaml
+    sync_limit: 1
+  - id: x-langchainai
+    path: sources/x-langchainai.yaml
+    sync_limit: 1
+  - id: x-llama-index
+    path: sources/x-llama-index.yaml
+    sync_limit: 1
+  - id: x-deepseek-ai
+    path: sources/x-deepseek-ai.yaml
+    sync_limit: 1
+  - id: x-alibaba-qwen
+    path: sources/x-alibaba-qwen.yaml
+    sync_limit: 1
+  - id: x-mistralai
+    path: sources/x-mistralai.yaml
+    sync_limit: 1
+  - id: x-xai
+    path: sources/x-xai.yaml
+    sync_limit: 1
+  - id: x-cursor-ai
+    path: sources/x-cursor-ai.yaml
+    sync_limit: 1
+  - id: x-cognition-labs
+    path: sources/x-cognition-labs.yaml
+    sync_limit: 1
+  - id: x-nvidiaai
+    path: sources/x-nvidiaai.yaml
+    sync_limit: 1
+  - id: x-paulg
+    path: sources/x-paulg.yaml
+    sync_limit: 1
+  - id: x-ycombinator
+    path: sources/x-ycombinator.yaml
+    sync_limit: 1
+  - id: x-a16z
+    path: sources/x-a16z.yaml
+    sync_limit: 1
+  - id: x-dotey
+    path: sources/x-dotey.yaml
+    sync_limit: 1
+  - id: x-guizang
+    path: sources/x-guizang.yaml
+    sync_limit: 1
+  - id: nyt-politics
+    path: sources/nyt-politics.yaml
+    sync_limit: 2
+  - id: npr-politics
+    path: sources/npr-politics.yaml
+    sync_limit: 2
+  - id: politico-playbook
+    path: sources/politico-playbook.yaml
+    sync_limit: 2
+  - id: scotusblog
+    path: sources/scotusblog.yaml
+    sync_limit: 1
+  - id: bbc-world
+    path: sources/bbc-world.yaml
+    sync_limit: 2
+  - id: guardian-world
+    path: sources/guardian-world.yaml
+    sync_limit: 2
+  - id: fed-press
+    path: sources/fed-press.yaml
+    sync_limit: 2
+  - id: fed-speeches
+    path: sources/fed-speeches.yaml
+    sync_limit: 1
+  - id: bea-news
+    path: sources/bea-news.yaml
+    sync_limit: 1
+  - id: guardian-economics
+    path: sources/guardian-economics.yaml
+    sync_limit: 2
+  - id: planet-money
+    path: sources/planet-money.yaml
+    sync_limit: 1
+  - id: cnbc-top-news
+    path: sources/cnbc-top-news.yaml
+    sync_limit: 2
+  - id: cnbc-business
+    path: sources/cnbc-business.yaml
+    sync_limit: 2
+  - id: cnbc-economy
+    path: sources/cnbc-economy.yaml
+    sync_limit: 2
+  - id: marketwatch-top
+    path: sources/marketwatch-top.yaml
+    sync_limit: 2
+  - id: marketwatch-realtime
+    path: sources/marketwatch-realtime.yaml
+    sync_limit: 2
+  - id: yahoo-finance
+    path: sources/yahoo-finance.yaml
+    sync_limit: 2
+  - id: seeking-alpha-market-news
+    path: sources/seeking-alpha-market-news.yaml
+    sync_limit: 2
+  - id: fortune-feed
+    path: sources/fortune-feed.yaml
+    sync_limit: 1
+  - id: marginal-revolution
+    path: sources/marginal-revolution.yaml
+    sync_limit: 1
+  - id: astral-codex-ten
+    path: sources/astral-codex-ten.yaml
+    sync_limit: 1
+  - id: farnam-street
+    path: sources/farnam-street.yaml
+    sync_limit: 1
+  - id: econtalk
+    path: sources/econtalk.yaml
+    sync_limit: 1
+  - id: throughline
+    path: sources/throughline.yaml
+    sync_limit: 1
+  - id: propublica
+    path: sources/propublica.yaml
+    sync_limit: 1
+  - id: marshall-project
+    path: sources/marshall-project.yaml
+    sync_limit: 1
+  - id: aclufeed
+    path: sources/aclufeed.yaml
+    sync_limit: 1
+  - id: guardian-society
+    path: sources/guardian-society.yaml
+    sync_limit: 1
+  - id: guardian-law
+    path: sources/guardian-law.yaml
+    sync_limit: 1
+  - id: bbc-education
+    path: sources/bbc-education.yaml
+    sync_limit: 1
+  - id: china-digital-times
+    path: sources/china-digital-times.yaml
+    sync_limit: 1
+  - id: sixth-tone
+    path: sources/sixth-tone.yaml
+    sync_limit: 1
+  - id: techmeme
+    path: sources/techmeme.yaml
+    sync_limit: 1
+  - id: wired
+    path: sources/wired.yaml
+    sync_limit: 1
+  - id: ars-technica
+    path: sources/ars-technica.yaml
+    sync_limit: 1
+  - id: hn-high-points
+    path: sources/hn-high-points.yaml
+    sync_limit: 1
+  - id: fred-blog
+    path: sources/fred-blog.yaml
+    sync_limit: 1
+  - id: ecb-press
+    path: sources/ecb-press.yaml
+    sync_limit: 1
+  - id: overcoming-bias
+    path: sources/overcoming-bias.yaml
+    sync_limit: 1
+  - id: new-atlantis
+    path: sources/new-atlantis.yaml
+    sync_limit: 1
+  - id: rob-henderson
+    path: sources/rob-henderson.yaml
+    sync_limit: 1
+  - id: reason
+    path: sources/reason.yaml
+    sync_limit: 1
+  - id: volokh-conspiracy
+    path: sources/volokh-conspiracy.yaml
+    sync_limit: 1
   scoring:
     interests: interests.md
     model: deepseek-v4-flash-0731
@@ -36,42 +361,93 @@ run:
     prefilter_min_score: 1
     sample_chars: 200
     categories:
-      - tech
-      - society
-      - open_source
-      - life
-      - politics
-      - economics
-      - other
+    - politics
+    - economics
+    - tech
+    - business
+    - cognition
+    - society
     nonthink: true
     batch_size: 50
     timeout: 180
     retries: 2
-
   analysis:
-    model:
-    base_url:
+    model: null
+    base_url: null
     min_score: 6.5
-    limit: 25
+    limit: 40
     content_chars: 4000
     batch_size: 5
     nonthink: true
     timeout: 180
     retries: 2
-
   brief:
     min_score: 6.5
-    limit: 10
+    limit: 24
     category_limits:
-      tech: 2
-      society: 2
-      open_source: 1
-      life: 1
-      politics: 2
-      economics: 2
+      politics: 5
+      economics: 5
+      tech: 5
+      business: 5
+      cognition: 5
+      society: 5
     excerpt_chars: 200
     output: /tmp/stream-sieve-daily-brief.md
-
   delivery:
     config: configs/delivery.gmail.yaml
     subject: Stream Sieve Daily Brief
+  fields:
+    tech:
+      mode: stream
+      horizon: 3d
+      target_items: 5
+      score_limit: 30
+      analyze_limit: 10
+      profile: 关注 AI、模型、推理、AI infra、芯片、开发者工具、开源系统、云基础设施、工程架构。优先具体发布、性能/成本变化、研究结果、系统设计和产业结构变化。
+      prefilter_scan_limit: 160
+      prefilter_min_score: 0
+    business:
+      mode: stream
+      horizon: 3d
+      target_items: 5
+      score_limit: 20
+      analyze_limit: 8
+      profile: 关注公司战略、融资、商业模式、竞争格局、定价、分发、财报、市场结构。优先能改变行业判断或公司判断的信息。
+      prefilter_scan_limit: 80
+      prefilter_min_score: 0
+    economics:
+      mode: slow_stream
+      horizon: 7d
+      target_items: 4
+      score_limit: 20
+      analyze_limit: 8
+      profile: 关注宏观经济、货币政策、财政、通胀、就业、银行、债务、贸易、金融稳定。权威数据和央行/机构原始材料优先。
+      prefilter_scan_limit: 60
+      prefilter_min_score: 0
+    politics:
+      mode: stream
+      horizon: 3d
+      target_items: 4
+      score_limit: 20
+      analyze_limit: 8
+      profile: 关注政策、监管、制度、选举、地缘政治、国家能力、权力结构变化。优先具体决策和可信报道。
+      prefilter_scan_limit: 60
+      prefilter_min_score: 0
+    society:
+      mode: watchlist
+      horizon: 7d
+      target_items: 4
+      score_limit: 20
+      analyze_limit: 8
+      profile: 关注社会重点新闻和尖锐社会矛盾，尤其性别矛盾、家庭/亲子争议、对男性的司法不公、制度性不公、教育、就业、公共安全。优先能揭示结构性问题的事件。
+      prefilter_scan_limit: 80
+      prefilter_min_score: 0
+    cognition:
+      mode: evergreen
+      horizon: evergreen
+      target_items: 2
+      score_limit: 15
+      analyze_limit: 5
+      profile: 关注长期有用的认知、判断、学习、历史、心理、决策、风险、人生策略和解释世界的模型。不追求新闻及时性，优先耐读、能改变思维方式的文章。
+      prefilter_scan_limit: 50
+      prefilter_min_score: 0

@@ -1,0 +1,9 @@
+id: x-llama-index
+name: LlamaIndex 🦙(@llama_index)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/67e259bd5be544ce84bbc867eace54c2
+acquire:
+  type: http
+extract:
+  type: trafilatura

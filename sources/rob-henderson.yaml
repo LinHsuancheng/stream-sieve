@@ -1,0 +1,9 @@
+id: rob-henderson
+name: Rob Henderson Newsletter
+discovery:
+  type: rss
+  url: https://www.robkhenderson.com/feed
+acquire:
+  type: http
+extract:
+  type: trafilatura

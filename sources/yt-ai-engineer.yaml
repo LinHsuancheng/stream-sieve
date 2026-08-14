@@ -1,0 +1,12 @@
+id: yt-ai-engineer
+name: AI Engineer
+discovery:
+  type: browser
+  url: https://www.youtube.com/@aiDotEngineer/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

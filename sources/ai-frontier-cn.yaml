@@ -1,0 +1,9 @@
+id: ai-frontier-cn
+name: AI前线
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/25185b01482da0f485418ecb92e208b4416712fb.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

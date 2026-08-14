@@ -1,0 +1,9 @@
+id: techmeme
+name: Techmeme
+discovery:
+  type: rss
+  url: https://www.techmeme.com/feed.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

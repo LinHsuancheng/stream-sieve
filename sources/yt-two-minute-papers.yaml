@@ -1,0 +1,12 @@
+id: yt-two-minute-papers
+name: Two Minute Papers
+discovery:
+  type: browser
+  url: https://www.youtube.com/@TwoMinutePapers/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

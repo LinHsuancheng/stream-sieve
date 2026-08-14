@@ -1,0 +1,12 @@
+id: yt-a16z
+name: a16z
+discovery:
+  type: browser
+  url: https://www.youtube.com/@a16z/videos
+  wait: 3
+  scroll: 1
+  include_url_regex: /watch\?v=
+acquire:
+  type: http
+extract:
+  type: trafilatura

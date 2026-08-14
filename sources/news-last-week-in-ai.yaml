@@ -1,0 +1,9 @@
+id: news-last-week-in-ai
+name: Last Week in AI
+discovery:
+  type: rss
+  url: https://lastweekin.ai/feed/
+acquire:
+  type: http
+extract:
+  type: trafilatura

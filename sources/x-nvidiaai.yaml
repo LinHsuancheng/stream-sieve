@@ -1,0 +1,9 @@
+id: x-nvidiaai
+name: NVIDIA AI(@NVIDIAAI)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/05f1492e43514dc3862a076d3697c390
+acquire:
+  type: http
+extract:
+  type: trafilatura

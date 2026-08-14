@@ -1,0 +1,1393 @@
+sources:
+  wsj-home:
+    name: WSJ Home
+    domains:
+    - economics
+    - finance
+    - politics
+    - business
+    - technology
+    tier: T1
+    source_type: professional_editorial
+    quality:
+      authority: 0.85
+      originality: 0.65
+      signal_density: 0.75
+    policy:
+      daily_cap: 8
+      discovery_only: false
+      usable_as_evidence: true
+    briefing_category: business
+    seed_origin: existing_sourcepool
+  qbitai-feed:
+    name: 量子位
+    tier: T2
+    source_type: expert_curated
+    domains: &id004
+    - ai
+    - llm
+    - technology
+    - engineering
+    quality: &id005
+      authority: 0.65
+      originality: 0.6
+      signal_density: 0.8
+    policy: &id006
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  zhihu-follow:
+    name: Zhihu Follow
+    domains:
+    - social
+    - technology
+    - economics
+    - culture
+    tier: T3
+    source_type: social_discovery
+    quality:
+      authority: 0.35
+      originality: 0.55
+      signal_density: 0.45
+    policy:
+      daily_cap: 5
+      discovery_only: true
+      usable_as_evidence: false
+    briefing_category: society
+    seed_origin: existing_sourcepool
+  zhihu-home:
+    name: Zhihu Home
+    domains:
+    - social
+    - technology
+    - economics
+    - culture
+    tier: T3
+    source_type: algorithmic_discovery
+    quality:
+      authority: 0.3
+      originality: 0.45
+      signal_density: 0.35
+    policy:
+      daily_cap: 5
+      discovery_only: true
+      usable_as_evidence: false
+    briefing_category: society
+    seed_origin: existing_sourcepool
+  blog-openai-blog:
+    name: OpenAI Blog
+    tier: T0
+    source_type: organization_blog
+    domains: &id001
+    - ai
+    - llm
+    - technology
+    - engineering
+    quality: &id002
+      authority: 0.9
+      originality: 0.95
+      signal_density: 0.75
+    policy: &id003
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  blog-anthropic-news:
+    name: Anthropic News
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  blog-google-deepmind-blog:
+    name: Google DeepMind Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  meta-ai-blog:
+    name: AI at Meta Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  blog-microsoft-research-blog:
+    name: Microsoft Research Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  aws-ml-blog:
+    name: AWS Machine Learning Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  blog-hugging-face-blog:
+    name: Hugging Face Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  cloudflare-blog:
+    name: The Cloudflare Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  github-blog:
+    name: The GitHub Blog
+    tier: T0
+    source_type: organization_blog
+    domains: *id001
+    quality: *id002
+    policy: *id003
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  news-last-week-in-ai:
+    name: Last Week in AI
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  the-batch:
+    name: deeplearning.ai
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  news-latent-space:
+    name: Latent Space
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  news-bytebytego-newsletter:
+    name: ByteByteGo Newsletter
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  simon-willison-blog:
+    name: Simon Willison's Weblog
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  news-martin-fowler:
+    name: Martin Fowler
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  xinzhiyuan:
+    name: 新智元
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  jiqizhixin:
+    name: 机器之心
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  ai-keji-pinglun:
+    name: AI科技评论
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  ai-frontier-cn:
+    name: AI前线
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  news-ainlp:
+    name: AINLP
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  baoyu-share:
+    name: 宝玉的分享
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  guizang-ai-toolbox:
+    name: 歸藏的AI工具箱
+    tier: T2
+    source_type: expert_curated
+    domains: *id004
+    quality: *id005
+    policy: *id006
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-openai:
+    name: OpenAI
+    tier: T3
+    source_type: video_discovery
+    domains: &id007
+    - ai
+    - llm
+    - technology
+    - research
+    quality: &id008
+      authority: 0.55
+      originality: 0.65
+      signal_density: 0.55
+    policy: &id009
+      daily_cap: 2
+      discovery_only: true
+      usable_as_evidence: false
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-anthropic:
+    name: Anthropic
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-google-deepmind:
+    name: Google DeepMind
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-andrej-karpathy:
+    name: Andrej Karpathy
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-ai-explained:
+    name: AI Explained
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-last-week-in-ai:
+    name: Last Week in AI
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-two-minute-papers:
+    name: Two Minute Papers
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-dwarkesh-patel:
+    name: Dwarkesh Patel
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-lex-fridman:
+    name: Lex Fridman
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-no-priors:
+    name: No Priors
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-ai-engineer:
+    name: AI Engineer
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-langchain:
+    name: LangChain
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-bytebytego:
+    name: ByteByteGo
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-a16z:
+    name: a16z
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: business
+    seed_origin: existing_sourcepool
+  yt-y-combinator:
+    name: Y Combinator
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: business
+    seed_origin: existing_sourcepool
+  yt-sequoia-capital:
+    name: Sequoia Capital
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-matthew-berman:
+    name: Matthew Berman
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-matt-wolfe:
+    name: Matt Wolfe
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  yt-wes-roth:
+    name: Wes Roth
+    tier: T3
+    source_type: video_discovery
+    domains: *id007
+    quality: *id008
+    policy: *id009
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-openai:
+    name: OpenAI(@OpenAI)
+    tier: T3
+    source_type: social_discovery
+    domains: &id010
+    - ai
+    - llm
+    - technology
+    - research
+    quality: &id011
+      authority: 0.55
+      originality: 0.7
+      signal_density: 0.5
+    policy: &id012
+      daily_cap: 2
+      discovery_only: true
+      usable_as_evidence: false
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-anthropicai:
+    name: Anthropic(@AnthropicAI)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-googledeepmind:
+    name: Google DeepMind(@GoogleDeepMind)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-sama:
+    name: Sam Altman(@sama)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-darioamodei:
+    name: Dario Amodei(@DarioAmodei)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-karpathy:
+    name: Andrej Karpathy(@karpathy)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-andrewyng:
+    name: Andrew Ng(@AndrewYNg)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-lilianweng:
+    name: Lilian Weng(@lilianweng)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-akhaliq:
+    name: AK(@_akhaliq)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-simonw:
+    name: Simon Willison(@simonw)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-huggingface:
+    name: Hugging Face(@huggingface)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-thom-wolf:
+    name: Thomas Wolf(@Thom_Wolf)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-langchainai:
+    name: LangChain(@LangChainAI)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-llama-index:
+    name: LlamaIndex 🦙(@llama_index)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-deepseek-ai:
+    name: DeepSeek(@deepseek_ai)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-alibaba-qwen:
+    name: Qwen(@Alibaba_Qwen)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-mistralai:
+    name: Mistral AI(@MistralAI)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-xai:
+    name: xAI(@xai)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-cursor-ai:
+    name: Cursor(@cursor_ai)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-cognition-labs:
+    name: Cognition(@cognition_labs)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-nvidiaai:
+    name: NVIDIA AI(@NVIDIAAI)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-paulg:
+    name: Paul Graham(@paulg)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: cognition
+    seed_origin: existing_sourcepool
+  x-ycombinator:
+    name: Y Combinator(@ycombinator)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: business
+    seed_origin: existing_sourcepool
+  x-a16z:
+    name: a16z(@a16z)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: business
+    seed_origin: existing_sourcepool
+  x-dotey:
+    name: 宝玉(@dotey)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  x-guizang:
+    name: 歸藏(guizang.ai)(@op7418)
+    tier: T3
+    source_type: social_discovery
+    domains: *id010
+    quality: *id011
+    policy: *id012
+    briefing_category: tech
+    seed_origin: existing_sourcepool
+  nyt-politics:
+    name: NYT Politics
+    tier: T1
+    source_type: professional_editorial
+    domains: &id013
+    - politics
+    - policy
+    - geopolitics
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.78
+      originality: 0.65
+      signal_density: 0.72
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  npr-politics:
+    name: NPR Politics
+    tier: T1
+    source_type: professional_editorial
+    domains: *id013
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.78
+      originality: 0.62
+      signal_density: 0.7
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  politico-playbook:
+    name: POLITICO Playbook
+    tier: T1
+    source_type: professional_editorial
+    domains: *id013
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.78
+      originality: 0.7
+      signal_density: 0.75
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  scotusblog:
+    name: SCOTUSblog
+    tier: T2
+    source_type: expert_curated
+    domains: *id013
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.82
+      originality: 0.7
+      signal_density: 0.8
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  bbc-world:
+    name: BBC World
+    tier: T1
+    source_type: professional_editorial
+    domains: *id013
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.8
+      originality: 0.62
+      signal_density: 0.7
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  guardian-world:
+    name: The Guardian World
+    tier: T1
+    source_type: professional_editorial
+    domains: *id013
+    briefing_category: politics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.72
+      originality: 0.62
+      signal_density: 0.68
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  fed-press:
+    name: Federal Reserve Press Releases
+    tier: T0
+    source_type: institution_primary
+    domains: &id014
+    - economics
+    - macro
+    - policy
+    - markets
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.98
+      originality: 1.0
+      signal_density: 0.9
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  fed-speeches:
+    name: Federal Reserve Speeches
+    tier: T0
+    source_type: institution_primary
+    domains: *id014
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.95
+      originality: 1.0
+      signal_density: 0.75
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  bea-news:
+    name: BEA News Releases
+    tier: T0
+    source_type: government_primary
+    domains: *id014
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.92
+      originality: 1.0
+      signal_density: 0.85
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  guardian-economics:
+    name: The Guardian Economics
+    tier: T1
+    source_type: professional_editorial
+    domains: *id014
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.7
+      originality: 0.6
+      signal_density: 0.7
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  planet-money:
+    name: NPR Planet Money
+    tier: T2
+    source_type: expert_curated
+    domains: *id014
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.75
+      originality: 0.7
+      signal_density: 0.65
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  cnbc-top-news:
+    name: CNBC Top News
+    tier: T1
+    source_type: professional_editorial
+    domains: &id015
+    - business
+    - finance
+    - markets
+    - companies
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.75
+      originality: 0.6
+      signal_density: 0.8
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  cnbc-business:
+    name: CNBC Business
+    tier: T1
+    source_type: professional_editorial
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.75
+      originality: 0.6
+      signal_density: 0.78
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  cnbc-economy:
+    name: CNBC Economy
+    tier: T1
+    source_type: professional_editorial
+    domains: *id014
+    briefing_category: economics
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.75
+      originality: 0.6
+      signal_density: 0.78
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  marketwatch-top:
+    name: MarketWatch Top Stories
+    tier: T1
+    source_type: professional_editorial
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.75
+      originality: 0.58
+      signal_density: 0.76
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  marketwatch-realtime:
+    name: MarketWatch Real-Time Headlines
+    tier: T1
+    source_type: professional_editorial
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.74
+      originality: 0.55
+      signal_density: 0.82
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  yahoo-finance:
+    name: Yahoo Finance
+    tier: T1
+    source_type: professional_editorial
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.68
+      originality: 0.48
+      signal_density: 0.72
+    policy:
+      daily_cap: 5
+      discovery_only: false
+      usable_as_evidence: true
+  seeking-alpha-market-news:
+    name: Seeking Alpha Market News
+    tier: T2
+    source_type: expert_curated
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.62
+      originality: 0.55
+      signal_density: 0.8
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  fortune-feed:
+    name: Fortune
+    tier: T1
+    source_type: professional_editorial
+    domains: *id015
+    briefing_category: business
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.7
+      originality: 0.58
+      signal_density: 0.65
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  marginal-revolution:
+    name: Marginal Revolution
+    tier: T2
+    source_type: expert_curated
+    domains: &id016
+    - cognition
+    - ideas
+    - history
+    - decision_making
+    briefing_category: cognition
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.72
+      originality: 0.78
+      signal_density: 0.76
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  astral-codex-ten:
+    name: Astral Codex Ten
+    tier: T2
+    source_type: expert_curated
+    domains: *id016
+    briefing_category: cognition
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.68
+      originality: 0.8
+      signal_density: 0.72
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  farnam-street:
+    name: Farnam Street
+    tier: T2
+    source_type: expert_curated
+    domains: *id016
+    briefing_category: cognition
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.66
+      originality: 0.65
+      signal_density: 0.62
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  econtalk:
+    name: EconTalk
+    tier: T2
+    source_type: expert_curated
+    domains: *id016
+    briefing_category: cognition
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.72
+      originality: 0.72
+      signal_density: 0.62
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  throughline:
+    name: NPR Throughline
+    tier: T2
+    source_type: expert_curated
+    domains: *id016
+    briefing_category: cognition
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.74
+      originality: 0.7
+      signal_density: 0.62
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  propublica:
+    name: ProPublica
+    tier: T1
+    source_type: investigative_editorial
+    domains: &id017
+    - society
+    - justice
+    - gender
+    - institutions
+    - social_conflict
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.84
+      originality: 0.82
+      signal_density: 0.78
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  marshall-project:
+    name: The Marshall Project
+    tier: T1
+    source_type: investigative_editorial
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.82
+      originality: 0.8
+      signal_density: 0.75
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  aclufeed:
+    name: ACLU
+    tier: T2
+    source_type: advocacy_primary
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.7
+      originality: 0.72
+      signal_density: 0.64
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  guardian-society:
+    name: The Guardian Society
+    tier: T1
+    source_type: professional_editorial
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.7
+      originality: 0.62
+      signal_density: 0.68
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  guardian-law:
+    name: The Guardian Law
+    tier: T1
+    source_type: professional_editorial
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.7
+      originality: 0.62
+      signal_density: 0.68
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  bbc-education:
+    name: BBC Education
+    tier: T1
+    source_type: professional_editorial
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.78
+      originality: 0.58
+      signal_density: 0.68
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  china-digital-times:
+    name: China Digital Times
+    tier: T2
+    source_type: expert_curated
+    domains: &id021
+    - society
+    - justice
+    - gender
+    - institutions
+    - social_conflict
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.68
+      originality: 0.7
+      signal_density: 0.72
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  sixth-tone:
+    name: Sixth Tone
+    tier: T1
+    source_type: professional_editorial
+    domains: *id017
+    briefing_category: society
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.62
+      originality: 0.68
+      signal_density: 0.65
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  techmeme:
+    name: Techmeme
+    tier: T2
+    source_type: aggregator
+    domains: &id018
+    - tech
+    - ai
+    - software
+    - engineering
+    briefing_category: tech
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.65
+      originality: 0.35
+      signal_density: 0.85
+    policy:
+      daily_cap: 4
+      discovery_only: true
+      usable_as_evidence: false
+  wired:
+    name: WIRED
+    tier: T1
+    source_type: professional_editorial
+    domains: *id018
+    briefing_category: tech
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.72
+      originality: 0.65
+      signal_density: 0.68
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  ars-technica:
+    name: Ars Technica
+    tier: T1
+    source_type: professional_editorial
+    domains: *id018
+    briefing_category: tech
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.76
+      originality: 0.65
+      signal_density: 0.74
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  hn-high-points:
+    name: Hacker News High Points
+    tier: T3
+    source_type: social_discovery
+    domains: *id018
+    briefing_category: tech
+    seed_origin: curated_cross_domain
+    quality:
+      authority: 0.45
+      originality: 0.7
+      signal_density: 0.75
+    policy:
+      daily_cap: 5
+      discovery_only: true
+      usable_as_evidence: false
+  fred-blog:
+    name: FRED Blog
+    tier: T2
+    source_type: expert_curated
+    domains: &id019
+    - economics
+    - macro
+    - policy
+    - markets
+    briefing_category: economics
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.78
+      originality: 0.74
+      signal_density: 0.72
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  ecb-press:
+    name: European Central Bank Press
+    tier: T0
+    source_type: institution_primary
+    domains: *id019
+    briefing_category: economics
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.94
+      originality: 1.0
+      signal_density: 0.84
+    policy:
+      daily_cap: 4
+      discovery_only: false
+      usable_as_evidence: true
+  overcoming-bias:
+    name: Overcoming Bias
+    tier: T2
+    source_type: expert_curated
+    domains: &id020
+    - cognition
+    - ideas
+    - history
+    - decision_making
+    briefing_category: cognition
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.64
+      originality: 0.78
+      signal_density: 0.68
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  new-atlantis:
+    name: The New Atlantis
+    tier: T2
+    source_type: expert_curated
+    domains: *id020
+    briefing_category: cognition
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.68
+      originality: 0.76
+      signal_density: 0.66
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  rob-henderson:
+    name: Rob Henderson Newsletter
+    tier: T2
+    source_type: expert_curated
+    domains: *id020
+    briefing_category: cognition
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.58
+      originality: 0.72
+      signal_density: 0.62
+    policy:
+      daily_cap: 2
+      discovery_only: false
+      usable_as_evidence: true
+  reason:
+    name: Reason
+    tier: T2
+    source_type: expert_curated
+    domains: *id021
+    briefing_category: society
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.62
+      originality: 0.68
+      signal_density: 0.7
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true
+  volokh-conspiracy:
+    name: The Volokh Conspiracy
+    tier: T2
+    source_type: expert_curated
+    domains: *id021
+    briefing_category: society
+    seed_origin: curated_cross_domain_replacement
+    quality:
+      authority: 0.7
+      originality: 0.72
+      signal_density: 0.7
+    policy:
+      daily_cap: 3
+      discovery_only: false
+      usable_as_evidence: true

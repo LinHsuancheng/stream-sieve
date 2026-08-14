@@ -1,0 +1,9 @@
+id: throughline
+name: NPR Throughline
+discovery:
+  type: rss
+  url: https://feeds.npr.org/510333/podcast.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

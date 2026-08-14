@@ -10,46 +10,76 @@ import httpx
 from stream_sieve.cluster import cluster_articles
 
 
-DIGEST_PROMPT = """You are an editor writing a concise personal daily briefing.
+DIGEST_PROMPT = """You are the editor of a private daily intelligence brief.
 
-Use the supplied article clusters to produce a readable morning digest, not a list dump.
-Write in Chinese unless the article title is English.
+Your goal is NOT to summarize every article.
+Your goal is to update the reader's world model with the smallest amount of reading possible.
+
+The input contains clusters of articles collected from multiple sources.
+Write the final brief in Chinese unless a title or named entity should remain in its original language.
 
 Return JSON only in this exact shape:
 {
-  "headline": "Morning Brief",
-  "headlines": [
+  "headline": "Daily Brief",
+  "highlights": [
     {
-      "title": "...",
+      "title": "<event / development>",
+      "category": "tech",
       "article_ids": [123],
-      "why_it_matters": "..."
+      "what_changed": "...",
+      "why_important": "...",
+      "evidence": ["..."],
+      "uncertainty": "...",
+      "watch_next": "..."
     }
   ],
   "sections": [
     {
-      "topic": "...",
+      "category": "technology",
       "overview": "...",
       "items": [
         {
-          "article_ids": [123],
           "title": "...",
-          "what_happened": "...",
+          "article_ids": [456],
+          "what_changed": "...",
           "why_it_matters": "...",
-          "sources": ["..."]
+          "evidence": ["..."],
+          "uncertainty": "...",
+          "watch_next": "...",
+          "reading_value": "high|medium|low"
         }
       ]
     }
   ],
-  "connections": ["...", "..."],
-  "further_reads": [123, 456]
+  "connections": ["..."]
 }
 
 Rules:
 - Keep article_ids exactly as provided.
-- Do not invent URLs.
-- Merge duplicates into one item instead of repeating them.
-- Use the best source as the lead, and mention useful secondary coverage when available.
-- Make summaries specific and useful.
+- Use only information supplied in the input. Never invent facts, numbers, names, URLs, or history.
+- Determine whether there is actually new information. Do not fill space.
+- highlights means the most important few items across the whole brief. It is not fixed to three. Use 0-8 items depending on the input.
+- sections must organize the rest by field. Use only these fields: politics, economics, tech, business, cognition, society.
+- Each section may contain at most 5 items.
+- It is acceptable for a section to be absent if nothing in that field is worth reading today.
+- Merge articles describing the same underlying event.
+- Prefer primary sources for factual claims.
+- Use secondary sources for context, interpretation, or independent confirmation.
+- Treat source_meta as a prior: T0/T1 sources can carry evidence; T3 social sources are mainly discovery unless the article itself contains direct evidence.
+- Separate facts, interpretation, uncertainty, and disagreement.
+- Do not repeat background knowledge unless needed to explain what changed.
+- Explicitly identify what is NEW compared with the previous known state when possible.
+- If sources disagree, describe the disagreement instead of averaging them.
+- Prefer concrete numbers, decisions, releases, policy changes, research results, and structural changes over commentary and generic opinions.
+
+Field-specific editorial judgment:
+- politics: emphasize policy decisions, regulation, institutions, elections, geopolitics, power shifts, credible reporting, and likely consequences.
+- economics: emphasize macro data, monetary/fiscal policy, inflation, employment, debt, trade, financial stability, and market-moving changes.
+- tech: emphasize AI, software, hardware, infrastructure, research results, product releases, open-source systems, and engineering changes.
+- business: emphasize company strategy, financing, competition, pricing, distribution, earnings, market structure, and business-model changes.
+- cognition: timeliness is optional. Emphasize durable ideas, reasoning quality, explanatory power, mental models, learning, judgment, and whether the piece is worth the reader's scarce attention.
+- society: reserve for major social news and sharp social conflicts, especially gender conflict, family/paternity disputes, judicial unfairness toward men, institutional injustice, education, employment, public safety, and issues that reveal meaningful social tension.
+- social/X/YouTube items can appear when they are high-signal, but avoid treating them as factual evidence unless the supplied item itself contains direct evidence.
 """
 
 
@@ -101,39 +131,67 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
     by_id = {int(row["id"]): row for row in rows}
     parts = [f"# {digest.get('headline') or 'Morning Brief'}", ""]
 
-    headlines = digest.get("headlines") or []
-    if headlines:
-        parts.extend(["## 今日最重要的 3 件事", ""])
-        for index, item in enumerate(headlines, start=1):
+    highlights = digest.get("highlights") or digest.get("key_signals") or []
+    if highlights:
+        parts.extend(["## Highlights", ""])
+        for item in highlights:
             title = str(item.get("title") or "").strip()
-            why = str(item.get("why_it_matters") or "").strip()
+            parts.extend([f"### {title}", ""])
+            for label, key in [
+                ("What changed", "what_changed"),
+                ("Why important", "why_important"),
+                ("Evidence", "evidence"),
+                ("Uncertainty", "uncertainty"),
+                ("Watch next", "watch_next"),
+            ]:
+                value = item.get(key) or (item.get("why_it_matters") if key == "why_important" else None)
+                if not value:
+                    continue
+                parts.append(f"**{label}**")
+                if isinstance(value, list):
+                    for entry in value:
+                        parts.append(f"- {entry}")
+                else:
+                    parts.append(str(value).strip())
+                parts.append("")
             refs = article_links(item.get("article_ids"), by_id)
-            parts.append(f"{index}. {title}")
-            if why:
-                parts.append(f"   为什么重要：{why}")
             if refs:
-                parts.append(f"   来源：{refs}")
-        parts.append("")
+                parts.extend([f"Sources: {refs}", ""])
 
     sections = digest.get("sections") or []
     for section in sections:
-        topic = str(section.get("topic") or "Other").strip()
+        topic = str(section.get("category") or section.get("topic") or "Other").strip()
         overview = str(section.get("overview") or "").strip()
         parts.extend([f"## {topic}", ""])
         if overview:
             parts.extend([overview, ""])
-        for item in section.get("items") or []:
+        for item in (section.get("items") or [])[:5]:
             title = str(item.get("title") or "").strip()
             parts.extend([f"### {title}", ""])
-            what = str(item.get("what_happened") or "").strip()
+            what = str(item.get("what_changed") or item.get("what_happened") or "").strip()
             why = str(item.get("why_it_matters") or "").strip()
             if what:
-                parts.extend(["发生了什么：", what, ""])
+                parts.extend(["**What changed**", what, ""])
             if why:
-                parts.extend(["为什么值得关注：", why, ""])
+                parts.extend(["**Why it matters**", why, ""])
+            evidence = item.get("evidence")
+            if evidence:
+                parts.append("**Evidence**")
+                if isinstance(evidence, list):
+                    for entry in evidence:
+                        parts.append(f"- {entry}")
+                else:
+                    parts.append(str(evidence).strip())
+                parts.append("")
+            if item.get("uncertainty"):
+                parts.extend(["**Uncertainty**", str(item["uncertainty"]).strip(), ""])
+            if item.get("watch_next"):
+                parts.extend(["**Watch next**", str(item["watch_next"]).strip(), ""])
+            if item.get("reading_value"):
+                parts.extend([f"Reading value: {item['reading_value']}", ""])
             refs = article_links(item.get("article_ids"), by_id)
             if refs:
-                parts.extend([f"来源：{refs}", ""])
+                parts.extend([f"Sources: {refs}", ""])
 
     connections = digest.get("connections") or []
     if connections:
@@ -175,6 +233,7 @@ def _fallback_items(rows: list[dict[str, Any]], content_chars: int) -> list[dict
                 "id": row["id"],
                 "title": row["title"],
                 "source": row["source_id"],
+                "source_meta": row.get("source_meta"),
                 "author": row.get("author"),
                 "score": row.get("total_score"),
                 "category": row.get("category"),
@@ -235,7 +294,7 @@ def _api_key() -> str | None:
 
 def _demo() -> None:
     rows = [{"id": 1, "title": "T", "source_id": "s", "author": "a", "url": "u", "total_score": 8, "content": "hello " * 10}]
-    digest = {"headline": "H", "headlines": [{"title": "x", "article_ids": [1], "why_it_matters": "w"}], "sections": []}
+    digest = {"headline": "H", "key_signals": [{"title": "x", "article_ids": [1], "what_changed": "c"}]}
     assert "[s](u)" in render_digest_markdown(digest, rows)
     assert len(_fallback_items(rows, 5)[0]["content"]) == 5
 

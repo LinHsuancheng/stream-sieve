@@ -1,0 +1,9 @@
+id: xinzhiyuan
+name: 新智元
+discovery:
+  type: rss
+  url: https://wechat2rss.bestblogs.dev/feed/e531a18b21c34cf787b83ab444eef659d7a980de.xml
+acquire:
+  type: http
+extract:
+  type: trafilatura

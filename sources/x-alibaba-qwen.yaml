@@ -1,0 +1,9 @@
+id: x-alibaba-qwen
+name: Qwen(@Alibaba_Qwen)
+discovery:
+  type: rss
+  url: https://api.xgo.ing/rss/user/80032d016d654eb4afe741ff34b7643d
+acquire:
+  type: http
+extract:
+  type: trafilatura
