@@ -1,9 +1,0 @@
-id: x-langchainai
-name: LangChain(@LangChainAI)
-discovery:
-  type: rss
-  url: https://api.xgo.ing/rss/user/862fee50a745423c87e2633b274caf1d
-acquire:
-  type: http
-extract:
-  type: trafilatura

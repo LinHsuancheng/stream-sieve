@@ -1,0 +1,82 @@
+run:
+  name: debug-wsj-zhihu
+  db: ~/.stream-sieve/stream-sieve.db
+  source_pool: sourcepool.debug.yaml
+
+  browser_boot:
+    enabled: true
+    executable: /usr/bin/google-chrome
+    user_data_dir: ~/.stream-sieve/chrome-profile
+    remote_debugging_port: 9222
+    url: about:blank
+    startup_wait_seconds: 5
+
+  sources:
+    - id: wsj-home
+      path: sources/wsj-home.yaml
+      sync_limit: 3
+    - id: zhihu-home
+      path: sources/zhihu-home.yaml
+      sync_limit: 3
+
+  scoring:
+    interests: interests.md
+    model: deepseek-v4-flash-0731
+    base_url: https://api.openlux.ai/v1/chat/completions
+    limit: 20
+    prefilter_scan_limit: 60
+    prefilter_min_score: 0
+    sample_chars: 500
+    nonthink: true
+    batch_size: 10
+    timeout: 180
+    retries: 2
+
+  analysis:
+    model: null
+    base_url: null
+    min_score: 6.5
+    limit: 12
+    content_chars: 3000
+    batch_size: 5
+    nonthink: true
+    timeout: 180
+    retries: 2
+
+  brief:
+    min_score: 6.5
+    limit: 10
+    category_limits:
+      business: 5
+      society: 5
+    excerpt_chars: 200
+    output: /tmp/stream-sieve-debug-wsj-zhihu.md
+
+  delivery:
+    config: configs/delivery.example.yaml
+    subject: Stream Sieve Debug Brief
+    delivery_key: debug-wsj-zhihu
+
+  fields:
+    business:
+      mode: stream
+      horizon: 3d
+      target_items: 5
+      sources:
+        - wsj-home
+      score_limit: 20
+      analyze_limit: 8
+      prefilter_scan_limit: 60
+      prefilter_min_score: 0
+      profile: 关注公司战略、商业模式、竞争格局、定价、财报和市场结构。优先具体、可验证、能改变判断的信息。
+    society:
+      mode: stream
+      horizon: 3d
+      target_items: 5
+      sources:
+        - zhihu-home
+      score_limit: 20
+      analyze_limit: 8
+      prefilter_scan_limit: 60
+      prefilter_min_score: 0
+      profile: 关注社会重点新闻和尖锐社会矛盾，优先具体事件、司法争议、公共政策和有充分事实材料的内容，避免普通生活分享。

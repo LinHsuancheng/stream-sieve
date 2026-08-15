@@ -164,5 +164,24 @@ Article[] + interests.md
 实现：
 
 ```text
-candidates -> clustering -> synthesis -> markdown/html -> SMTP
+candidates -> field selection -> analysis -> digest JSON -> fixed HTML/text -> SMTP
 ```
+
+状态：Core completed
+
+已完成：
+
+- field-specific source selection and scoring
+- field-specific prompt profiles
+- structured digest JSON prompt
+- database metadata kept outside LLM output
+- fixed HTML newsletter renderer
+- Markdown/plain-text fallback
+- SMTP and filesystem delivery
+- temporary two-source debug configuration
+
+保留问题：
+
+- scorer 对第三方 OpenAI-compatible endpoint 的 malformed JSON 需要容错和重试。
+- digest Markdown renderer 仍需完整兼容新的 `article_id` JSON schema。
+- HTML 视觉模板已经由当前版本确定，后续只做明确授权的局部调整。

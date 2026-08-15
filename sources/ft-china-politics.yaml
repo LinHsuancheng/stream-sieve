@@ -1,0 +1,5 @@
+id: ft-china-politics
+name: Financial Times China
+discovery: {type: rss, url: "https://www.ft.com/china?format=rss"}
+acquire: {type: http}
+extract: {type: trafilatura}

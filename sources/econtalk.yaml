@@ -1,9 +1,0 @@
-id: econtalk
-name: EconTalk
-discovery:
-  type: rss
-  url: https://feeds.simplecast.com/wgl4xEgL
-acquire:
-  type: http
-extract:
-  type: trafilatura

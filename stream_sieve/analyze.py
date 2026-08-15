@@ -2,38 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 import time
 from typing import Any
 
 import httpx
 
 
-ANALYZE_PROMPT = """You analyze articles for a personal daily briefing.
-
-Write Chinese summaries unless the article itself is mainly English and the title should remain English.
-Return JSON only in this exact shape:
-{
-  "items": [
-    {
-      "article_id": 123,
-      "one_liner": "...",
-      "summary": "...",
-      "key_points": ["...", "...", "..."],
-      "topics": ["AI", "Inference"],
-      "entities": ["OpenAI"],
-      "why_care": "..."
-    }
-  ]
-}
-
-Rules:
-- Keep article_id exactly as provided.
-- Do not invent facts, numbers, names, or URLs.
-- Prefer concrete facts over generic descriptions.
-- key_points should contain 2-5 concise points.
-- topics and entities should be short labels.
-- why_care should explain the practical consequence for an informed reader.
-"""
+ANALYZE_PROMPT = (Path(__file__).resolve().parents[1] / "prompts" / "analyze.md").read_text(encoding="utf-8")
 
 
 def analyze_batch(

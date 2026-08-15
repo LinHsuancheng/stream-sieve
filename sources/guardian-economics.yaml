@@ -1,9 +1,0 @@
-id: guardian-economics
-name: The Guardian Economics
-discovery:
-  type: rss
-  url: https://www.theguardian.com/business/economics/rss
-acquire:
-  type: http
-extract:
-  type: trafilatura

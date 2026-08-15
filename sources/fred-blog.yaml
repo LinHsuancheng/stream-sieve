@@ -1,9 +1,0 @@
-id: fred-blog
-name: FRED Blog
-discovery:
-  type: rss
-  url: https://fredblog.stlouisfed.org/feed/
-acquire:
-  type: http
-extract:
-  type: trafilatura

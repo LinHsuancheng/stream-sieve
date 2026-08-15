@@ -1,9 +1,0 @@
-id: ecb-press
-name: European Central Bank Press
-discovery:
-  type: rss
-  url: https://www.ecb.europa.eu/rss/press.html
-acquire:
-  type: http
-extract:
-  type: trafilatura

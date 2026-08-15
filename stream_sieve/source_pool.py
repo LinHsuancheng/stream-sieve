@@ -31,9 +31,11 @@ def normalize_source_meta(source_id: str, value: Any) -> dict[str, Any]:
         "name": str(meta.get("name") or source_id),
         "domains": string_list(meta.get("domains")),
         "briefing_category": str(meta.get("briefing_category") or ""),
+        "briefing_categories": string_list(meta.get("briefing_categories")) or [str(meta.get("briefing_category") or "")],
         "seed_origin": str(meta.get("seed_origin") or ""),
         "tier": str(meta.get("tier") or "T3"),
         "source_type": str(meta.get("source_type") or "unknown"),
+        "topic_focus": string_list(meta.get("topic_focus")),
         "quality": {
             "authority": bounded_float(quality.get("authority"), 0.5),
             "originality": bounded_float(quality.get("originality"), 0.5),

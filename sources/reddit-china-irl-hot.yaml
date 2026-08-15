@@ -1,0 +1,5 @@
+id: reddit-china-irl-hot
+name: China_irl Hot
+discovery: {type: rss, url: https://old.reddit.com/r/China_irl/hot/.rss}
+acquire: {type: http}
+extract: {type: trafilatura}

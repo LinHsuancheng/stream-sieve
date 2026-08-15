@@ -3,6 +3,7 @@ delivery:
   from: "Stream Sieve <your-address@gmail.com>"
   to:
     - your-address@gmail.com
+  attachment_prefix: stream-sieve-daily-brief
   smtp:
     host: smtp.gmail.com
     port: 587

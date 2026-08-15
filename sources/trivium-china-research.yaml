@@ -1,0 +1,5 @@
+id: trivium-china-research
+name: Trivium China Research
+discovery: {type: browser, url: https://triviumchina.com/research/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

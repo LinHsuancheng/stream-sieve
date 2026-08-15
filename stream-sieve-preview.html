@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stream Sieve Preview</title>
+  <style>
+    :root {
+      --paper:#f2efe9; --paper-alt:#e8e4dc; --ink:#303331;
+      --ink-soft:#626763; --ink-faint:#8a8d87; --rule:#d6d1c8;
+      --sage:#a8b0a0; --display:Georgia,"Noto Serif CJK SC",serif;
+      --body:Inter,"Noto Sans CJK SC",Arial,sans-serif;
+      --mono:"SFMono-Regular",Consolas,monospace;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--paper);color:var(--ink);font-size:16px}
+    body{margin:0;background:linear-gradient(to bottom,rgba(255,255,255,.18),transparent 22rem),var(--paper);font-family:var(--body);line-height:1.68}
+    a{color:inherit;text-decoration-color:rgba(46,49,47,.35);text-underline-offset:.16em}
+    .page{width:min(calc(100% - 48px),1120px);margin:0 auto}
+    .masthead{padding:30px 0 72px;border-bottom:1px solid var(--rule)}
+    .brand-row{display:flex;justify-content:space-between;gap:24px;align-items:baseline;color:var(--ink-soft);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+    .brand{font-weight:700}.edition{color:var(--ink-faint)}
+    .hero{max-width:900px;padding-top:92px}.eyebrow,.kicker,.section-label{margin:0;color:var(--ink-soft);font-size:.72rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
+    h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.035em;line-height:1.02}
+    h1{max-width:900px;margin:14px 0 22px;font-size:clamp(3.7rem,9vw,7.8rem)}
+    .deck{max-width:720px;margin:0;color:var(--ink-soft);font-family:var(--display);font-size:clamp(1.18rem,2vw,1.55rem);line-height:1.42}
+    .meta{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:34px;color:var(--ink-faint);font-size:.78rem}
+    section{padding:68px 0 76px;border-bottom:1px solid var(--rule)}
+    .section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:34px}.section-head h2{margin:7px 0 0;font-size:clamp(2.5rem,6vw,5.2rem)}
+    .count{font-family:var(--mono);color:var(--ink-faint);font-size:.72rem}
+    .highlight-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,.55fr);gap:44px 54px}.highlight{align-self:start}.highlight:not(.primary){padding-top:5px;border-top:4px solid var(--sage)}.primary{grid-row:span 2}.highlight h3{margin:10px 0 14px;font-size:clamp(1.9rem,4.5vw,3.65rem)}.highlight:not(.primary) h3{font-size:clamp(1.45rem,2.8vw,2.05rem)}.summary{max-width:60ch;margin:0;color:var(--ink-soft)}.story-meta{display:flex;gap:10px 16px;margin-top:18px;color:var(--ink-faint);font-size:.73rem}
+    .section-note{margin:0;color:var(--ink-soft);font-family:var(--display);font-size:1.03rem}.article{padding:0 0 64px}.article+.article{padding-top:58px;border-top:1px solid var(--rule)}
+    .article-head{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:56px;margin-bottom:34px}.article h3{max-width:780px;margin:9px 0 12px;font-size:clamp(2rem,4vw,3.25rem)}.dek{max-width:700px;margin:0;color:var(--ink-soft);font-family:var(--display);font-size:1.08rem}.article-meta{display:grid;gap:5px;padding-top:25px;text-align:right;color:var(--ink-faint);font-size:.73rem}.article-body{width:min(100%,700px);margin-left:clamp(0px,8vw,96px)}.article-body p{margin:0 0 1.15em;font-size:1.02rem;line-height:1.78}.article-body p:first-child::first-letter{float:left;margin:.12em .09em 0 0;font-family:var(--display);font-size:3.4em;line-height:.72}.read{width:min(100%,700px);margin:26px 0 0 clamp(0px,8vw,96px);font-size:.78rem;font-weight:650;text-decoration:none}
+    footer{display:flex;justify-content:space-between;padding:28px 0 42px;color:var(--ink-faint);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
+    @media(max-width:700px){.page{width:min(calc(100% - 32px),1120px)}.masthead{padding-bottom:50px}.hero{padding-top:58px}.highlight-grid{display:block}.highlight{margin-bottom:38px}.article-head{display:block}.article-meta{display:flex;gap:8px 14px;padding-top:18px;text-align:left}.article-body,.read{margin-left:0}.section-head{display:block}.count{display:block;margin-top:8px}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <header class="masthead">
+    <div class="brand-row"><div class="brand">STREAM SIEVE</div><div class="edition">DAILY EDITION · PREVIEW</div></div>
+    <div class="hero">
+      <p class="eyebrow">Curated reading</p>
+      <h1>Daily Brief</h1>
+      <p class="deck">今天的阅读集中在 AI 基础设施、企业软件和正在显现的社会变化。</p>
+      <div class="meta"><span>2026-08-14</span><span>12 articles</span><span>8 min read</span><span>Business · Technology · Society</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head"><p class="section-label">Today's Highlights</p><span class="count">TOP 03</span></div>
+    <div class="highlight-grid">
+      <article class="highlight primary"><p class="kicker">Technology</p><h3><a href="#">Inference is becoming a product decision</a></h3><p class="summary">模型服务的成本、延迟和上下文长度正在从工程细节变成产品设计的一部分。新的工具开始把这些变量直接暴露给应用开发者。</p><div class="story-meta"><span>Example Lab</span><span>Aug 14</span><span>5 min</span></div></article>
+      <article class="highlight"><p class="kicker">Business</p><h3><a href="#">The quiet reshaping of enterprise software</a></h3><p class="summary">企业软件厂商把定价从席位数逐步转向使用量，销售和成本模型随之发生变化。</p><div class="story-meta"><span>Market Journal</span><span>Aug 14</span></div></article>
+      <article class="highlight"><p class="kicker">Society</p><h3><a href="#">A dispute over evidence and institutions</a></h3><p class="summary">一起公共争议重新把注意力带回程序、公平和证据标准。</p><div class="story-meta"><span>Public Record</span><span>Aug 13</span></div></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><p class="kicker">01</p><h2>Technology</h2></div><p class="section-note">工程、平台与基础设施的近期变化。</p></div>
+    <article class="article"><div class="article-head"><div><p class="kicker">Systems</p><h3><a href="#">Inference is becoming a product decision</a></h3><p class="dek">成本和延迟不再只是后端指标，而是影响产品形态的约束。</p></div><div class="article-meta"><span>Example Lab</span><span>Aug 14</span><span>5 min</span><span>score 9.2</span></div></div><div class="article-body"><p>模型服务的成本、延迟和上下文长度正在从工程细节变成产品设计的一部分。新的工具开始把这些变量直接暴露给应用开发者。</p><p>文章比较了几种常见部署方式，并给出不同负载下的延迟与成本数据。</p></div><a class="read" href="#">Read original →</a></article>
+    <article class="article"><div class="article-head"><div><p class="kicker">Developer tools</p><h3><a href="#">Small teams are building around composable agents</a></h3><p class="dek">工作流编排开始从单一框架转向可替换的组件。</p></div><div class="article-meta"><span>Engineering Notes</span><span>Aug 13</span><span>4 min</span><span>score 8.4</span></div></div><div class="article-body"><p>这篇文章记录了一个小团队如何组合检索、工具调用和人工审核，并说明了哪些部分保持简单反而更可靠。</p></div><a class="read" href="#">Read original →</a></article>
+  </section>
+
+  <section>
+    <div class="section-head"><div><p class="kicker">02</p><h2>Business</h2></div><p class="section-note">公司、市场和商业模式的可验证变化。</p></div>
+    <article class="article"><div class="article-head"><div><p class="kicker">Markets</p><h3><a href="#">Usage-based pricing reaches another software category</a></h3><p class="dek">按使用量收费正在进入过去主要依赖订阅收入的产品。</p></div><div class="article-meta"><span>Market Journal</span><span>Aug 14</span><span>6 min</span><span>score 8.7</span></div></div><div class="article-body"><p>多家公司公布了新的计费方案，用户支付与 API 调用、存储量和计算时间直接相关。</p></div><a class="read" href="#">Read original →</a></article>
+  </section>
+
+  <section>
+    <div class="section-head"><div><p class="kicker">03</p><h2>Society</h2></div><p class="section-note">社会重点新闻和尖锐的公共争议。</p></div>
+    <article class="article"><div class="article-head"><div><p class="kicker">Institutions</p><h3><a href="#">A dispute over evidence and institutions</a></h3><p class="dek">一起公共争议重新把注意力带回程序、公平和证据标准。</p></div><div class="article-meta"><span>Public Record</span><span>Aug 13</span><span>7 min</span><span>score 8.1</span></div></div><div class="article-body"><p>报道梳理了争议的时间线、公开文件和不同当事人的说法，并把事实陈述与评论分开呈现。</p></div><a class="read" href="#">Read original →</a></article>
+  </section>
+  <footer><span>STREAM SIEVE</span><span>END OF BRIEF</span></footer>
+</main>
+</body>
+</html>

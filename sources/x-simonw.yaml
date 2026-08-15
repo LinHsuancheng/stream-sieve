@@ -1,9 +1,0 @@
-id: x-simonw
-name: Simon Willison(@simonw)
-discovery:
-  type: rss
-  url: https://api.xgo.ing/rss/user/30ad80be93c84e44acc37d5ddf31db57
-acquire:
-  type: http
-extract:
-  type: trafilatura

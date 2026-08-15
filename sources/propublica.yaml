@@ -1,9 +1,0 @@
-id: propublica
-name: ProPublica
-discovery:
-  type: rss
-  url: https://www.propublica.org/feeds/propublica/main
-acquire:
-  type: http
-extract:
-  type: trafilatura

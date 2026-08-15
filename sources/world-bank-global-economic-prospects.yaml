@@ -1,0 +1,5 @@
+id: world-bank-global-economic-prospects
+name: World Bank Global Economic Prospects
+discovery: {type: browser, url: https://www.worldbank.org/en/publication/global-economic-prospects, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

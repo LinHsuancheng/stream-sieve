@@ -1,0 +1,5 @@
+id: jamestown-china-brief
+name: Jamestown China Brief
+discovery: {type: browser, url: https://jamestown.org/publications/cb/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

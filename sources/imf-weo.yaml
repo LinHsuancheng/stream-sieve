@@ -1,0 +1,5 @@
+id: imf-weo
+name: IMF World Economic Outlook
+discovery: {type: browser, url: https://www.imf.org/en/publications/weo, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

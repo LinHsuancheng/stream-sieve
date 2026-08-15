@@ -13,7 +13,7 @@ from stream_sieve.digest import render_digest_markdown, synthesize_digest
 from stream_sieve.llm_scorer import DEFAULT_BASE_URL, DEFAULT_MODEL, build_prompt, score_batch, total_score
 from stream_sieve.pipeline import article_markdown, acquire, discover, extract_article, load_source, run_once, sync_source, sync_sources
 from stream_sieve.relevance import rank_articles
-from stream_sieve.render.html import markdown_to_html
+from stream_sieve.render.html import markdown_to_html, render_digest_html
 from stream_sieve.source_pool import DEFAULT_SOURCE_POOL, enrich_rows, load_source_pool
 from stream_sieve.storage import DEFAULT_DB, FeedStore
 
@@ -411,9 +411,12 @@ def command_brief(args: argparse.Namespace) -> int:
             rows = select_category_limits(rows, args.category_limits, args.limit)
     finally:
         store.close()
-    output = digest_markdown(rows, args)
+    digest = build_digest(rows, args)
+    output = render_digest_markdown(digest, rows)
     if args.output:
-        Path(args.output).write_text(output, encoding="utf-8")
+        output_path = Path(args.output)
+        output_path.write_text(output, encoding="utf-8")
+        output_path.with_suffix(".json").write_text(json.dumps(digest, ensure_ascii=False, indent=2), encoding="utf-8")
         print(args.output)
     else:
         print(output)
@@ -437,8 +440,14 @@ def command_send(args: argparse.Namespace) -> int:
             print("delivered: skipped")
             print("reason: no undelivered scored articles matched the threshold")
             return 0
-        text = Path(args.body_file).read_text(encoding="utf-8") if args.body_file else digest_markdown(rows, args)
-        html = markdown_to_html(text)
+        if args.body_file:
+            text = Path(args.body_file).read_text(encoding="utf-8")
+            digest = read_digest_json(args.body_file)
+            html = render_digest_html(digest, rows) if digest else markdown_to_html(text)
+        else:
+            digest = build_digest(rows, args)
+            text = render_digest_markdown(digest, rows)
+            html = render_digest_html(digest, rows)
         config = load_delivery(args.config)
         result = deliver(config, args.subject, html, text)
         marked = 0 if args.resend else store.mark_delivered(rows, delivery_key)
@@ -451,9 +460,13 @@ def command_send(args: argparse.Namespace) -> int:
 
 
 def digest_markdown(rows: list[dict[str, object]], args: argparse.Namespace) -> str:
+    return render_digest_markdown(build_digest(rows, args), rows)
+
+
+def build_digest(rows: list[dict[str, object]], args: argparse.Namespace) -> dict[str, object]:
     if not rows:
-        return "# Morning Brief\n\nNo scored articles matched the threshold.\n"
-    digest = synthesize_digest(
+        return {"headline": "Daily Reading", "intro": "No scored articles matched the threshold.", "highlights": [], "sections": []}
+    return synthesize_digest(
         rows,
         model=args.model or DEFAULT_MODEL,
         base_url=args.base_url or DEFAULT_BASE_URL,
@@ -462,7 +475,13 @@ def digest_markdown(rows: list[dict[str, object]], args: argparse.Namespace) -> 
         timeout=args.timeout,
         retries=args.retries,
     )
-    return render_digest_markdown(digest, rows)
+
+
+def read_digest_json(body_file: str) -> dict[str, object] | None:
+    path = Path(body_file).with_suffix(".json")
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def parse_csv(value: str | None) -> list[str] | None:
@@ -512,9 +531,13 @@ def select_field_limits(rows: list[dict[str, object]], spec: str | None, limit: 
     for field, count in limits.items():
         for row in rows:
             source_meta = row.get("source_meta") if isinstance(row.get("source_meta"), dict) else {}
-            if source_meta.get("briefing_category") != field:
+            categories = source_meta.get("briefing_categories") or [source_meta.get("briefing_category")]
+            if field not in categories:
                 continue
-            if len([item for item in selected if (item.get("source_meta") or {}).get("briefing_category") == field]) >= int(count):
+            if len([
+                item for item in selected
+                if field in ((item.get("source_meta") or {}).get("briefing_categories") or [(item.get("source_meta") or {}).get("briefing_category")])
+            ]) >= int(count):
                 break
             if int(row["id"]) not in used:
                 selected.append(row)

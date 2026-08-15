@@ -1,0 +1,5 @@
+id: china-power
+name: CSIS ChinaPower
+discovery: {type: browser, url: https://chinapower.csis.org/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

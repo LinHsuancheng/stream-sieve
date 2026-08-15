@@ -7,15 +7,15 @@ browser:
 discovery:
   type: browser
   url: https://www.zhihu.com
-  wait: 1
+  wait: 180
   scroll: 2
   scroll_wait: 0.5
-  include_url_regex: "(zhihu\\.com/question/|zhuanlan\\.zhihu\\.com/p/)"
-  exclude_url_regex: "(#|/people/|/search|/signin)"
+  include_url_regex: "^https://(www\\.)?zhihu\\.com/question/[0-9]+/answer/[0-9]+|^https://zhuanlan\\.zhihu\\.com/p/[0-9]+"
+  exclude_url_regex: "(#|/people/|/search|/signin|/signup|/advert|/ad/|/app/|/question/[0-9]+/?$)"
 
 acquire:
   type: browser
-  wait: 1
+  wait: 3
 
 extract:
   type: trafilatura

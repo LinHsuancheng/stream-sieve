@@ -1,9 +1,0 @@
-id: yahoo-finance
-name: Yahoo Finance
-discovery:
-  type: rss
-  url: https://finance.yahoo.com/news/rssindex
-acquire:
-  type: http
-extract:
-  type: trafilatura

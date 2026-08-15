@@ -1,0 +1,5 @@
+id: china-beige-book-economy
+name: China Beige Book
+discovery: {type: browser, url: https://www.chinabeigebook.com/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

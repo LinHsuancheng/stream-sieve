@@ -1,0 +1,39 @@
+sources:
+  wsj-home:
+    name: WSJ Home
+    domains:
+      - economics
+      - finance
+      - politics
+      - business
+      - technology
+    tier: T1
+    source_type: professional_editorial
+    quality:
+      authority: 0.85
+      originality: 0.65
+      signal_density: 0.75
+    policy:
+      daily_cap: 8
+      discovery_only: false
+      usable_as_evidence: true
+    briefing_category: business
+
+  zhihu-home:
+    name: Zhihu Home
+    domains:
+      - social
+      - technology
+      - economics
+      - culture
+    tier: T3
+    source_type: algorithmic_discovery
+    quality:
+      authority: 0.3
+      originality: 0.45
+      signal_density: 0.35
+    policy:
+      daily_cap: 5
+      discovery_only: true
+      usable_as_evidence: false
+    briefing_category: society

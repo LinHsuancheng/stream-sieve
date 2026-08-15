@@ -1,0 +1,5 @@
+id: reuters-markets-economy
+name: Reuters Markets
+discovery: {type: browser, url: https://www.reuters.com/markets/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

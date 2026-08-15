@@ -1,0 +1,5 @@
+id: wire-china-politics
+name: The Wire China Politics
+discovery: {type: browser, url: https://www.thewirechina.com/topic/politics/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

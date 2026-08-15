@@ -1,9 +1,0 @@
-id: volokh-conspiracy
-name: The Volokh Conspiracy
-discovery:
-  type: rss
-  url: https://reason.com/volokh/feed/
-acquire:
-  type: http
-extract:
-  type: trafilatura

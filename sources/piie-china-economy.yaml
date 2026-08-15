@@ -1,0 +1,5 @@
+id: piie-china-economy
+name: PIIE China Economy
+discovery: {type: browser, url: https://www.piie.com/research/china, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

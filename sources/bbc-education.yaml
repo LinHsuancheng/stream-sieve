@@ -1,9 +1,0 @@
-id: bbc-education
-name: BBC Education
-discovery:
-  type: rss
-  url: https://feeds.bbci.co.uk/news/education/rss.xml
-acquire:
-  type: http
-extract:
-  type: trafilatura

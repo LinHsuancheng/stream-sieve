@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import time
 
@@ -22,11 +23,12 @@ class LinuxChromeCdpBackend(BrowserBackend):
         self.cdp_endpoint = cdp_endpoint
 
     def attach(self) -> BrowserResult:
-        self._run_playwright(["detach"], timeout=10)
         return self._run_playwright(["attach", f"--cdp={self.cdp_endpoint}", f"--session={self.session}"], timeout=120)
 
     def goto(self, url: str) -> BrowserResult:
-        code = f"async page => {{ await page.goto({json.dumps(url)}, {{ waitUntil: 'domcontentloaded', timeout: 30000 }}); }}"
+        # Some feeds keep connections open indefinitely.  Commit is enough for
+        # discovery; the configured wait/scroll steps let the page populate.
+        code = f"async page => {{ await page.goto({json.dumps(url)}, {{ waitUntil: 'commit', timeout: 30000 }}); }}"
         result = self._run_playwright(["run-code", code], timeout=45)
         if session_lost(result.output):
             attach = self.attach()
@@ -79,10 +81,13 @@ class LinuxChromeCdpBackend(BrowserBackend):
         return self._run_playwright(["detach"], timeout=30)
 
     def close_tab(self) -> BrowserResult:
-        return self.detach()
+        # Keep one reusable tab alive during a multi-source sync; the pipeline
+        # terminates Chrome after the run, so no browser window remains.
+        return self._run_playwright(["goto", "about:blank"], timeout=30)
 
     def _run_playwright(self, args: list[str], *, raw: bool = False, timeout: int = 60) -> BrowserResult:
-        command = ["playwright-cli", f"--s={self.session}"]
+        playwright = shutil.which("playwright-cli") or "/mnt/c/Users/33301/AppData/Roaming/npm/playwright-cli"
+        command = [playwright, f"--s={self.session}"]
         if raw:
             command.append("--raw")
         command.extend(args)

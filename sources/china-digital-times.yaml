@@ -1,9 +1,0 @@
-id: china-digital-times
-name: China Digital Times
-discovery:
-  type: rss
-  url: https://chinadigitaltimes.net/chinese/feed
-acquire:
-  type: http
-extract:
-  type: trafilatura

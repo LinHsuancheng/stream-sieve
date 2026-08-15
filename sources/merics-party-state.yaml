@@ -1,0 +1,5 @@
+id: merics-party-state
+name: MERICS Party and State
+discovery: {type: browser, url: https://merics.org/en/party-and-state, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

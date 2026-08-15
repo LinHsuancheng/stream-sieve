@@ -1,9 +1,0 @@
-id: marginal-revolution
-name: Marginal Revolution
-discovery:
-  type: rss
-  url: https://marginalrevolution.com/feed
-acquire:
-  type: http
-extract:
-  type: trafilatura

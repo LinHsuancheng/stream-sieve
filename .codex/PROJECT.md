@@ -6,6 +6,37 @@
 
 当前项目最重要的结论是：**Browser runtime 必须优先支持 attached real browser profile**。很多 source 的可访问性来自用户真实浏览器里的 Cookie、登录态、风控状态和扩展，而不是 Playwright managed profile 或简单 storage state。
 
+## 当前报告架构
+
+报告已经从简单的 Markdown 摘要升级为结构化 newsletter：
+
+```text
+Article
+  -> field-specific scoring
+  -> field-specific analysis
+  -> digest JSON
+  -> fixed HTML/CSS renderer
+  -> SMTP or filesystem delivery
+```
+
+LLM 只负责筛选和生成 JSON 内容，不负责 HTML、CSS、标题链接、来源、日期、分数或阅读时间的展示。HTML 模板位于 `stream_sieve/render/html.py`，是固定的阅读型 publication layout；后续修改报告视觉时必须先得到明确指示，不要因为参考了其他主题而自动替换模板。
+
+当前 field：
+
+```text
+ai_news, tech, business, economics, politics, society, cognition
+```
+
+每个 field 有自己的 source、时间范围、评分 profile 和最多展示数量。`ai_news` 与 `tech` 分开，避免 AI 新闻占满一般技术栏目。
+
+快速调试配置：
+
+```bash
+./run configs/runs/debug-wsj-zhihu.yaml
+```
+
+该配置只使用 `wsj-home` 和 `zhihu-home`，对应的临时 source registry 是 `sourcepool.debug.yaml`。
+
 ## 当前已验证链路
 
 ```text

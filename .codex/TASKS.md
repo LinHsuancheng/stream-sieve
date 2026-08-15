@@ -38,6 +38,18 @@ Phase 0 browser transport is validated. Phase 1/2 minimal source pipeline is now
    - page title / URL sanity checks
 2. Add machine-readable output mode only when another tool consumes CLI output.
 
+## Report Pipeline Status
+
+- [x] Source registry includes field, tier, source type, quality and policy metadata.
+- [x] Score prompt is field-specific and assigns a direct score without weighted sum.
+- [x] Score and analysis requests are grouped by field/source set rather than one request per source.
+- [x] Digest prompt returns JSON-only content references using article IDs.
+- [x] HTML renderer uses database metadata for title, URL, source, date, score and reading time.
+- [x] HTML/CSS report template is fixed and should not be changed implicitly by future agents.
+- [x] Debug run exists for `wsj-home` + `zhihu-home`: `configs/runs/debug-wsj-zhihu.yaml`.
+- [ ] Add malformed JSON recovery/retry for scorer responses.
+- [ ] Make Markdown fallback consume the new `article_id`/`content` digest schema completely.
+
 ## Browser Tasks
 
 - [x] Implement `WindowsEdgeExtensionBackend`.

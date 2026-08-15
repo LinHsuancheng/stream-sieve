@@ -1,9 +1,0 @@
-id: farnam-street
-name: Farnam Street
-discovery:
-  type: rss
-  url: https://fs.blog/feed/
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,0 +1,5 @@
+id: cfr-china
+name: Council on Foreign Relations China
+discovery: {type: browser, url: https://www.cfr.org/regions/china, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

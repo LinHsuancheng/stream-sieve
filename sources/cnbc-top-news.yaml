@@ -1,9 +1,0 @@
-id: cnbc-top-news
-name: CNBC Top News
-discovery:
-  type: rss
-  url: https://www.cnbc.com/id/100003114/device/rss/rss.html
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,9 +1,0 @@
-id: x-guizang
-name: 歸藏(guizang.ai)(@op7418)
-discovery:
-  type: rss
-  url: https://api.xgo.ing/rss/user/831fac36aa0a49a9af79f35dc1c9b5d9
-acquire:
-  type: http
-extract:
-  type: trafilatura

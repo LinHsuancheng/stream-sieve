@@ -1,0 +1,5 @@
+id: china-digital-times-politics
+name: China Digital Times
+discovery: {type: browser, url: https://chinadigitaltimes.net/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

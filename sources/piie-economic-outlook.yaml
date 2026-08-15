@@ -1,0 +1,5 @@
+id: piie-economic-outlook
+name: PIIE Economic Outlook
+discovery: {type: browser, url: https://www.piie.com/research/economic-issues/economic-outlook, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

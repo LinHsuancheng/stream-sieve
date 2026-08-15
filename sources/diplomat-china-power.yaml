@@ -1,0 +1,5 @@
+id: diplomat-china-power
+name: The Diplomat China Power
+discovery: {type: browser, url: https://thediplomat.com/category/china-power/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

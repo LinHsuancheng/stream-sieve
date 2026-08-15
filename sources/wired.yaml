@@ -1,9 +1,0 @@
-id: wired
-name: WIRED
-discovery:
-  type: rss
-  url: https://www.wired.com/feed/rss
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,0 +1,5 @@
+id: imf-china-economy
+name: IMF China
+discovery: {type: browser, url: https://www.imf.org/en/countries/chn, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

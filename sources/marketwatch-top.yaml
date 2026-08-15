@@ -1,9 +1,0 @@
-id: marketwatch-top
-name: MarketWatch Top Stories
-discovery:
-  type: rss
-  url: https://feeds.content.dowjones.io/public/rss/mw_topstories
-acquire:
-  type: http
-extract:
-  type: trafilatura

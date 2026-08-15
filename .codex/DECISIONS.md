@@ -114,3 +114,29 @@ last successful cursor / last_seen_id
 - 复制 profile 会引入 Local State、加密 Cookie、锁文件和 profile registry 问题。
 - 当前 Stable Edge `Profile 1` 已能工作。
 - 保持实验和 MVP 简单。
+
+## DR-010: Structured Digest JSON Is Canonical
+
+状态：Accepted
+
+LLM 的日报输出使用结构化 JSON。文章标题、URL、来源、作者、发布时间、分数和阅读时间由数据库与 source metadata 提供，不能让 LLM 重写这些字段。
+
+原因：
+
+- 防止模型改坏链接或捏造 metadata。
+- HTML 和 Markdown 可以共享同一份 digest。
+- renderer 可以独立调整视觉，不需要修改 prompt。
+
+## DR-011: HTML Is A Fixed Renderer
+
+状态：Accepted
+
+`stream_sieve/render/html.py` 负责把 digest JSON 和数据库文章行渲染为 HTML newsletter。CSS 和组件属于产品界面，不属于 LLM 输出。
+
+视觉方向是 publication/newsletter，而不是 dashboard：保留当前已完成的模板，不因参考 Newsprint、Retypeset 或 Volks-Typo 而整套替换主题。
+
+## DR-012: Field-First Pipeline
+
+状态：Accepted
+
+source 先按 field 分桶，再在 field 内评分、分析和限额，最后由 digest 汇总。不同 field 不直接争夺同一个全局排行榜位置，因为 AI 新闻、商业新闻、社会新闻和认知文章的时间尺度不同。

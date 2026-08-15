@@ -1,9 +1,0 @@
-id: npr-politics
-name: NPR Politics
-discovery:
-  type: rss
-  url: https://feeds.npr.org/1014/rss.xml
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,0 +1,5 @@
+id: china-media-project-politics
+name: China Media Project
+discovery: {type: browser, url: https://chinamediaproject.org/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

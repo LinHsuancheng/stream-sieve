@@ -1,0 +1,5 @@
+id: piie-trade-investment
+name: PIIE Trade and Investment
+discovery: {type: browser, url: https://www.piie.com/research/trade-investment, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

@@ -1,0 +1,5 @@
+id: rhodium-china-economy
+name: Rhodium Group China Research
+discovery: {type: browser, url: https://rhg.com/china/research/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

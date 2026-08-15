@@ -1,9 +1,0 @@
-id: scotusblog
-name: SCOTUSblog
-discovery:
-  type: rss
-  url: https://www.scotusblog.com/feed/
-acquire:
-  type: http
-extract:
-  type: trafilatura

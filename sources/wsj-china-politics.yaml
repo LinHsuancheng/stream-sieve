@@ -1,0 +1,5 @@
+id: wsj-china-politics
+name: WSJ China
+discovery: {type: browser, url: https://www.wsj.com/world/china, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

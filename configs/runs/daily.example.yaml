@@ -361,12 +361,13 @@ run:
     prefilter_min_score: 1
     sample_chars: 200
     categories:
-    - politics
-    - economics
+    - ai_news
     - tech
     - business
-    - cognition
+    - economics
+    - politics
     - society
+    - cognition
     nonthink: true
     batch_size: 50
     timeout: 180
@@ -383,71 +384,82 @@ run:
     retries: 2
   brief:
     min_score: 6.5
-    limit: 24
+    limit: 35
     category_limits:
-      politics: 5
-      economics: 5
+      ai_news: 5
       tech: 5
       business: 5
-      cognition: 5
+      economics: 5
+      politics: 5
       society: 5
+      cognition: 5
     excerpt_chars: 200
     output: /tmp/stream-sieve-daily-brief.md
   delivery:
     config: configs/delivery.gmail.yaml
     subject: Stream Sieve Daily Brief
   fields:
+    ai_news:
+      mode: stream
+      horizon: 2d
+      target_items: 5
+      score_limit: 25
+      analyze_limit: 8
+      prefilter_scan_limit: 120
+      prefilter_min_score: 0
+      profile: 关注 AI 行业资讯、模型发布、公司动态、产品发布、benchmark、价格变化、开源模型、AI infra 事件和高信号讨论。优先具体新信息，避免泛泛
+        AI 评论。
     tech:
       mode: stream
-      horizon: 3d
+      horizon: 7d
       target_items: 5
-      score_limit: 30
-      analyze_limit: 10
-      profile: 关注 AI、模型、推理、AI infra、芯片、开发者工具、开源系统、云基础设施、工程架构。优先具体发布、性能/成本变化、研究结果、系统设计和产业结构变化。
-      prefilter_scan_limit: 160
+      score_limit: 20
+      analyze_limit: 8
+      prefilter_scan_limit: 80
       prefilter_min_score: 0
+      profile: 关注软件工程、云基础设施、开发者工具、系统设计、安全、开源生态、平台变化和非纯 AI 的技术趋势。优先工程含量和结构性变化。
     business:
       mode: stream
       horizon: 3d
       target_items: 5
       score_limit: 20
       analyze_limit: 8
-      profile: 关注公司战略、融资、商业模式、竞争格局、定价、分发、财报、市场结构。优先能改变行业判断或公司判断的信息。
       prefilter_scan_limit: 80
       prefilter_min_score: 0
+      profile: 关注公司战略、融资、商业模式、竞争格局、定价、分发、财报、市场结构。优先能改变行业判断或公司判断的信息。
     economics:
       mode: slow_stream
       horizon: 7d
-      target_items: 4
+      target_items: 5
       score_limit: 20
       analyze_limit: 8
-      profile: 关注宏观经济、货币政策、财政、通胀、就业、银行、债务、贸易、金融稳定。权威数据和央行/机构原始材料优先。
       prefilter_scan_limit: 60
       prefilter_min_score: 0
+      profile: 关注宏观经济、货币政策、财政、通胀、就业、银行、债务、贸易、金融稳定。权威数据和央行/机构原始材料优先。
     politics:
       mode: stream
       horizon: 3d
-      target_items: 4
+      target_items: 5
       score_limit: 20
       analyze_limit: 8
-      profile: 关注政策、监管、制度、选举、地缘政治、国家能力、权力结构变化。优先具体决策和可信报道。
       prefilter_scan_limit: 60
       prefilter_min_score: 0
+      profile: 关注政策、监管、制度、选举、地缘政治、国家能力、权力结构变化。优先具体决策和可信报道。
     society:
       mode: watchlist
       horizon: 7d
-      target_items: 4
+      target_items: 5
       score_limit: 20
       analyze_limit: 8
-      profile: 关注社会重点新闻和尖锐社会矛盾，尤其性别矛盾、家庭/亲子争议、对男性的司法不公、制度性不公、教育、就业、公共安全。优先能揭示结构性问题的事件。
       prefilter_scan_limit: 80
       prefilter_min_score: 0
+      profile: 关注社会重点新闻和尖锐社会矛盾，尤其性别矛盾、家庭/亲子争议、对男性的司法不公、制度性不公、教育、就业、公共安全。优先能揭示结构性问题的事件。
     cognition:
       mode: evergreen
       horizon: evergreen
-      target_items: 2
+      target_items: 5
       score_limit: 15
       analyze_limit: 5
-      profile: 关注长期有用的认知、判断、学习、历史、心理、决策、风险、人生策略和解释世界的模型。不追求新闻及时性，优先耐读、能改变思维方式的文章。
       prefilter_scan_limit: 50
       prefilter_min_score: 0
+      profile: 关注长期有用的认知、判断、学习、历史、心理、决策、风险、人生策略和解释世界的模型。不追求新闻及时性，优先耐读、能改变思维方式的文章。

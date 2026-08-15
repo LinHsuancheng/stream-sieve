@@ -1,0 +1,5 @@
+id: merics-industrial-policy
+name: MERICS Industrial Policy and Technology
+discovery: {type: browser, url: https://merics.org/en/industrial-policy-and-technology, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

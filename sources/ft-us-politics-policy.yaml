@@ -1,0 +1,5 @@
+id: ft-us-politics-policy
+name: Financial Times US Politics and Policy
+discovery: {type: browser, url: https://www.ft.com/us-politics-policy, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

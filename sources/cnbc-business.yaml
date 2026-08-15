@@ -1,9 +1,0 @@
-id: cnbc-business
-name: CNBC Business
-discovery:
-  type: rss
-  url: https://www.cnbc.com/id/10001147/device/rss/rss.html
-acquire:
-  type: http
-extract:
-  type: trafilatura

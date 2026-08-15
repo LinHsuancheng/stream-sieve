@@ -334,7 +334,8 @@ def build_field_runs(fields: dict, source_pool: dict) -> list[tuple[str, dict, l
             source_ids = [
                 source_id
                 for source_id, meta in source_pool.items()
-                if isinstance(meta, dict) and meta.get("briefing_category") == field
+                if isinstance(meta, dict)
+                and field in (meta.get("briefing_categories") or [meta.get("briefing_category")])
             ]
         if source_ids:
             runs.append((str(field), config, source_ids))

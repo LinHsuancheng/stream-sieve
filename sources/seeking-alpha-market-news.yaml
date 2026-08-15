@@ -1,9 +1,0 @@
-id: seeking-alpha-market-news
-name: Seeking Alpha Market News
-discovery:
-  type: rss
-  url: https://seekingalpha.com/market_currents.xml
-acquire:
-  type: http
-extract:
-  type: trafilatura

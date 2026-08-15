@@ -1,9 +1,0 @@
-id: fed-press
-name: Federal Reserve Press Releases
-discovery:
-  type: rss
-  url: https://www.federalreserve.gov/feeds/press_all.xml
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,9 +1,0 @@
-id: new-atlantis
-name: The New Atlantis
-discovery:
-  type: rss
-  url: https://www.thenewatlantis.com/feed
-acquire:
-  type: http
-extract:
-  type: trafilatura

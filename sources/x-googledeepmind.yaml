@@ -1,9 +1,0 @@
-id: x-googledeepmind
-name: Google DeepMind(@GoogleDeepMind)
-discovery:
-  type: rss
-  url: https://api.xgo.ing/rss/user/a99538443a484fcc846bdcc8f50745ec
-acquire:
-  type: http
-extract:
-  type: trafilatura

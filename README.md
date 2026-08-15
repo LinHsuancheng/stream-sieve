@@ -271,6 +271,7 @@ delivery:
   from: "Stream Sieve <feed@example.com>"
   to:
     - user@example.com
+  attachment_prefix: stream-sieve-daily-brief
   smtp:
     host: smtp.example.com
     port: 587
@@ -278,6 +279,12 @@ delivery:
     username_env: STREAM_SIEVE_EMAIL_USER
     password_env: STREAM_SIEVE_EMAIL_PASSWORD
 ```
+
+SMTP delivery keeps the email body as a short plain-text notice and sends the
+rendered newsletter as an HTML attachment. The attachment filename includes
+the local send time to the minute, for example
+`stream-sieve-daily-brief-2026-08-15-1430.html`. `attachment_prefix` is
+optional and defaults to `stream-sieve-daily-brief`.
 
 Gmail example:
 

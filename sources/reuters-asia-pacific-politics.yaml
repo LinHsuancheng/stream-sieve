@@ -1,0 +1,5 @@
+id: reuters-asia-pacific-politics
+name: Reuters Asia Pacific
+discovery: {type: browser, url: https://www.reuters.com/world/asia-pacific/, wait: 1, scroll: 1}
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

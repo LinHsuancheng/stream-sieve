@@ -1,9 +1,0 @@
-id: x-paulg
-name: Paul Graham(@paulg)
-discovery:
-  type: rss
-  url: https://api.xgo.ing/rss/user/900549ddadf04e839d3f7a17ebaba3fc
-acquire:
-  type: http
-extract:
-  type: trafilatura

@@ -1,9 +1,32 @@
 from __future__ import annotations
 
+from datetime import datetime
 from email.message import EmailMessage
 import os
 import socket
 import smtplib
+
+
+def build_message(config: dict, subject: str, html: str) -> EmailMessage:
+    """Build an email with a short plain-text body and an HTML attachment."""
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = config["from"]
+    msg["To"] = ", ".join(config["to"])
+    msg.set_content(
+        "Stream Sieve daily brief is attached as an HTML file.\n"
+        "Open the attachment to read today's report."
+    )
+    prefix = config.get("attachment_prefix", "stream-sieve-daily-brief")
+    timestamp = datetime.now().astimezone().strftime("%Y-%m-%d-%H%M")
+    filename = f"{prefix}-{timestamp}.html"
+    msg.add_attachment(
+        html.encode("utf-8"),
+        maintype="text",
+        subtype="html",
+        filename=filename,
+    )
+    return msg
 
 
 def send(config: dict, subject: str, html: str, text: str | None = None) -> str:
@@ -22,12 +45,9 @@ def send(config: dict, subject: str, html: str, text: str | None = None) -> str:
             missing.append(f"password/{password_env}")
         raise RuntimeError(f"missing SMTP {' and '.join(missing)}")
 
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = config["from"]
-    msg["To"] = ", ".join(config["to"])
-    msg.set_content(text or "Your Stream Sieve brief is attached as HTML.")
-    msg.add_alternative(html, subtype="html")
+    # ``text`` remains in the public signature for delivery compatibility, but
+    # the report is intentionally always delivered as an HTML attachment.
+    msg = build_message(config, subject, html)
 
     host = smtp["host"]
     port = int(smtp.get("port", 465))

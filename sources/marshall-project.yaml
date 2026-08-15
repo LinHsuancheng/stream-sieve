@@ -1,9 +1,0 @@
-id: marshall-project
-name: The Marshall Project
-discovery:
-  type: rss
-  url: https://www.themarshallproject.org/rss/recent.rss
-acquire:
-  type: http
-extract:
-  type: trafilatura
