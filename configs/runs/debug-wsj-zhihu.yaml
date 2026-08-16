@@ -47,7 +47,7 @@ run:
     min_score: 6.5
     limit: 10
     category_limits:
-      business: 5
+      economy: 5
       society: 5
     excerpt_chars: 200
     output: /tmp/stream-sieve-debug-wsj-zhihu.md
@@ -58,7 +58,7 @@ run:
     delivery_key: debug-wsj-zhihu
 
   fields:
-    business:
+    economy:
       mode: stream
       horizon: 3d
       target_items: 5

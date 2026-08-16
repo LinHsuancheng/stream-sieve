@@ -9,14 +9,16 @@ Stream Sieve 是一个面向个人的内容过滤和阅读简报系统。它从�
 项目把“内容处理”和“邮件发送”分开：
 
 ```text
-sieve       抓取、解析、去重、入库
-score       可选的 LLM 内容评分
+sieve       抓取、解析、去重、入库，并按字段评分/分析形成内容池
+sieve-cycle <n> 重复执行 sieve；`0` 表示持续执行
+sync        为所有尚未评分的 extraction 补齐评分
+score       底层的 LLM 内容评分命令
 analyze     可选的文章结构化分析
-brief       按规则挑选并生成简报
+brief       按规则从已保存 JSON 生成确定性简报
 send-email  读取已保存结果并发送邮件
 ```
 
-评分可以随时开启或关闭，不会阻塞采集；邮件发送也不会自动抓取或打分。这样可以单独重跑评分、替换评分原则、调整邮件数量，或者在没有 LLM 时使用已经保存的评分和分析结果发送确定性简报。
+评分和发送彼此分离：`sieve` 负责采集、评分、分析并形成内容池；`send-email` 从内容池抽取文章，生成日报并发送，不调用 LLM。
 
 ## 项目架构
 
@@ -107,16 +109,45 @@ STREAM_SIEVE_LLM_API_KEY=...
 
 ## 快速开始
 
-### 只采集内容
+### 内容侧：采集、评分和分析
 
-`sieve` 只抓取并写入 SQLite，不调用 LLM，也不发送邮件：
+项目级 `sieve` 会依次抓取、去重、入库，再执行配置中的各字段评分和分析；它不发送邮件：
 
 ```bash
-.venv/bin/python -m stream_sieve.cli sieve \
-  sources/blog-openai-blog.yaml \
-  sources/blog-anthropic-news.yaml \
-  --db ~/.stream-sieve/stream-sieve.db \
-  --limit 10
+./stream-sieve sieve
+```
+
+只处理指定字段类型：
+
+```bash
+./stream-sieve sieve --type ai_news politics
+./stream-sieve send-email --type ai_news cognition
+```
+
+`--type` 使用 `config.yaml` 中 `fields` 的字段名。对 `sieve`，它同时限制采集来源、评分和分析；对 `send-email`，它只限制邮件候选内容。
+
+如果采集已经完成，但部分 extraction 没有评分，可以运行：
+
+```bash
+./stream-sieve sync
+./stream-sieve sync --type ai_news politics
+./stream-sieve sync --reset-scores
+```
+
+`sync` 不重新采集，也不发送邮件，只补齐数据库中缺失的评分记录。
+`--reset-scores` 会先清空全部评分和分析，再对全部 extraction 重新评分；不会删除文章或发送记录，且不能和 `--type` 一起使用。
+
+需要连续刷新内容时使用：
+
+```bash
+./stream-sieve sieve-cycle 3
+./stream-sieve sieve-cycle 0       # 一直执行，Ctrl-C 停止
+```
+
+也可以指定配置文件：
+
+```bash
+./stream-sieve sieve-cycle 3 configs/runs/full-email-test.example.yaml
 ```
 
 ### 可选评分
@@ -208,8 +239,8 @@ stream-sieve all
 三个命令分别执行：
 
 ```text
-sieve       只采集并写入 SQLite
-send-email  只读取保存的数据并生成/发送邮件
+sieve       采集、评分、分析并写入 SQLite 内容池
+send-email  从内容池确定性抽取、生成日报并发送邮件
 all         执行完整流程
 ```
 
@@ -217,11 +248,12 @@ all         执行完整流程
 
 ```text
 启动/连接 Chrome CDP
-→ sieve 所有配置来源
+→ sieve 所有配置来源、评分和分析
 → 按 fields 执行 score
 → 分析达到阈值的文章
-→ 生成 brief
-→ send-email
+→ send-email 从内容池抽取文章
+→ 用已保存 score/analyze JSON 确定性生成 brief JSON/HTML
+→ 发送邮件
 → 输出数据库 status
 ```
 
@@ -325,9 +357,9 @@ scripts/run_wsj_pipeline.sh
 
 ## 设计边界
 
-- `sieve` 负责内容进入系统，不负责发送。
-- `score` 和 `analyze` 是可选、可重跑的丰富步骤。
-- `brief` 负责把数据库内容组织成阅读简报。
-- `send-email` 只消费数据库和已有简报结果，不隐式抓取或打分。
+- `sieve` 负责内容进入系统以及评分/分析，形成可发送内容池，不负责发送。
+- `score` 和 `analyze` 也可以作为底层命令单独重跑。
+- `brief` 是底层确定性 renderer，可单独查看内容池生成的日报。
+- `send-email` 从内容池抽取文章并生成日报后发送，不隐式抓取、评分、分析或调用 LLM。
 - HTML 布局由固定 renderer 控制，LLM 只返回结构化内容。
 - LLM 输出协议是项目接口的一部分；修改 prompt 时不要改动 JSON key、字段类型和 category 值。

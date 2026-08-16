@@ -9,17 +9,16 @@ from typing import Any
 import httpx
 
 
-DEFAULT_MODEL = "deepseek-chat"
-DEFAULT_BASE_URL = "https://api.deepseek.com/chat/completions"
 SCORE_PROMPT_TEMPLATE = (Path(__file__).resolve().parents[1] / "prompts" / "score.md").read_text(encoding="utf-8")
+ALLOWED_CATEGORIES = {"ai_news", "tech", "politics", "economy", "society", "cognition"}
 
 
 def score_batch(
     rows: list[dict[str, Any]],
     interests: str,
     *,
-    model: str | None = None,
-    base_url: str | None = None,
+    model: str,
+    base_url: str,
     api_key: str | None = None,
     sample_chars: int = 50,
     categories: list[str] | None = None,
@@ -28,8 +27,10 @@ def score_batch(
     timeout: float = 180,
     retries: int = 1,
 ) -> list[dict[str, Any]]:
-    model = model or os.environ.get("STREAM_SIEVE_LLM_MODEL") or DEFAULT_MODEL
-    base_url = base_url or os.environ.get("STREAM_SIEVE_LLM_BASE_URL") or DEFAULT_BASE_URL
+    if not isinstance(model, str) or not model.strip():
+        raise ValueError("missing LLM model: set scoring.model in config or pass --model")
+    if not isinstance(base_url, str) or not base_url.strip():
+        raise ValueError("missing LLM base URL: set scoring.base_url in config or pass --base-url")
     api_key = api_key or _api_key()
     if not api_key:
         raise RuntimeError("missing API key: set STREAM_SIEVE_LLM_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY")
@@ -37,7 +38,7 @@ def score_batch(
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": "You score articles for a personal information feed. Return JSON only."},
+            {"role": "system", "content": "你为单个用户评分文章。只返回 JSON。"},
             {"role": "user", "content": build_prompt(rows, interests, sample_chars, categories, field_context)},
         ],
         "response_format": {"type": "json_object"},
@@ -81,7 +82,7 @@ def build_prompt(
                 "sample": content_sample(row.get("content") or "", sample_chars),
             }
         )
-    allowed_categories = categories or ["ai_news", "politics", "economics", "tech", "business", "cognition", "society"]
+    allowed_categories = categories or ["ai_news", "tech", "politics", "economy", "society", "cognition"]
     return SCORE_PROMPT_TEMPLATE.format(
         interests=interests.strip(),
         field_context=format_field_context(field_context),
@@ -134,6 +135,9 @@ def parse_scores(content: str) -> list[dict[str, Any]]:
         raise ValueError("LLM response must contain an items list")
     out = []
     for item in items:
+        category = str(item.get("category") or "").strip()
+        if category not in ALLOWED_CATEGORIES:
+            raise ValueError(f"invalid score category: {category!r}")
         out.append(
             {
                 "id": int(item["id"]),
@@ -141,7 +145,7 @@ def parse_scores(content: str) -> list[dict[str, Any]]:
                 "relevance": _score(item.get("personal_relevance", item.get("relevance", item.get("score", 0)))),
                 "importance": _score(item.get("information_value", item.get("importance", item.get("score", 0)))),
                 "novelty": _score(item.get("timeliness", item.get("novelty", 0))),
-                "category": str(item.get("category") or "Other"),
+                "category": category,
                 "reason": str(item.get("reason") or ""),
             }
         )
@@ -168,7 +172,7 @@ def _api_key() -> str | None:
 
 
 def _demo() -> None:
-    content = '{"items":[{"id":1,"score":8,"personal_relevance":7,"information_value":8,"timeliness":6,"category":"AI","reason":"x"}]}'
+    content = '{"items":[{"id":1,"score":8,"personal_relevance":7,"information_value":8,"timeliness":6,"category":"ai_news","reason":"x"}]}'
     scores = parse_scores(content)
     assert scores[0]["id"] == 1
     assert total_score(scores[0]) == 8

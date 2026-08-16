@@ -12,8 +12,8 @@ import yaml
 from stream_sieve.analyze import analyze_batch
 from stream_sieve.browser.linux_chrome_cdp import LinuxChromeCdpBackend
 from stream_sieve.delivery.config import deliver, load_delivery
-from stream_sieve.digest import render_digest_markdown, synthesize_digest
-from stream_sieve.llm_scorer import DEFAULT_BASE_URL, DEFAULT_MODEL, build_prompt, score_batch, total_score
+from stream_sieve.digest import render_digest_markdown
+from stream_sieve.llm_scorer import build_prompt, score_batch, total_score
 from stream_sieve.pipeline import article_markdown, acquire, discover, extract_article, load_source, run_once, sync_source, sync_sources
 from stream_sieve.relevance import rank_articles
 from stream_sieve.render.html import markdown_to_html, render_digest_html
@@ -267,22 +267,26 @@ def command_rank(args: argparse.Namespace) -> int:
 def command_score(args: argparse.Namespace) -> int:
     interests = args.field_profile or Path(args.interests).read_text(encoding="utf-8")
     source_pool = load_source_pool(args.source_pool)
-    model = args.model or DEFAULT_MODEL
+    model = _required_option(args.model, "--model")
+    base_url = _required_option(args.base_url, "--base-url")
     store = FeedStore(args.db)
     try:
-        rows = store.unscored_articles(args.source, args.prefilter_scan_limit or args.limit, parse_csv(args.source_ids))
+        scan_limit = -1 if args.all_unscored else (args.prefilter_scan_limit or args.limit)
+        rows = store.unscored_articles(args.source, scan_limit, parse_csv(args.source_ids))
         rows = enrich_rows(rows, source_pool)
         ignored_scores = []
         if args.prefilter_min_score is not None:
             ranked = rank_articles(rows, args.interests, interests)
-            rows = [item.article for item in ranked if item.score >= args.prefilter_min_score][: args.limit]
+            selected = [item.article for item in ranked if item.score >= args.prefilter_min_score]
+            rows = selected if args.all_unscored else selected[: args.limit]
             ignored_scores = [
                 local_prefilter_score(item.article, item.score)
                 for item in ranked
                 if item.score < args.prefilter_min_score
             ]
         else:
-            rows = rows[: args.limit]
+            if not args.all_unscored:
+                rows = rows[: args.limit]
         if args.dry_run:
             print(build_prompt(rows, interests, args.sample_chars, parse_csv(args.categories), field_context(args)))
             return 0
@@ -301,7 +305,7 @@ def command_score(args: argparse.Namespace) -> int:
                     batch,
                     interests,
                     model=model,
-                    base_url=args.base_url,
+                    base_url=base_url,
                     sample_chars=args.sample_chars,
                     categories=parse_csv(args.categories),
                     field_context=field_context(args),
@@ -381,7 +385,8 @@ def command_scores(args: argparse.Namespace) -> int:
 
 
 def command_analyze(args: argparse.Namespace) -> int:
-    model = args.model or DEFAULT_MODEL
+    model = _required_option(args.model, "--model")
+    base_url = _required_option(args.base_url, "--base-url")
     source_pool = load_source_pool(args.source_pool)
     store = FeedStore(args.db)
     try:
@@ -406,7 +411,7 @@ def command_analyze(args: argparse.Namespace) -> int:
                 batch_analyses = analyze_batch(
                     batch,
                     model=model,
-                    base_url=args.base_url or DEFAULT_BASE_URL,
+                    base_url=base_url,
                     content_chars=args.content_chars,
                     nonthink=args.nonthink,
                     timeout=args.timeout,
@@ -468,19 +473,7 @@ def command_brief(args: argparse.Namespace) -> int:
             rows = select_category_limits(rows, args.category_limits, args.limit)
     finally:
         store.close()
-    try:
-        digest = build_digest(rows, args)
-    except (json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
-        print(
-            f"brief synthesis skipped: {type(exc).__name__}: {exc}",
-            file=sys.stderr,
-        )
-        digest = {
-            "headline": "Daily Reading",
-            "intro": "AI 摘要生成失败，以下为本次筛选出的文章。",
-            "highlights": [],
-            "sections": [],
-        }
+    digest = build_local_digest(rows)
     output = render_digest_markdown(digest, rows)
     if args.output:
         output_path = Path(args.output)
@@ -513,12 +506,10 @@ def command_send(args: argparse.Namespace) -> int:
             text = Path(args.body_file).read_text(encoding="utf-8")
             digest = read_digest_json(args.body_file)
             html = render_digest_html(digest, rows) if digest else markdown_to_html(text)
-        elif args.no_synthesis:
-            digest = build_local_digest(rows)
-            text = render_digest_markdown(digest, rows)
-            html = render_digest_html(digest, rows)
         else:
-            digest = build_digest(rows, args)
+            # Delivery is deterministic: sieve/brief already produced the
+            # report JSON, and send-email must not invoke an LLM.
+            digest = build_local_digest(rows)
             text = render_digest_markdown(digest, rows)
             html = render_digest_html(digest, rows)
         config = load_delivery(args.config)
@@ -562,17 +553,7 @@ def digest_markdown(rows: list[dict[str, object]], args: argparse.Namespace) -> 
 
 
 def build_digest(rows: list[dict[str, object]], args: argparse.Namespace) -> dict[str, object]:
-    if not rows:
-        return {"headline": "Daily Reading", "intro": "No scored articles matched the threshold.", "highlights": [], "sections": []}
-    return synthesize_digest(
-        rows,
-        model=args.model or DEFAULT_MODEL,
-        base_url=args.base_url or DEFAULT_BASE_URL,
-        content_chars=args.excerpt_chars,
-        nonthink=args.nonthink,
-        timeout=args.timeout,
-        retries=args.retries,
-    )
+    return build_local_digest(rows)
 
 
 def build_local_digest(rows: list[dict[str, object]]) -> dict[str, object]:
@@ -590,13 +571,19 @@ def build_local_digest(rows: list[dict[str, object]]) -> dict[str, object]:
     for category, category_rows in grouped.items():
         items = []
         for row in category_rows[:20]:
-            summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
-            items.append({"article_id": row["id"], "dek": summary, "content": [summary] if summary else []})
+            overview = str(row.get("one_liner") or row.get("summary") or row.get("reason") or "").strip()
+            excerpt = " ".join(str(row.get("content") or "").split())[:80]
+            items.append({
+                "article_id": row["id"],
+                "dek": overview[:80],
+                "content": [excerpt] if excerpt else [],
+            })
         sections.append({"category": category, "note": "Saved score and analysis results.", "items": items})
     highlights = []
-    for row in rows[:8]:
-        summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
-        highlights.append({"article_id": row["id"], "summary": summary})
+    for category_rows in grouped.values():
+        for row in category_rows[:2]:
+            summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
+            highlights.append({"article_id": row["id"], "summary": summary[:80]})
     return {
         "meta": {"title": "Stream Sieve Daily Brief", "deck": "Based on the completed saved selection; no new model synthesis was run."},
         "highlights": highlights,
@@ -793,6 +780,7 @@ def build_parser() -> argparse.ArgumentParser:
     score_cmd.add_argument("--timeout", type=float, default=180)
     score_cmd.add_argument("--retries", type=int, default=1)
     score_cmd.add_argument("--dry-run", action="store_true")
+    score_cmd.add_argument("--all-unscored", action="store_true", help="Score every unscored article matching the filters.")
     score_cmd.set_defaults(func=command_score)
 
     scores_cmd = subparsers.add_parser("scores", help="List saved LLM scores.")
@@ -905,6 +893,12 @@ def add_source_pool_arg(parser: argparse.ArgumentParser) -> None:
 def _short_error(exc: Exception, max_chars: int = 500) -> str:
     message = " ".join(str(exc).split()) or type(exc).__name__
     return message[:max_chars]
+
+
+def _required_option(value: str | None, name: str) -> str:
+    if not value or not value.strip():
+        raise ValueError(f"missing required option {name}; configure it explicitly")
+    return value
 
 
 def main(argv: list[str] | None = None) -> int:

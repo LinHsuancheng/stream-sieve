@@ -34,6 +34,14 @@ class FeedStore:
     def close(self) -> None:
         self.conn.close()
 
+    def reset_evaluations(self) -> tuple[int, int]:
+        analyses = self.conn.execute("select count(*) from article_analysis").fetchone()[0]
+        scores = self.conn.execute("select count(*) from article_scores").fetchone()[0]
+        self.conn.execute("delete from article_analysis")
+        self.conn.execute("delete from article_scores")
+        self.conn.commit()
+        return int(scores), int(analyses)
+
     def init(self) -> None:
         self.conn.executescript(
             """
@@ -94,6 +102,10 @@ class FeedStore:
             );
             """
         )
+        # Field taxonomy migration: regional politics/economy remain useful
+        # in source profiles, but are now delivered as two unified fields.
+        self.conn.execute("update article_scores set category = 'politics' where category in ('politics_global', 'politics_china')")
+        self.conn.execute("update article_scores set category = 'economy' where category in ('economy_global', 'economy_china')")
         self.conn.commit()
 
     def seen_url(self, source_id: str, url: str) -> bool:
@@ -234,7 +246,7 @@ class FeedStore:
     ) -> list[dict[str, Any]]:
         sql = """
             select
-                a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
+                a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
                 s.relevance, s.importance, s.novelty, s.total_score,
                 s.category, s.reason
             from article_scores s
@@ -325,7 +337,7 @@ class FeedStore:
     ) -> list[dict[str, Any]]:
         sql = """
             select
-                a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
+                a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
                 s.relevance, s.importance, s.novelty, s.total_score,
                 s.category, s.reason,
                 aa.one_liner, aa.summary, aa.key_points_json,
@@ -354,7 +366,7 @@ class FeedStore:
     ) -> list[dict[str, Any]]:
         sql = """
             select
-                a.id, a.source_id, a.title, a.author, a.published_at, a.url, a.content,
+                a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
                 s.relevance, s.importance, s.novelty, s.total_score,
                 s.category, s.reason,
                 aa.one_liner, aa.summary, aa.key_points_json,

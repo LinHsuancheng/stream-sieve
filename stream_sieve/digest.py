@@ -77,16 +77,12 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
 
     if highlights:
         parts.extend(["## Highlights", ""])
-        for index, item in enumerate(highlights[:10], start=1):
+        for index, item in enumerate(highlights[:12], start=1):
             row = _first_row(item, by_id)
             item_title = str(item.get("title") or row.get("title") or "").strip()
             description = str(item.get("description") or item.get("summary") or item.get("what_changed") or "").strip()
-            parts.append(f"{index}. **{item_title}**")
-            if description:
-                parts.append(f"   {description}")
-            refs = article_links(_item_ids(item), by_id)
-            if refs:
-                parts.append(f"   {refs}")
+            line = " — ".join(part for part in (item_title, description) if part)
+            parts.append(f"{index}. {line}")
             parts.append("")
 
     if present_sections:
@@ -106,41 +102,17 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
             rows_for_item = _rows_for_ids(_item_ids(item), by_id)
             row = rows_for_item[0] if rows_for_item else {}
             item_title = str(item.get("title") or row.get("title") or item.get("dek") or "").strip()
-            summary = str(item.get("summary") or item.get("description") or _item_content(item) or row.get("summary") or row.get("one_liner") or "").strip()
+            overview = str(item.get("summary") or item.get("description") or item.get("dek") or row.get("summary") or row.get("one_liner") or "").strip()
+            excerpt = _item_content(item).strip()
             parts.extend([f"### {item_title}", "", _article_meta(row), ""])
-            if summary:
-                parts.extend([summary, ""])
+            if overview:
+                parts.extend([f"概括：{overview}", ""])
+            if excerpt and excerpt != overview:
+                parts.extend([f"正文：{excerpt}", ""])
             refs = article_links(_item_ids(item), by_id)
             if refs:
                 parts.extend([refs, ""])
         parts.append("")
-
-    quick_reads = digest.get("quick_reads") or []
-    if quick_reads:
-        parts.extend(["## Quick reads", ""])
-        for item in quick_reads:
-            row = _first_row(item, by_id)
-            if not row:
-                continue
-            summary = str(item.get("summary") or item.get("description") or "").strip()
-            parts.extend([f"- **{row['title']}**", f"  {summary or row.get('one_liner') or row.get('reason') or ''}", f"  [{row['source_id']}]({row['url']})", ""])
-
-    reading_list = digest.get("reading_list") or []
-    if reading_list:
-        parts.extend(["## Reading list", ""])
-        for article_id in reading_list:
-            row = _first_row({"article_id": article_id}, by_id)
-            if row:
-                parts.append(f"- [{row['title']}]({row['url']})")
-        parts.append("")
-
-    referenced = _referenced_ids(digest)
-    extras = [row for row in rows if int(row["id"]) not in referenced]
-    if extras:
-        parts.extend(["## More selected reading", ""])
-        for row in extras:
-            summary = row.get("summary") or row.get("one_liner") or row.get("reason") or ""
-            parts.extend([f"### {row['title']}", "", _article_meta(row), "", str(summary).strip(), "", f"[{row['source_id']}]({row['url']})", ""])
 
     return "\n".join(parts).strip() + "\n"
 
@@ -148,8 +120,7 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
 FIELD_LABELS = {
     "ai_news": "AI News",
     "tech": "Tech",
-    "business": "Business",
-    "economics": "Economics",
+    "economy": "Economy",
     "politics": "Politics",
     "society": "Society",
     "cognition": "Cognition",

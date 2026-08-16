@@ -11,6 +11,8 @@ import time
 
 import yaml
 
+from stream_sieve.storage import FeedStore
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,12 +23,28 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--env-file", default=".env")
     parser.add_argument(
         "--stage",
-        choices=("all", "sieve", "send-email"),
+        choices=("all", "sieve", "sync", "send-email"),
         default="all",
         help="Run the full pipeline or one independent project stage.",
     )
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--reset-scores",
+        action="store_true",
+        help="For sync only: delete all saved scores and analyses before rescoring.",
+    )
+    parser.add_argument(
+        "--type",
+        nargs="+",
+        dest="types",
+        help="Only process the selected field types, for example ai_news cognition.",
+    )
     args = parser.parse_args(argv)
+
+    if args.reset_scores and args.stage != "sync":
+        parser.error("--reset-scores is only valid with --stage sync")
+    if args.reset_scores and args.types:
+        parser.error("--reset-scores clears the whole evaluation store; do not combine it with --type")
 
     env = os.environ.copy()
     env.update(load_env(ROOT / args.env_file))
@@ -39,8 +57,36 @@ def main(argv: list[str] | None = None) -> int:
     boot_command = build_browser_boot_command(browser_boot)
     cdp_endpoint = f"http://127.0.0.1:{need(browser_boot, 'remote_debugging_port')}"
 
+    scoring = config.get("scoring", {})
+    fields = config.get("fields") or {}
+    requested_types = set(args.types or [])
+    unknown_types = requested_types - set(fields)
+    if unknown_types:
+        raise ValueError(f"unknown type(s): {', '.join(sorted(unknown_types))}; configured types: {', '.join(fields)}")
+    field_limits = {
+        field: need(field_config, "target_items")
+        for field, field_config in fields.items()
+        if not requested_types or field in requested_types
+    }
+    field_runs = [
+        run for run in build_field_runs(fields, source_pool_data)
+        if not requested_types or run[0] in requested_types
+    ]
+    if requested_types and not field_runs:
+        raise ValueError("no configured field matches --type")
+
     commands: list[list[str]] = []
     sources = config.get("sources", [])
+    if requested_types:
+        selected_source_ids = {
+            source_id
+            for _, _, source_ids in field_runs
+            for source_id in (source_ids or [])
+        }
+        sources = [
+            source for source in sources
+            if str(source.get("id")) in selected_source_ids
+        ]
     if sources:
         commands.append(
             [
@@ -56,10 +102,6 @@ def main(argv: list[str] | None = None) -> int:
             ]
         )
 
-    scoring = config.get("scoring", {})
-    fields = config.get("fields") or {}
-    field_limits = {field: need(field_config, "target_items") for field, field_config in fields.items()}
-    field_runs = build_field_runs(fields, source_pool_data)
     if not field_runs:
         field_runs = [(None, {}, None)]
     for field, field_config, source_ids in field_runs:
@@ -105,6 +147,8 @@ def main(argv: list[str] | None = None) -> int:
             command.extend(["--source-ids", ",".join(source_ids)])
         if need(scoring, "nonthink"):
             command.append("--nonthink")
+        if args.stage == "sync":
+            command.append("--all-unscored")
         commands.append(command)
 
     analysis = config.get("analysis", {})
@@ -142,45 +186,8 @@ def main(argv: list[str] | None = None) -> int:
         commands.append(command)
 
     brief = config.get("brief", {})
-    brief_output = need(brief, "output")
     delivery = config.get("delivery", {})
     delivery_key = delivery.get("delivery_key") or need(delivery, "config")
-    commands.append(
-        [
-            py,
-            "-m",
-            "stream_sieve.cli",
-            "brief",
-            "--db",
-            db,
-            "--min-score",
-            str(need(brief, "min_score")),
-            "--limit",
-            str(need(brief, "limit")),
-            "--excerpt-chars",
-            str(need(brief, "excerpt_chars")),
-            "--model",
-            need(scoring, "model"),
-            "--base-url",
-            need(scoring, "base_url"),
-            "--timeout",
-            str(need(scoring, "timeout")),
-            "--retries",
-            str(need(scoring, "retries")),
-            "--delivery-key",
-            delivery_key,
-            "--category-limits",
-            json.dumps(need(brief, "category_limits"), ensure_ascii=False),
-            "--field-limits",
-            json.dumps(field_limits or need(brief, "category_limits"), ensure_ascii=False),
-            "--source-pool",
-            source_pool,
-            "--output",
-            brief_output,
-        ]
-    )
-    if need(scoring, "nonthink"):
-        commands[-1].append("--nonthink")
 
     send_command = [
         py,
@@ -209,15 +216,20 @@ def main(argv: list[str] | None = None) -> int:
     send_command.extend(["--delivery-key", delivery_key])
     if delivery.get("resend"):
         send_command.append("--resend")
-    if args.stage == "all":
-        body_index = send_command.index("--category-limits")
-        send_command[body_index:body_index] = ["--body-file", brief_output]
     commands.append(send_command)
 
     commands.append([py, "-m", "stream_sieve.cli", "status", "--db", db])
 
     if args.stage != "all":
-        commands = [command for command in commands if command[3] == args.stage]
+        # `sieve` is the content side of the project: collect, score, and
+        # optionally analyze. `send-email` is deliberately delivery-only.
+        if args.stage == "send-email":
+            allowed = {"send-email"}
+        elif args.stage == "sync":
+            allowed = {"score", "status"}
+        else:
+            allowed = {"sieve", "score", "analyze"}
+        commands = [command for command in commands if command[3] in allowed]
 
     if args.dry_run:
         if boot_command and args.stage in {"all", "sieve"}:
@@ -225,6 +237,14 @@ def main(argv: list[str] | None = None) -> int:
         for command in commands:
             print(shlex.join(command))
         return 0
+
+    if args.reset_scores:
+        store = FeedStore(db)
+        try:
+            scores, analyses = store.reset_evaluations()
+        finally:
+            store.close()
+        print(f"== reset-evaluations == scores={scores}, analyses={analyses} ==", flush=True)
 
     chrome_proc: subprocess.Popen | None = None
     chrome_log = None

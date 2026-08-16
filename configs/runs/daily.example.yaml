@@ -363,8 +363,7 @@ run:
     categories:
     - ai_news
     - tech
-    - business
-    - economics
+    - economy
     - politics
     - society
     - cognition
@@ -388,8 +387,7 @@ run:
     category_limits:
       ai_news: 5
       tech: 5
-      business: 5
-      economics: 5
+      economy: 5
       politics: 5
       society: 5
       cognition: 5
@@ -418,16 +416,7 @@ run:
       prefilter_scan_limit: 80
       prefilter_min_score: 0
       profile: 关注软件工程、云基础设施、开发者工具、系统设计、安全、开源生态、平台变化和非纯 AI 的技术趋势。优先工程含量和结构性变化。
-    business:
-      mode: stream
-      horizon: 3d
-      target_items: 5
-      score_limit: 20
-      analyze_limit: 8
-      prefilter_scan_limit: 80
-      prefilter_min_score: 0
-      profile: 关注公司战略、融资、商业模式、竞争格局、定价、分发、财报、市场结构。优先能改变行业判断或公司判断的信息。
-    economics:
+    economy:
       mode: slow_stream
       horizon: 7d
       target_items: 5

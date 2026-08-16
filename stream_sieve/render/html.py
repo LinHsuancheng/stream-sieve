@@ -8,8 +8,7 @@ from typing import Any
 FIELD_LABELS = {
     "ai_news": "AI & Computing",
     "tech": "Technology",
-    "business": "Business",
-    "economics": "Economy & Markets",
+    "economy": "Economy",
     "politics": "Politics",
     "society": "Society",
     "cognition": "Cognition & Growth",
@@ -52,17 +51,19 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
     highlights = digest.get("highlights") or []
     if highlights:
         body.extend(['<section class="section-block">', '<div class="section-label-row"><p class="section-label">Today\'s Highlights</p><span class="section-count">TOP</span></div>', '<div class="highlight-list">'])
-        for index, item in enumerate(highlights[:8], start=1):
+        for index, item in enumerate(highlights[:12], start=1):
             row = _first_row(item, by_id)
             if not row:
                 continue
             summary = str(item.get("summary") or item.get("description") or "").strip()
+            title = str(row.get("title") or "").strip()
+            line = " — ".join(part for part in (title, summary) if part)
             klass = "highlight-row"
             body.extend(
                 [
                     f'<article class="{klass}">',
                     f'<span class="highlight-number">{index:02d}</span>',
-                    f'<p class="highlight-take">{escape(summary or str(row.get("title") or ""))}</p>',
+                    f'<p class="highlight-take">{escape(line)}</p>',
                     "</article>",
                 ]
             )
@@ -88,21 +89,19 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
             if not row:
                 continue
             paragraphs = _paragraphs(item, row)[:1]
-            dek = str(item.get("dek") or (paragraphs[0] if paragraphs else ""))
-            body.extend(
-                [
-                    '<article class="article">',
-                    f'<div class="article-number">{section_index:02d}.{article_index:02d}</div>',
-                    f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
-                    f'<p class="article-dek">{escape(dek)}</p>',
-                    f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{_word_count(row)} words</span><span>{escape(_short_date(row))}</span><span>{_reading_minutes(row)} min</span><span>{escape(str(row.get("total_score") or ""))}</span></div>',
-                    '<div class="article-body">',
-                    *[f"<p>{escape(paragraph)}</p>" for paragraph in paragraphs],
-                    "</div>",
-                    f'<div class="article-footer"><a class="source-link" href="{escape(str(row.get("url") or ""), quote=True)}">Read original &rarr;</a></div>',
-                    "</article>",
-                ]
-            )
+            dek = str(item.get("dek") or "").strip()
+            body.extend([
+                '<article class="article">',
+                f'<div class="article-number">{section_index:02d}.{article_index:02d}</div>',
+                f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
+                *([f'<p class="article-dek">{escape(dek)}</p>'] if dek else []),
+                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{_word_count(row)} words</span><span>{escape(_short_date(row))}</span><span>{_reading_minutes(row)} min</span><span>{escape(str(row.get("total_score") or ""))}</span></div>',
+                '<div class="article-body">',
+                *[f"<p>{escape(paragraph)}</p>" for paragraph in paragraphs],
+                "</div>",
+                f'<div class="article-footer"><a class="source-link" href="{escape(str(row.get("url") or ""), quote=True)}">Read original &rarr;</a></div>',
+                "</article>",
+            ])
         body.extend(["</div>", "</section>"])
 
     quick_reads = digest.get("quick_reads") or []
@@ -229,7 +228,7 @@ def _word_count(row: dict[str, Any]) -> int:
 
 
 def _short_date(row: dict[str, Any]) -> str:
-    published = str(row.get("published_at") or "").strip()
+    published = str(row.get("published_at") or row.get("first_seen_at") or "").strip()
     return published[:10] if published else ""
 
 

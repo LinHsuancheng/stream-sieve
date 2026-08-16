@@ -53,10 +53,8 @@ run:
     categories:
     - ai_news
     - tech
-    - politics_global
-    - politics_china
-    - economy_global
-    - economy_china
+    - politics
+    - economy
     - society
     - cognition
     nonthink: false
@@ -79,10 +77,8 @@ run:
     category_limits:
       ai_news: 20
       tech: 20
-      politics_global: 20
-      politics_china: 20
-      economy_global: 20
-      economy_china: 20
+      politics: 20
+      economy: 20
       society: 20
       cognition: 20
     excerpt_chars: 200
@@ -111,8 +107,8 @@ run:
       prefilter_scan_limit: 100
       prefilter_min_score: 0
       profile: 关注软件、硬件、系统、基础设施、开发工具、工程实践和技术研究。优先真正改变性能、成本、能力、可靠性或工程方法的新技术、架构、工具、论文、benchmark 和实现经验。过滤营销、小版本更新和没有技术含量的科技新闻。
-    politics_global:
-      sources: [reuters-asia-pacific-politics, reuters-europe-politics, wsj-politics, wsj-asia-politics, wsj-europe-politics]
+    politics:
+      sources: [reuters-asia-pacific-politics, reuters-china-politics, reuters-europe-politics, wsj-politics, wsj-asia-politics, wsj-europe-politics]
       mode: stream
       horizon: 3d
       target_items: 20
@@ -120,19 +116,9 @@ run:
       analyze_limit: 20
       prefilter_scan_limit: 100
       prefilter_min_score: 0
-      profile: 关注美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化。优先政策、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动中会改变现实机会或风险的信息。过滤党派口水、人物八卦、象征性争议和空洞表态。
-    politics_china:
-      sources: [reuters-china-politics]
-      mode: stream
-      horizon: 3d
-      target_items: 20
-      score_limit: 100
-      analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
-      profile: 关注中国政治、党政体制、对外关系、台海、政策语言、媒体控制和制度变化。优先具体事实、政策决定、可信报道和高质量研究。
-    economy_global:
-      sources: [reuters-business-economy, reuters-markets-economy, wsj-economy]
+      profile: 关注中国、美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、政策、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
+    economy:
+      sources: [reuters-business-economy, reuters-markets-economy, wsj-economy, wsj-china-economy]
       mode: slow_stream
       horizon: 7d
       target_items: 20
@@ -140,17 +126,7 @@ run:
       analyze_limit: 20
       prefilter_scan_limit: 100
       prefilter_min_score: 0
-      profile: 关注美国、欧洲和全球经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动和产业结构变化。过滤日常行情噪声、泛泛评论和无证据预测。
-    economy_china:
-      sources: [wsj-china-economy]
-      mode: slow_stream
-      horizon: 7d
-      target_items: 20
-      score_limit: 100
-      analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
-      profile: 关注中国增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先具体数据、政策变化和高质量研究。
+      profile: 关注中国、美国、欧洲和全球经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     society:
       sources: [x-yantanzhang, x-gulag-bot, x-sager-rgyalpo, x-toronto-bigface, x-wangjupaian, zhihu-hot]
       mode: watchlist
