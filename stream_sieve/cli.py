@@ -732,6 +732,17 @@ def build_parser() -> argparse.ArgumentParser:
     sync_many_cmd.add_argument("--output", default=None)
     sync_many_cmd.set_defaults(func=command_sync_many)
 
+    sieve_cmd = subparsers.add_parser(
+        "sieve",
+        help="Collect and persist content for later scoring, analysis, and delivery.",
+    )
+    sieve_cmd.add_argument("source", nargs="+", help="Source YAML path, optionally PATH:LIMIT.")
+    sieve_cmd.add_argument("--limit", type=int, default=3)
+    sieve_cmd.add_argument("--db", default=DEFAULT_DB)
+    sieve_cmd.add_argument("--cdp-endpoint", default=None)
+    sieve_cmd.add_argument("--output", default=None)
+    sieve_cmd.set_defaults(func=command_sync_many)
+
     status_cmd = subparsers.add_parser("status", help="Show SQLite feed status.")
     status_cmd.add_argument("--db", default=DEFAULT_DB)
     status_cmd.set_defaults(func=command_status)
@@ -848,6 +859,36 @@ def build_parser() -> argparse.ArgumentParser:
     send_cmd.add_argument("--delivery-key", default=None)
     send_cmd.add_argument("--resend", action="store_true")
     send_cmd.set_defaults(func=command_send)
+
+    send_email_cmd = subparsers.add_parser(
+        "send-email",
+        help="Select saved content and deliver an email; never collects or scores content.",
+    )
+    send_email_cmd.add_argument("--config", default="configs/delivery.example.yaml")
+    send_email_cmd.add_argument("--db", default=DEFAULT_DB)
+    send_email_cmd.add_argument("--source", default=None)
+    send_email_cmd.add_argument("--source-ids", default=None)
+    send_email_cmd.add_argument("--min-score", type=float, default=7.0)
+    send_email_cmd.add_argument("--limit", type=int, default=20)
+    send_email_cmd.add_argument("--excerpt-chars", type=int, default=700)
+    send_email_cmd.add_argument("--model", default=None)
+    send_email_cmd.add_argument("--base-url", default=None)
+    send_email_cmd.add_argument("--nonthink", action="store_true")
+    send_email_cmd.add_argument("--timeout", type=float, default=180)
+    send_email_cmd.add_argument("--retries", type=int, default=1)
+    send_email_cmd.add_argument("--subject", default="Stream Sieve Brief")
+    send_email_cmd.add_argument("--body-file", default=None)
+    send_email_cmd.add_argument(
+        "--no-synthesis",
+        action="store_true",
+        help="Build the report deterministically from saved scores/analyses without an LLM call.",
+    )
+    send_email_cmd.add_argument("--category-limits", default=None)
+    send_email_cmd.add_argument("--field-limits", default=None)
+    add_source_pool_arg(send_email_cmd)
+    send_email_cmd.add_argument("--delivery-key", default=None)
+    send_email_cmd.add_argument("--resend", action="store_true")
+    send_email_cmd.set_defaults(func=command_send)
     return parser
 
 

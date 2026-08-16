@@ -1,8 +1,0 @@
-# Stream Sieve source registry.
-# Each entry maps one real source to its primary field and optional focus tags.
-sources:
-  reuters-china-politics: {name: Reuters China, briefing_category: politics_china, tier: T1, source_type: professional_editorial}
-  reuters-asia-pacific-politics: {name: Reuters Asia Pacific, briefing_category: politics_global, tier: T1, source_type: professional_editorial}
-  reuters-business-economy: {name: Reuters Business, briefing_category: economy_global, tier: T1, source_type: professional_editorial}
-  reuters-markets-economy: {name: Reuters Markets, briefing_category: economy_global, tier: T1, source_type: professional_editorial}
-  reuters-china-economy: {name: Reuters China Economy, briefing_category: economy_china, tier: T1, source_type: professional_editorial}

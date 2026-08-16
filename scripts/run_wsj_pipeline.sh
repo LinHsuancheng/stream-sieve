@@ -50,8 +50,8 @@ if [[ -z "${STREAM_SIEVE_LLM_API_KEY:-}" && -z "${DEEPSEEK_API_KEY:-}" && -z "${
   exit 2
 fi
 
-echo "== sync =="
-"$PY" -m stream_sieve.cli sync "$SOURCE" \
+echo "== sieve =="
+"$PY" -m stream_sieve.cli sieve "$SOURCE" \
   --db "$DB" \
   --limit "$SYNC_LIMIT" \
   --output /tmp/stream-sieve-wsj-sync.md
@@ -76,8 +76,8 @@ echo "== brief =="
   --output "$BRIEF_OUT"
 
 echo
-echo "== send =="
-"$PY" -m stream_sieve.cli send \
+echo "== send-email =="
+"$PY" -m stream_sieve.cli send-email \
   --config "$DELIVERY_CONFIG" \
   --db "$DB" \
   --source "$SOURCE_ID" \

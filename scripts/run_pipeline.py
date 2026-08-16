@@ -19,6 +19,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run a Stream Sieve pipeline config.")
     parser.add_argument("config", nargs="?", default="config.yaml")
     parser.add_argument("--env-file", default=".env")
+    parser.add_argument(
+        "--stage",
+        choices=("all", "sieve", "send-email"),
+        default="all",
+        help="Run the full pipeline or one independent project stage.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
 
@@ -41,7 +47,7 @@ def main(argv: list[str] | None = None) -> int:
                 py,
                 "-m",
                 "stream_sieve.cli",
-                "sync-many",
+                "sieve",
                 "--db",
                 db,
                 "--cdp-endpoint",
@@ -180,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
         py,
         "-m",
         "stream_sieve.cli",
-        "send",
+        "send-email",
         "--config",
         need(delivery, "config"),
         "--db",
@@ -193,8 +199,6 @@ def main(argv: list[str] | None = None) -> int:
         str(need(brief, "excerpt_chars")),
         "--subject",
         need(delivery, "subject"),
-        "--body-file",
-        brief_output,
         "--category-limits",
         json.dumps(need(brief, "category_limits"), ensure_ascii=False),
         "--field-limits",
@@ -205,12 +209,18 @@ def main(argv: list[str] | None = None) -> int:
     send_command.extend(["--delivery-key", delivery_key])
     if delivery.get("resend"):
         send_command.append("--resend")
+    if args.stage == "all":
+        body_index = send_command.index("--category-limits")
+        send_command[body_index:body_index] = ["--body-file", brief_output]
     commands.append(send_command)
 
     commands.append([py, "-m", "stream_sieve.cli", "status", "--db", db])
 
+    if args.stage != "all":
+        commands = [command for command in commands if command[3] == args.stage]
+
     if args.dry_run:
-        if boot_command:
+        if boot_command and args.stage in {"all", "sieve"}:
             print(shlex.join(boot_command))
         for command in commands:
             print(shlex.join(command))
@@ -218,7 +228,7 @@ def main(argv: list[str] | None = None) -> int:
 
     chrome_proc: subprocess.Popen | None = None
     chrome_log = None
-    if boot_command:
+    if boot_command and args.stage in {"all", "sieve"}:
         print("== browser_boot ==", flush=True)
         port = int(need(config.get("browser_boot") or {}, "remote_debugging_port"))
         if is_chrome_cdp_ready(port):
@@ -231,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             port = replacement_port
             cdp_endpoint = f"http://127.0.0.1:{port}"
-            set_sync_many_cdp_endpoint(commands, cdp_endpoint)
+            set_sieve_cdp_endpoint(commands, cdp_endpoint)
             chrome_log = open("/tmp/stream-sieve-chrome.log", "a", encoding="utf-8")
             chrome_proc = subprocess.Popen(
                 build_browser_boot_command(browser_boot, port=port),
@@ -261,8 +271,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         for command in commands:
             print(f"== {command[3]} ==", flush=True)
-            if command[3] == "send" and chrome_proc:
-                print("== cleanup: stopping Chrome before send ==", flush=True)
+            if command[3] == "send-email" and chrome_proc:
+                print("== cleanup: stopping Chrome before send-email ==", flush=True)
                 stop_process(chrome_proc, "Chrome")
                 chrome_proc = None
                 if chrome_log:
@@ -327,9 +337,9 @@ def find_free_port(start: int) -> int:
     raise RuntimeError(f"no free local port found from {start} to {start + 49}")
 
 
-def set_sync_many_cdp_endpoint(commands: list[list[str]], cdp_endpoint: str) -> None:
+def set_sieve_cdp_endpoint(commands: list[list[str]], cdp_endpoint: str) -> None:
     for command in commands:
-        if len(command) > 4 and command[3] == "sync-many" and "--cdp-endpoint" in command:
+        if len(command) > 4 and command[3] == "sieve" and "--cdp-endpoint" in command:
             command[command.index("--cdp-endpoint") + 1] = cdp_endpoint
 
 
