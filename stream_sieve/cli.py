@@ -177,7 +177,11 @@ def command_sync_many(args: argparse.Namespace) -> int:
         else:
             path = spec
             limit = args.limit
-        source = load_source(path)
+        try:
+            source = load_source(path)
+        except Exception as exc:
+            print(f"[ERROR] cannot load source {path}: {_short_error(exc)}; skipping", file=sys.stderr)
+            continue
         if args.cdp_endpoint:
             source.setdefault("browser", {})["cdp_endpoint"] = args.cdp_endpoint
         pairs.append((source, limit))
@@ -192,6 +196,8 @@ def command_sync_many(args: argparse.Namespace) -> int:
         print(f"new: {stats.new}", flush=True)
         print(f"extracted: {stats.extracted}", flush=True)
         print(f"saved: {stats.saved}", flush=True)
+        if stats.error:
+            print(f"error: {stats.error}", flush=True)
         print(flush=True)
     if args.output:
         Path(args.output).write_text(article_markdown(all_articles), encoding="utf-8")
@@ -896,13 +902,25 @@ def add_source_pool_arg(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--source-pool", default=DEFAULT_SOURCE_POOL)
 
 
+def _short_error(exc: Exception, max_chars: int = 500) -> str:
+    message = " ".join(str(exc).split()) or type(exc).__name__
+    return message[:max_chars]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if not hasattr(args, "func"):
         parser.print_help()
         return 2
-    return args.func(args)
+    try:
+        return args.func(args)
+    except KeyboardInterrupt:
+        print("[WARN] interrupted", file=sys.stderr)
+        return 130
+    except Exception as exc:
+        print(f"[ERROR] {_short_error(exc)}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

@@ -335,7 +335,7 @@ def sync_sources(
         for source, limit in sources:
             if progress:
                 progress(f"sync source: {source['id']}")
-            results.append(sync_source(source, limit, db_path))
+            results.append(sync_source_soft(source, limit, db_path, progress))
         return results
     if not sources:
         return []
@@ -344,41 +344,88 @@ def sync_sources(
     store = FeedStore(db_path)
     results: list[tuple[SyncStats, list[Article]]] = []
     try:
-        _must(backend.attach(), "attach")
+        try:
+            _must(backend.attach(), "attach")
+        except Exception as exc:
+            message = short_error(exc)
+            if progress:
+                progress(f"[ERROR] browser attach failed: {message}")
+            return [
+                (failed_sync_stats(source, db_path, message), [])
+                for source, _limit in sources
+            ]
         for source, limit in sources:
             if progress:
                 progress(f"sync source: {source['id']}")
-            articles: list[Article] = []
-            saved = 0
-            refs = discover_browser_links_with_backend(source, backend)
-            new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
-            for ref in new_refs:
-                if len(articles) >= limit:
-                    break
-                article = acquire_extract_or_none(source, ref, backend, progress)
-                if not article or not article.content.strip():
-                    continue
-                articles.append(article)
-                if store.save_article(article):
-                    saved += 1
-            store.mark_success(source["id"])
-            results.append(
-                (
-                    SyncStats(
-                        source_id=source["id"],
-                        discovered=len(refs),
-                        new=len(new_refs),
-                        extracted=len(articles),
-                        saved=saved,
-                        db=store.path,
-                    ),
-                    articles,
+            try:
+                articles: list[Article] = []
+                saved = 0
+                refs = discover_browser_links_with_backend(source, backend)
+                new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
+                for ref in new_refs:
+                    if len(articles) >= limit:
+                        break
+                    article = acquire_extract_or_none(source, ref, backend, progress)
+                    if not article or not article.content.strip():
+                        continue
+                    articles.append(article)
+                    if store.save_article(article):
+                        saved += 1
+                store.mark_success(source["id"])
+                results.append(
+                    (
+                        SyncStats(
+                            source_id=source["id"],
+                            discovered=len(refs),
+                            new=len(new_refs),
+                            extracted=len(articles),
+                            saved=saved,
+                            db=store.path,
+                        ),
+                        articles,
+                    )
                 )
-            )
+            except Exception as exc:
+                message = short_error(exc)
+                if progress:
+                    progress(f"[ERROR] {source['id']}: {message}; skipping source")
+                results.append((failed_sync_stats(source, store.path, message), []))
         return results
     finally:
         backend.close_tab()
         store.close()
+
+
+def sync_source_soft(
+    source: dict[str, Any],
+    limit: int,
+    db_path: str,
+    progress=None,
+) -> tuple[SyncStats, list[Article]]:
+    try:
+        return sync_source(source, limit, db_path)
+    except Exception as exc:
+        message = short_error(exc)
+        if progress:
+            progress(f"[ERROR] {source['id']}: {message}; skipping source")
+        return failed_sync_stats(source, db_path, message), []
+
+
+def failed_sync_stats(source: dict[str, Any], db_path: str, error: str) -> SyncStats:
+    return SyncStats(
+        source_id=str(source.get("id") or "unknown"),
+        discovered=0,
+        new=0,
+        extracted=0,
+        saved=0,
+        db=db_path,
+        error=error,
+    )
+
+
+def short_error(exc: Exception, max_chars: int = 500) -> str:
+    message = " ".join(str(exc).split()) or type(exc).__name__
+    return message[:max_chars]
 
 
 def article_markdown(articles: list[Article]) -> str:

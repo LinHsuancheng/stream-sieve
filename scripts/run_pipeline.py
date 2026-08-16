@@ -268,18 +268,30 @@ def main(argv: list[str] | None = None) -> int:
             raise RuntimeError(f"Chrome CDP did not become ready on 127.0.0.1:{port}")
         print(flush=True)
 
+    failures: list[str] = []
     try:
         for command in commands:
-            print(f"== {command[3]} ==", flush=True)
-            if command[3] == "send-email" and chrome_proc:
+            stage_name = command[3]
+            print(f"== {stage_name} ==", flush=True)
+            if stage_name == "send-email" and chrome_proc:
                 print("== cleanup: stopping Chrome before send-email ==", flush=True)
                 stop_process(chrome_proc, "Chrome")
                 chrome_proc = None
                 if chrome_log:
                     chrome_log.close()
                     chrome_log = None
-            subprocess.run(command, cwd=ROOT, env=env, check=True)
+            try:
+                subprocess.run(command, cwd=ROOT, env=env, check=True)
+            except (subprocess.CalledProcessError, OSError) as exc:
+                message = " ".join(str(exc).split()) or type(exc).__name__
+                print(f"[ERROR] stage {stage_name} failed: {message}; continuing", file=sys.stderr, flush=True)
+                failures.append(f"{stage_name}: {message}")
             print(flush=True)
+        if failures:
+            print("[WARN] pipeline completed with failures:", file=sys.stderr)
+            for failure in failures:
+                print(f"  - {failure}", file=sys.stderr)
+            return 1
         return 0
     finally:
         if chrome_proc:
@@ -400,4 +412,12 @@ def expand(value: str) -> str:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:]))
+    try:
+        raise SystemExit(main(sys.argv[1:]))
+    except KeyboardInterrupt:
+        print("[WARN] interrupted", file=sys.stderr)
+        raise SystemExit(130)
+    except Exception as exc:
+        message = " ".join(str(exc).split()) or type(exc).__name__
+        print(f"[ERROR] pipeline: {message}", file=sys.stderr)
+        raise SystemExit(1)

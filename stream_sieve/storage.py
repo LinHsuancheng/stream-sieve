@@ -20,6 +20,7 @@ class SyncStats:
     extracted: int
     saved: int
     db: str
+    error: str | None = None
 
 
 class FeedStore:
