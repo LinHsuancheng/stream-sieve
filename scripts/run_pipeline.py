@@ -261,6 +261,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         for command in commands:
             print(f"== {command[3]} ==", flush=True)
+            if command[3] == "send" and chrome_proc:
+                print("== cleanup: stopping Chrome before send ==", flush=True)
+                stop_process(chrome_proc, "Chrome")
+                chrome_proc = None
+                if chrome_log:
+                    chrome_log.close()
+                    chrome_log = None
             subprocess.run(command, cwd=ROOT, env=env, check=True)
             print(flush=True)
         return 0

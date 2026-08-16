@@ -21,13 +21,13 @@ run:
 
   scoring:
     interests: interests.md
-    model: deepseek-v4-flash-0731
+    model: gpt-5.6-luna
     base_url: https://api.openlux.ai/v1/chat/completions
     limit: 20
     prefilter_scan_limit: 60
     prefilter_min_score: 0
     sample_chars: 500
-    nonthink: true
+    nonthink: false
     batch_size: 10
     timeout: 180
     retries: 2
@@ -39,7 +39,7 @@ run:
     limit: 12
     content_chars: 3000
     batch_size: 5
-    nonthink: true
+    nonthink: false
     timeout: 180
     retries: 2
 

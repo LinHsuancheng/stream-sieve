@@ -61,27 +61,30 @@ def synthesize_digest(
 
 def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -> str:
     by_id = {int(row["id"]): row for row in rows}
-    parts = [f"# {digest.get('headline') or 'Daily Reading'}", "", date.today().isoformat(), ""]
+    meta = digest.get("meta") if isinstance(digest.get("meta"), dict) else {}
+    title = str(meta.get("title") or digest.get("headline") or "Daily Reading")
+    deck = str(meta.get("deck") or digest.get("intro") or "").strip()
+    parts = [f"# {title}", "", date.today().isoformat(), ""]
 
-    intro = str(digest.get("intro") or "").strip()
-    if intro:
-        parts.extend([intro, ""])
+    if deck:
+        parts.extend([deck, ""])
 
     highlights = digest.get("highlights") or []
     sections = digest.get("sections") or []
     present_sections = [section for section in sections if section.get("items")]
-    if not highlights and not present_sections:
+    if not highlights and not present_sections and not (digest.get("quick_reads") or digest.get("reading_list")):
         return render_legacy_markdown(rows)
 
     if highlights:
         parts.extend(["## Highlights", ""])
         for index, item in enumerate(highlights[:10], start=1):
-            title = str(item.get("title") or "").strip()
+            row = _first_row(item, by_id)
+            item_title = str(item.get("title") or row.get("title") or "").strip()
             description = str(item.get("description") or item.get("summary") or item.get("what_changed") or "").strip()
-            parts.append(f"{index}. **{title}**")
+            parts.append(f"{index}. **{item_title}**")
             if description:
                 parts.append(f"   {description}")
-            refs = article_links(item.get("article_ids"), by_id)
+            refs = article_links(_item_ids(item), by_id)
             if refs:
                 parts.append(f"   {refs}")
             parts.append("")
@@ -95,22 +98,49 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
 
     for section in sections:
         category = str(section.get("category") or section.get("topic") or "other").strip()
-        items = (section.get("items") or [])[:5]
+        items = (section.get("items") or [])[:20]
         if not items:
             continue
         parts.extend([f"## {FIELD_LABELS.get(category, category)}", ""])
         for item in items:
-            rows_for_item = _rows_for_ids(item.get("article_ids"), by_id)
+            rows_for_item = _rows_for_ids(_item_ids(item), by_id)
             row = rows_for_item[0] if rows_for_item else {}
-            title = str(item.get("title") or "").strip()
-            summary = str(item.get("summary") or item.get("description") or row.get("summary") or row.get("one_liner") or "").strip()
-            parts.extend([f"### {title}", "", _article_meta(row), ""])
+            item_title = str(item.get("title") or row.get("title") or item.get("dek") or "").strip()
+            summary = str(item.get("summary") or item.get("description") or _item_content(item) or row.get("summary") or row.get("one_liner") or "").strip()
+            parts.extend([f"### {item_title}", "", _article_meta(row), ""])
             if summary:
                 parts.extend([summary, ""])
-            refs = article_links(item.get("article_ids"), by_id)
+            refs = article_links(_item_ids(item), by_id)
             if refs:
                 parts.extend([refs, ""])
         parts.append("")
+
+    quick_reads = digest.get("quick_reads") or []
+    if quick_reads:
+        parts.extend(["## Quick reads", ""])
+        for item in quick_reads:
+            row = _first_row(item, by_id)
+            if not row:
+                continue
+            summary = str(item.get("summary") or item.get("description") or "").strip()
+            parts.extend([f"- **{row['title']}**", f"  {summary or row.get('one_liner') or row.get('reason') or ''}", f"  [{row['source_id']}]({row['url']})", ""])
+
+    reading_list = digest.get("reading_list") or []
+    if reading_list:
+        parts.extend(["## Reading list", ""])
+        for article_id in reading_list:
+            row = _first_row({"article_id": article_id}, by_id)
+            if row:
+                parts.append(f"- [{row['title']}]({row['url']})")
+        parts.append("")
+
+    referenced = _referenced_ids(digest)
+    extras = [row for row in rows if int(row["id"]) not in referenced]
+    if extras:
+        parts.extend(["## More selected reading", ""])
+        for row in extras:
+            summary = row.get("summary") or row.get("one_liner") or row.get("reason") or ""
+            parts.extend([f"### {row['title']}", "", _article_meta(row), "", str(summary).strip(), "", f"[{row['source_id']}]({row['url']})", ""])
 
     return "\n".join(parts).strip() + "\n"
 
@@ -136,6 +166,39 @@ def _rows_for_ids(article_ids: Any, by_id: dict[int, dict[str, Any]]) -> list[di
         except (KeyError, TypeError, ValueError):
             continue
     return rows
+
+
+def _item_ids(item: dict[str, Any]) -> list[Any]:
+    ids = item.get("article_ids")
+    if isinstance(ids, list):
+        return ids
+    article_id = item.get("article_id")
+    return [article_id] if article_id is not None else []
+
+
+def _first_row(item: dict[str, Any], by_id: dict[int, dict[str, Any]]) -> dict[str, Any]:
+    rows = _rows_for_ids(_item_ids(item), by_id)
+    return rows[0] if rows else {}
+
+
+def _item_content(item: dict[str, Any]) -> str:
+    content = item.get("content")
+    if isinstance(content, list):
+        return " ".join(str(part).strip() for part in content if str(part).strip())
+    return str(content or item.get("dek") or "").strip()
+
+
+def _referenced_ids(digest: dict[str, Any]) -> set[int]:
+    ids: set[int] = set()
+    for item in digest.get("highlights") or []:
+        ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    for section in digest.get("sections") or []:
+        for item in section.get("items") or []:
+            ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    for item in digest.get("quick_reads") or []:
+        ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    ids.update(int(value) for value in digest.get("reading_list") or [] if str(value).isdigit())
+    return ids
 
 
 def _article_meta(row: dict[str, Any]) -> str:

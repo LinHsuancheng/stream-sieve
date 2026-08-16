@@ -229,7 +229,9 @@ def extract_article(source: dict[str, Any], raw: RawDocument, title: str | None 
 
 def run_once(source: dict[str, Any], limit: int) -> list[Article]:
     articles: list[Article] = []
-    for ref in discover(source)[:limit]:
+    for ref in discover(source):
+        if len(articles) >= limit:
+            break
         article = acquire_extract_or_none(source, ref)
         if article and article.content:
             articles.append(article)
@@ -246,7 +248,9 @@ def sync_source(source: dict[str, Any], limit: int, db_path: str) -> tuple[SyncS
     saved = 0
     try:
         new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
-        for ref in new_refs[:limit]:
+        for ref in new_refs:
+            if len(articles) >= limit:
+                break
             article = acquire_extract_or_none(source, ref)
             if not article or not article.content.strip():
                 continue
@@ -282,7 +286,9 @@ def sync_source_browser_reuse(source: dict[str, Any], limit: int, db_path: str) 
         _must(backend.attach(), "attach")
         refs = discover_browser_links_with_backend(source, backend)
         new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
-        for ref in new_refs[:limit]:
+        for ref in new_refs:
+            if len(articles) >= limit:
+                break
             article = acquire_extract_or_none(source, ref, backend)
             if not article or not article.content.strip():
                 continue
@@ -346,7 +352,9 @@ def sync_sources(
             saved = 0
             refs = discover_browser_links_with_backend(source, backend)
             new_refs = [ref for ref in refs if not store.seen_url(source["id"], ref.url)]
-            for ref in new_refs[:limit]:
+            for ref in new_refs:
+                if len(articles) >= limit:
+                    break
                 article = acquire_extract_or_none(source, ref, backend, progress)
                 if not article or not article.content.strip():
                     continue

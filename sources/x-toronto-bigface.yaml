@@ -1,0 +1,14 @@
+id: x-toronto-bigface
+name: 多伦多方脸(@torontobigface)
+browser:
+  session: chrome-main
+discovery:
+  type: browser
+  url: https://x.com/torontobigface
+  wait: 2
+  scroll: 20
+  scroll_wait: 1
+  include_url_regex: "^https://x\\.com/torontobigface/status/[0-9]+(?:\\?.*)?$"
+  exclude_url_regex: "/(?:photo|video)/"
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

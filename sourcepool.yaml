@@ -1,6 +1,14 @@
 # Stream Sieve source registry.
 # Each entry maps one real source to its primary field and optional focus tags.
 sources:
+  reuters-europe-politics: {name: Reuters Europe, briefing_category: politics_global, tier: T1, source_type: professional_editorial}
+  wsj-europe-politics: {name: WSJ Europe, briefing_category: politics_global, tier: T1, source_type: professional_editorial}
+  zhihu-hot: {name: Zhihu Hot, briefing_category: society, tier: T3, source_type: social}
+  x-yantanzhang: {name: 颜克权, briefing_category: society, tier: T3, source_type: social}
+  x-gulag-bot: {name: The Gulag Bot, briefing_category: society, tier: T3, source_type: social}
+  x-sager-rgyalpo: {name: 萨格杰布, briefing_category: society, tier: T3, source_type: social}
+  x-toronto-bigface: {name: 多伦多方脸, briefing_category: society, tier: T2, source_type: social}
+  x-wangjupaian: {name: 王局拍案, briefing_category: society, tier: T2, source_type: media}
   reddit-china-irl-hot: {name: China_irl Hot, briefing_category: society, tier: T3, source_type: social_forum}
   reddit-china-irl-new: {name: China_irl New, briefing_category: society, tier: T3, source_type: social_forum}
   reuters-china-politics: {name: Reuters China, briefing_category: politics_china, tier: T1, source_type: professional_editorial}

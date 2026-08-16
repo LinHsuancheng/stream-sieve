@@ -1,0 +1,14 @@
+id: x-yantanzhang
+name: 颜克权(@yantanzhang)
+browser:
+  session: chrome-main
+discovery:
+  type: browser
+  url: https://x.com/yantanzhang
+  wait: 2
+  scroll: 20
+  scroll_wait: 1
+  include_url_regex: "^https://x\\.com/yantanzhang/status/[0-9]+(?:\\?.*)?$"
+  exclude_url_regex: "/(?:photo|video)/"
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

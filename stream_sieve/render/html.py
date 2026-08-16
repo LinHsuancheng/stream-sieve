@@ -70,7 +70,7 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
 
     for section_index, section in enumerate(sections, start=1):
         category = str(section.get("category") or "")
-        items = _section_items(section)[:5]
+        items = _section_items(section)[:20]
         body.extend(
             [
                 f'<section id="field-{escape(category, quote=True)}" class="section-block">',
@@ -105,6 +105,58 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
             )
         body.extend(["</div>", "</section>"])
 
+    quick_reads = digest.get("quick_reads") or []
+    if quick_reads:
+        body.extend([
+            '<section class="section-block"><div class="section-header"><div><p class="section-index">Q</p><h2>Quick reads</h2></div></div>',
+            '<div class="article-grid">',
+        ])
+        for index, item in enumerate(quick_reads, start=1):
+            row = _first_row(item, by_id)
+            if not row:
+                continue
+            summary = str(item.get("summary") or item.get("description") or row.get("one_liner") or row.get("reason") or "").strip()
+            body.extend([
+                '<article class="article">',
+                f'<div class="article-number">Q.{index:02d}</div>',
+                f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
+                f'<p class="article-dek">{escape(summary)}</p>',
+                f'<div class="article-footer"><a class="source-link" href="{escape(str(row.get("url") or ""), quote=True)}">Read original &rarr;</a></div>',
+                '</article>',
+            ])
+        body.extend(["</div>", "</section>"])
+
+    reading_list = digest.get("reading_list") or []
+    if reading_list:
+        body.extend([
+            '<section class="section-block"><div class="section-header"><div><p class="section-index">R</p><h2>Reading list</h2></div></div>',
+            '<ol class="reading-list">',
+        ])
+        for article_id in reading_list:
+            row = _row_by_id(article_id, by_id)
+            if row:
+                body.append(f'<li><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a><span>{escape(_source_name(row))}</span></li>')
+        body.extend(["</ol>", "</section>"])
+
+    referenced = _referenced_ids(digest)
+    extras = [row for row in rows if int(row["id"]) not in referenced]
+    if extras:
+        body.extend([
+            '<section class="section-block"><div class="section-header"><div><p class="section-index">+</p><h2>More selected reading</h2></div></div>',
+            '<div class="article-grid">',
+        ])
+        for index, row in enumerate(extras, start=1):
+            summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
+            body.extend([
+                '<article class="article">',
+                f'<div class="article-number">+.{index:02d}</div>',
+                f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
+                f'<p class="article-dek">{escape(summary)}</p>',
+                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{escape(str(row.get("total_score") or ""))}</span></div>',
+                '</article>',
+            ])
+        body.extend(["</div>", "</section>"])
+
     body.extend(['<footer class="report-footer"><span>STREAM SIEVE</span><span>END OF BRIEF</span></footer>', "</main>", "</body></html>"])
     return "\n".join(part for part in body if part)
 
@@ -129,6 +181,27 @@ def _row_by_id(article_id: Any, by_id: dict[int, dict[str, Any]]) -> dict[str, A
         return by_id[int(article_id)]
     except (KeyError, TypeError, ValueError):
         return {}
+
+
+def _item_ids(item: dict[str, Any]) -> list[Any]:
+    ids = item.get("article_ids")
+    if isinstance(ids, list):
+        return ids
+    article_id = item.get("article_id")
+    return [article_id] if article_id is not None else []
+
+
+def _referenced_ids(digest: dict[str, Any]) -> set[int]:
+    ids: set[int] = set()
+    for item in digest.get("highlights") or []:
+        ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    for section in digest.get("sections") or []:
+        for item in _section_items(section):
+            ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    for item in digest.get("quick_reads") or []:
+        ids.update(int(value) for value in _item_ids(item) if str(value).isdigit())
+    ids.update(int(value) for value in digest.get("reading_list") or [] if str(value).isdigit())
+    return ids
 
 
 def _paragraphs(item: dict[str, Any], row: dict[str, Any]) -> list[str]:

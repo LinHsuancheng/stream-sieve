@@ -8,10 +8,10 @@ discovery:
   type: browser
   url: https://www.zhihu.com/follow
   wait: 1
-  scroll: 2
-  scroll_wait: 0.5
-  include_url_regex: "^https://(www\\.)?zhihu\\.com/question/[0-9]+/answer/[0-9]+|^https://zhuanlan\\.zhihu\\.com/p/[0-9]+"
-  exclude_url_regex: "(#|/people/|/search|/signin|/signup|/advert|/ad/|/app/|/question/[0-9]+/?$)"
+  scroll: 120
+  scroll_wait: 1
+  include_url_regex: "^https://www\\.zhihu\\.com/question/[0-9]+/answer/[0-9]+(?:\\?.*)?$"
+  exclude_url_regex: "(?:#|^https://zhuanlan\\.zhihu\\.com/|^https://www\\.zhihu\\.com/ring/|[?&](?:spu|zid)=|/people/|/search(?:/|[?#]|$)|/signin(?:/|[?#]|$)|/signup(?:/|[?#]|$)|/advert(?:/|[?#]|$)|/ad(?:/|[?#]|$)|/app(?:/|[?#]|$)|/question/[0-9]+/?$)"
 
 acquire:
   type: browser

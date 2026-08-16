@@ -1,0 +1,5 @@
+id: reuters-europe-politics
+name: Reuters Europe
+discovery: {type: rss, url: https://reutersbest.com/region/europe/feed/}
+acquire: {type: http}
+extract: {type: trafilatura}

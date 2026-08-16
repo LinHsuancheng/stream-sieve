@@ -354,7 +354,7 @@ run:
     sync_limit: 1
   scoring:
     interests: interests.md
-    model: deepseek-v4-flash-0731
+    model: gpt-5.6-luna
     base_url: https://api.openlux.ai/v1/chat/completions
     limit: 50
     prefilter_scan_limit: 500
@@ -368,7 +368,7 @@ run:
     - politics
     - society
     - cognition
-    nonthink: true
+    nonthink: false
     batch_size: 50
     timeout: 180
     retries: 2
@@ -379,7 +379,7 @@ run:
     limit: 40
     content_chars: 4000
     batch_size: 5
-    nonthink: true
+    nonthink: false
     timeout: 180
     retries: 2
   brief:

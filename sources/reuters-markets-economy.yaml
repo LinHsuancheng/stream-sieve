@@ -1,5 +1,11 @@
 id: reuters-markets-economy
 name: Reuters Markets
-discovery: {type: browser, url: https://www.reuters.com/markets/, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}
+discovery:
+  type: rss
+  url: https://reutersbest.com/topic/markets/feed/
+acquire:
+  type: http
+  headers:
+    User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/146.0.0.0 Safari/537.36
+extract:
+  type: trafilatura

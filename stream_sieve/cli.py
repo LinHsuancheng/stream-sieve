@@ -6,6 +6,9 @@ from pathlib import Path
 import sys
 import time
 
+import httpx
+import yaml
+
 from stream_sieve.analyze import analyze_batch
 from stream_sieve.browser.linux_chrome_cdp import LinuxChromeCdpBackend
 from stream_sieve.delivery.config import deliver, load_delivery
@@ -133,6 +136,38 @@ def command_sync(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_run_source(args: argparse.Namespace) -> int:
+    source_path = resolve_source_path(args.source, args.sources_dir)
+    source = load_source(source_path)
+    if args.cdp_endpoint:
+        source.setdefault("browser", {})["cdp_endpoint"] = args.cdp_endpoint
+    stats, articles = sync_source(source, args.limit, args.db)
+    print(f"source: {stats.source_id}")
+    print(f"source_file: {source_path}")
+    print(f"db: {stats.db}")
+    print(f"discovered: {stats.discovered}")
+    print(f"new: {stats.new}")
+    print(f"extracted: {stats.extracted}")
+    print(f"saved: {stats.saved}")
+    if args.output:
+        Path(args.output).write_text(article_markdown(articles), encoding="utf-8")
+        print(f"output: {args.output}")
+    return 0
+
+
+def resolve_source_path(name: str, sources_dir: str) -> Path:
+    root = Path(sources_dir)
+    direct = root / (name if name.endswith(".yaml") else f"{name}.yaml")
+    if direct.is_file():
+        return direct
+    wanted = name.casefold()
+    for path in sorted(root.glob("*.yaml")):
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        if str(data.get("id", "")).casefold() == wanted or str(data.get("name", "")).casefold() == wanted:
+            return path
+    raise SystemExit(f"source not found: {name} (looked in {root})")
+
+
 def command_sync_many(args: argparse.Namespace) -> int:
     pairs = []
     for spec in args.source:
@@ -253,19 +288,26 @@ def command_score(args: argparse.Namespace) -> int:
             return 0
         scores = []
         saved = 0
+        skipped_batches = 0
         for batch in chunks(rows, args.batch_size):
-            batch_scores = score_batch(
-                batch,
-                interests,
-                model=model,
-                base_url=args.base_url,
-                sample_chars=args.sample_chars,
-                categories=parse_csv(args.categories),
-                field_context=field_context(args),
-                nonthink=args.nonthink,
-                timeout=args.timeout,
-                retries=args.retries,
-            )
+            try:
+                batch_scores = score_batch(
+                    batch,
+                    interests,
+                    model=model,
+                    base_url=args.base_url,
+                    sample_chars=args.sample_chars,
+                    categories=parse_csv(args.categories),
+                    field_context=field_context(args),
+                    nonthink=args.nonthink,
+                    timeout=args.timeout,
+                    retries=args.retries,
+                )
+            except (httpx.HTTPError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+                skipped_batches += 1
+                ids = ",".join(str(row["id"]) for row in batch)
+                print(f"score batch skipped: ids={ids}: {type(exc).__name__}: {exc}", file=sys.stderr)
+                continue
             for score in batch_scores:
                 score["total_score"] = total_score(score)
                 score["raw_json"] = json.dumps(score, ensure_ascii=False)
@@ -276,6 +318,7 @@ def command_score(args: argparse.Namespace) -> int:
     print(f"model: {model}")
     print(f"articles: {len(rows)}")
     print(f"prefilter_ignored: {ignored}")
+    print(f"batches_skipped: {skipped_batches}")
     print(f"scores_saved: {saved}")
     for score in sorted(scores, key=lambda item: item["total_score"], reverse=True):
         row = next((row for row in rows if row["id"] == score["id"]), {})
@@ -350,23 +393,31 @@ def command_analyze(args: argparse.Namespace) -> int:
             print("analyses_saved: 0")
             return 0
         saved = 0
+        skipped_batches = 0
         analyses = []
         for batch in chunks(rows, args.batch_size):
-            batch_analyses = analyze_batch(
-                batch,
-                model=model,
-                base_url=args.base_url or DEFAULT_BASE_URL,
-                content_chars=args.content_chars,
-                nonthink=args.nonthink,
-                timeout=args.timeout,
-                retries=args.retries,
-            )
+            try:
+                batch_analyses = analyze_batch(
+                    batch,
+                    model=model,
+                    base_url=args.base_url or DEFAULT_BASE_URL,
+                    content_chars=args.content_chars,
+                    nonthink=args.nonthink,
+                    timeout=args.timeout,
+                    retries=args.retries,
+                )
+            except (json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+                skipped_batches += 1
+                ids = ",".join(str(row["id"]) for row in batch)
+                print(f"analysis batch skipped: ids={ids}: {type(exc).__name__}: {exc}", file=sys.stderr)
+                continue
             saved += store.save_analyses(batch_analyses, model)
             analyses.extend(batch_analyses)
     finally:
         store.close()
     print(f"model: {model}")
     print(f"articles: {len(rows)}")
+    print(f"batches_skipped: {skipped_batches}")
     print(f"analyses_saved: {saved}")
     for analysis in analyses:
         print()
@@ -411,7 +462,19 @@ def command_brief(args: argparse.Namespace) -> int:
             rows = select_category_limits(rows, args.category_limits, args.limit)
     finally:
         store.close()
-    digest = build_digest(rows, args)
+    try:
+        digest = build_digest(rows, args)
+    except (json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+        print(
+            f"brief synthesis skipped: {type(exc).__name__}: {exc}",
+            file=sys.stderr,
+        )
+        digest = {
+            "headline": "Daily Reading",
+            "intro": "AI 摘要生成失败，以下为本次筛选出的文章。",
+            "highlights": [],
+            "sections": [],
+        }
     output = render_digest_markdown(digest, rows)
     if args.output:
         output_path = Path(args.output)
@@ -444,12 +507,41 @@ def command_send(args: argparse.Namespace) -> int:
             text = Path(args.body_file).read_text(encoding="utf-8")
             digest = read_digest_json(args.body_file)
             html = render_digest_html(digest, rows) if digest else markdown_to_html(text)
+        elif args.no_synthesis:
+            digest = build_local_digest(rows)
+            text = render_digest_markdown(digest, rows)
+            html = render_digest_html(digest, rows)
         else:
             digest = build_digest(rows, args)
             text = render_digest_markdown(digest, rows)
             html = render_digest_html(digest, rows)
         config = load_delivery(args.config)
-        result = deliver(config, args.subject, html, text)
+        delivery_attempts = 10
+        delivery_retry_wait = 60
+        delivery_error = None
+        for attempt in range(1, delivery_attempts + 1):
+            try:
+                result = deliver(config, args.subject, html, text)
+                delivery_error = None
+                break
+            except Exception as exc:
+                delivery_error = exc
+                print(
+                    f"delivery attempt {attempt}/{delivery_attempts} failed: "
+                    f"{type(exc).__name__}: {exc}",
+                    file=sys.stderr,
+                )
+                if attempt < delivery_attempts:
+                    print(
+                        f"retrying delivery in {delivery_retry_wait}s",
+                        file=sys.stderr,
+                    )
+                    time.sleep(delivery_retry_wait)
+        if delivery_error is not None:
+            print("delivered: failed")
+            print(f"attempts: {delivery_attempts}")
+            print("marked_delivered: 0")
+            return 0
         marked = 0 if args.resend else store.mark_delivered(rows, delivery_key)
     finally:
         store.close()
@@ -475,6 +567,35 @@ def build_digest(rows: list[dict[str, object]], args: argparse.Namespace) -> dic
         timeout=args.timeout,
         retries=args.retries,
     )
+
+
+def build_local_digest(rows: list[dict[str, object]]) -> dict[str, object]:
+    """Build a complete deterministic report from saved scores/analyses.
+
+    This is intentionally LLM-free: it is useful for resending a report after
+    renderer changes without re-fetching, rescoring, or consuming synthesis
+    tokens.
+    """
+    grouped: dict[str, list[dict[str, object]]] = {}
+    for row in rows:
+        category = str(row.get("category") or "other")
+        grouped.setdefault(category, []).append(row)
+    sections = []
+    for category, category_rows in grouped.items():
+        items = []
+        for row in category_rows[:20]:
+            summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
+            items.append({"article_id": row["id"], "dek": summary, "content": [summary] if summary else []})
+        sections.append({"category": category, "note": "Saved score and analysis results.", "items": items})
+    highlights = []
+    for row in rows[:8]:
+        summary = str(row.get("summary") or row.get("one_liner") or row.get("reason") or "").strip()
+        highlights.append({"article_id": row["id"], "summary": summary})
+    return {
+        "meta": {"title": "Stream Sieve Daily Brief", "deck": "Based on the completed saved selection; no new model synthesis was run."},
+        "highlights": highlights,
+        "sections": sections,
+    }
 
 
 def read_digest_json(body_file: str) -> dict[str, object] | None:
@@ -594,6 +715,15 @@ def build_parser() -> argparse.ArgumentParser:
     sync_cmd.add_argument("--output", default=None)
     sync_cmd.set_defaults(func=command_sync)
 
+    run_source_cmd = subparsers.add_parser("run-source", help="Run one source by ID or display name.")
+    run_source_cmd.add_argument("source", help="Source ID, source display name, or YAML filename.")
+    run_source_cmd.add_argument("--sources-dir", default="sources")
+    run_source_cmd.add_argument("--limit", type=int, default=3)
+    run_source_cmd.add_argument("--db", default=DEFAULT_DB)
+    run_source_cmd.add_argument("--cdp-endpoint", default=None)
+    run_source_cmd.add_argument("--output", default=None)
+    run_source_cmd.set_defaults(func=command_run_source)
+
     sync_many_cmd = subparsers.add_parser("sync-many", help="Sync multiple browser sources with one browser attach/tab.")
     sync_many_cmd.add_argument("source", nargs="+", help="Source YAML path, optionally PATH:LIMIT.")
     sync_many_cmd.add_argument("--limit", type=int, default=3)
@@ -711,6 +841,7 @@ def build_parser() -> argparse.ArgumentParser:
     send_cmd.add_argument("--retries", type=int, default=1)
     send_cmd.add_argument("--subject", default="Stream Sieve Brief")
     send_cmd.add_argument("--body-file", default=None)
+    send_cmd.add_argument("--no-synthesis", action="store_true", help="Build the report deterministically from saved scores/analyses without an LLM call.")
     send_cmd.add_argument("--category-limits", default=None)
     send_cmd.add_argument("--field-limits", default=None)
     add_source_pool_arg(send_cmd)

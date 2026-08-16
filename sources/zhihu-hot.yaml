@@ -1,21 +1,14 @@
-id: zhihu-home
-name: Zhihu Home
-
+id: zhihu-hot
+name: Zhihu Hot
 browser:
   session: chrome-main
-
 discovery:
   type: browser
-  url: https://www.zhihu.com
+  url: https://www.zhihu.com/hot
   wait: 1
-  scroll: 120
+  scroll: 20
   scroll_wait: 1
   include_url_regex: "^https://www\\.zhihu\\.com/question/[0-9]+/answer/[0-9]+(?:\\?.*)?$"
   exclude_url_regex: "(?:#|^https://zhuanlan\\.zhihu\\.com/|^https://www\\.zhihu\\.com/ring/|[?&](?:spu|zid)=|/people/|/search(?:/|[?#]|$)|/signin(?:/|[?#]|$)|/signup(?:/|[?#]|$)|/advert(?:/|[?#]|$)|/ad(?:/|[?#]|$)|/app(?:/|[?#]|$)|/question/[0-9]+/?$)"
-
-acquire:
-  type: browser
-  wait: 1
-
-extract:
-  type: trafilatura
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

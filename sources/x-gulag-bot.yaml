@@ -1,0 +1,14 @@
+id: x-gulag-bot
+name: The Gulag Bot(@LIGHTSEEKER1984)
+browser:
+  session: chrome-main
+discovery:
+  type: browser
+  url: https://x.com/LIGHTSEEKER1984
+  wait: 2
+  scroll: 20
+  scroll_wait: 1
+  include_url_regex: "^https://x\\.com/LIGHTSEEKER1984/status/[0-9]+(?:\\?.*)?$"
+  exclude_url_regex: "/(?:photo|video)/"
+acquire: {type: browser, wait: 1}
+extract: {type: trafilatura}

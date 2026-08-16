@@ -62,7 +62,9 @@ Component rules:
 - highlights: 3-8 articles across the whole digest.
 - sections: group selected articles by predefined field.
 - Use only these categories: ai_news, tech, business, economics, politics, society, cognition.
-- Each section may contain at most 5 items.
+- Each section may contain at most 20 items.
+- Try to represent every supplied article exactly once in a section or in quick_reads.
+- Do not silently omit supplied articles; use quick_reads for lower-priority articles.
 - Omit a field if it has no worthwhile material today.
 - Each item content should contain exactly one compact paragraph, not a full essay.
 - quick_reads is optional and should contain lower-priority but still useful articles.
