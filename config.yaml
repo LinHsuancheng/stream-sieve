@@ -10,20 +10,18 @@ run:
     url: about:blank
     startup_wait_seconds: 5
   sources:
-  - {id: blog-openai-blog, path: sources/blog-openai-blog.yaml, sync_limit: 12}
-  - {id: blog-anthropic-news, path: sources/blog-anthropic-news.yaml, sync_limit: 12}
-  - {id: blog-google-deepmind-blog, path: sources/blog-google-deepmind-blog.yaml, sync_limit: 12}
-  - {id: blog-hugging-face-blog, path: sources/blog-hugging-face-blog.yaml, sync_limit: 12}
   - {id: qbitai-feed, path: sources/qbitai-feed.yaml, sync_limit: 12}
-  - {id: xinzhiyuan, path: sources/xinzhiyuan.yaml, sync_limit: 12}
-  - {id: jiqizhixin, path: sources/jiqizhixin.yaml, sync_limit: 12}
+  - {id: smol-ai-news, path: sources/smol-ai-news.yaml, sync_limit: 12}
   - {id: news-last-week-in-ai, path: sources/news-last-week-in-ai.yaml, sync_limit: 12}
-  - {id: blog-microsoft-research-blog, path: sources/blog-microsoft-research-blog.yaml, sync_limit: 16}
-  - {id: aws-ml-blog, path: sources/aws-ml-blog.yaml, sync_limit: 16}
-  - {id: cloudflare-blog, path: sources/cloudflare-blog.yaml, sync_limit: 16}
-  - {id: github-blog, path: sources/github-blog.yaml, sync_limit: 16}
-  - {id: news-bytebytego-newsletter, path: sources/news-bytebytego-newsletter.yaml, sync_limit: 16}
-  - {id: simon-willison-blog, path: sources/simon-willison-blog.yaml, sync_limit: 16}
+  - {id: blog-hugging-face-blog, path: sources/blog-hugging-face-blog.yaml, sync_limit: 12}
+  - {id: hf-paper-rss, path: sources/hf-paper-rss.yaml, sync_limit: 12}
+  - {id: github-trending-daily, path: sources/github-trending-daily.yaml, sync_limit: 12}
+  - {id: hackernews-best, path: sources/hackernews-best.yaml, sync_limit: 12}
+  - {id: hackernews-tech, path: sources/hackernews-tech.yaml, sync_limit: 20}
+  - {id: simon-willison-blog, path: sources/simon-willison-blog.yaml, sync_limit: 20}
+  - {id: news-latent-space, path: sources/news-latent-space.yaml, sync_limit: 20}
+  - {id: inkandswitch-blog, path: sources/inkandswitch-blog.yaml, sync_limit: 20}
+  - {id: thesephist-blog, path: sources/thesephist-blog.yaml, sync_limit: 20}
   - {id: reuters-asia-pacific-politics, path: sources/reuters-asia-pacific-politics.yaml, sync_limit: 20}
   - {id: reuters-china-politics, path: sources/reuters-china-politics.yaml, sync_limit: 100}
   - {id: reuters-europe-politics, path: sources/reuters-europe-politics.yaml, sync_limit: 20}
@@ -88,7 +86,7 @@ run:
     subject: Stream Sieve Daily Brief
   fields:
     ai_news:
-      sources: [blog-openai-blog, blog-anthropic-news, blog-google-deepmind-blog, blog-hugging-face-blog, qbitai-feed, xinzhiyuan, jiqizhixin, news-last-week-in-ai]
+      sources: [qbitai-feed, smol-ai-news, news-last-week-in-ai, blog-hugging-face-blog, hf-paper-rss, github-trending-daily, hackernews-best]
       mode: stream
       horizon: 1d
       target_items: 20
@@ -98,7 +96,7 @@ run:
       prefilter_min_score: 0
       profile: 关注 AI 模型、研究、产品、公司、算力、芯片、基础设施、API、价格、开源生态和监管的最新变化，几乎总是优先最近 1 天内的信息。超过 1 天的信息只有在具有重大长期信息价值时才保留。强力去重，过滤普通融资、宣传采访和重复报道。
     tech:
-      sources: [blog-microsoft-research-blog, aws-ml-blog, cloudflare-blog, github-blog, news-bytebytego-newsletter, simon-willison-blog]
+      sources: [hackernews-tech, simon-willison-blog, news-latent-space, inkandswitch-blog, thesephist-blog]
       mode: stream
       horizon: 7d
       target_items: 20

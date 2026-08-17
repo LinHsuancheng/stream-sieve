@@ -1,0 +1,12 @@
+id: thesephist-blog
+name: Thesephist
+
+discovery:
+  type: rss
+  url: https://thesephist.com/index.xml
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

@@ -1,0 +1,12 @@
+id: hf-paper-rss
+name: Hugging Face Trending Papers
+
+discovery:
+  type: rss
+  url: https://azuresilent.github.io/hf-paper-rss/feed.xml
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

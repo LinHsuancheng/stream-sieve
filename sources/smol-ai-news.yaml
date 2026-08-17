@@ -1,0 +1,12 @@
+id: smol-ai-news
+name: AINews / smol.ai
+
+discovery:
+  type: rss
+  url: https://news.smol.ai/rss.xml
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

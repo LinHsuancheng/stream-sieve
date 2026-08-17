@@ -1,0 +1,12 @@
+id: inkandswitch-blog
+name: Ink & Switch
+
+discovery:
+  type: rss
+  url: https://www.inkandswitch.com/index.xml
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

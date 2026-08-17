@@ -52,6 +52,10 @@ sources:
   merics-industrial-policy: {name: MERICS Industrial Policy and Technology, briefing_category: economy, tier: T1, source_type: think_tank}
   wire-china-economy: {name: The Wire China Economy, briefing_category: economy, tier: T2, source_type: specialist_editorial}
   qbitai-feed: {name: 量子位, briefing_category: ai_news, tier: T2, source_type: news}
+  smol-ai-news: {name: AINews / smol.ai, briefing_category: ai_news, tier: T2, source_type: newsletter}
+  hf-paper-rss: {name: Hugging Face Trending Papers, briefing_category: ai_news, tier: T2, source_type: research}
+  github-trending-daily: {name: GitHub Trending Daily, briefing_category: ai_news, tier: T2, source_type: developer_community}
+  hackernews-best: {name: Hacker News Best, briefing_category: ai_news, tier: T2, source_type: developer_community}
   zhihu-follow: {name: Zhihu Follow, briefing_category: cognition, tier: T3, source_type: social}
   zhihu-home: {name: Zhihu Home, briefing_category: cognition, tier: T3, source_type: social}
 
@@ -67,10 +71,13 @@ sources:
 
   news-last-week-in-ai: {name: Last Week in AI, briefing_category: ai_news, tier: T2, source_type: newsletter}
   the-batch: {name: The Batch, briefing_category: ai_news, tier: T2, source_type: newsletter}
-  news-latent-space: {name: Latent Space, briefing_category: ai_news, tier: T2, source_type: newsletter}
+  news-latent-space: {name: Latent Space, briefing_category: tech, tier: T2, source_type: newsletter}
   news-bytebytego-newsletter: {name: ByteByteGo, briefing_category: tech, tier: T2, source_type: newsletter}
   simon-willison-blog: {name: Simon Willison, briefing_category: tech, tier: T2, source_type: personal_blog}
   news-martin-fowler: {name: Martin Fowler, briefing_category: tech, tier: T2, source_type: personal_blog}
+  hackernews-tech: {name: Hacker News, briefing_category: tech, tier: T2, source_type: developer_community}
+  inkandswitch-blog: {name: Ink & Switch, briefing_category: tech, tier: T2, source_type: research}
+  thesephist-blog: {name: Thesephist, briefing_category: tech, tier: T2, source_type: personal_blog}
   xinzhiyuan: {name: 新智元, briefing_category: ai_news, tier: T2, source_type: news}
   jiqizhixin: {name: 机器之心, briefing_category: ai_news, tier: T2, source_type: news}
   ai-keji-pinglun: {name: AI科技评论, briefing_category: ai_news, tier: T2, source_type: news}

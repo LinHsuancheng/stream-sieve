@@ -50,7 +50,7 @@ stream_sieve/
   models.py               Article、ItemRef 等数据模型
   llm_scorer.py           批量内容评分和评分结果解析
   analyze.py              文章分析和结构化摘要
-  digest.py               简报合成和 Markdown 输出
+  digest.py               确定性简报数据和 Markdown 输出
   render/html.py          固定 HTML 模板和渲染器
   source_pool.py          来源质量、字段和标签元数据
   relevance.py            本地关键词预筛选

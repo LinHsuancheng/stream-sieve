@@ -1,0 +1,12 @@
+id: hackernews-best
+name: Hacker News Best
+
+discovery:
+  type: rss
+  url: https://hnrss.org/best
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

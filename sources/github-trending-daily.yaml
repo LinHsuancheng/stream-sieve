@@ -1,0 +1,12 @@
+id: github-trending-daily
+name: GitHub Trending Daily
+
+discovery:
+  type: rss
+  url: https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura

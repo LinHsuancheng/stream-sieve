@@ -1,0 +1,12 @@
+id: hackernews-tech
+name: Hacker News
+
+discovery:
+  type: rss
+  url: https://news.ycombinator.com/rss
+
+acquire:
+  type: http
+
+extract:
+  type: trafilatura
