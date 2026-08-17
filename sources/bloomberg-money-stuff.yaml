@@ -1,0 +1,5 @@
+id: bloomberg-money-stuff
+name: Bloomberg Money Stuff
+discovery: {type: browser, url: https://www.bloomberg.com/account/newsletters/money-stuff, wait: 8, scroll: 0, include_url_regex: "^https://www\\.bloomberg\\.com/(?:news/articles|opinion)/[^?#]+"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

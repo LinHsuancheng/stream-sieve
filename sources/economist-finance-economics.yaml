@@ -1,5 +1,0 @@
-id: economist-finance-economics
-name: The Economist Finance and Economics
-discovery: {type: browser, url: https://www.economist.com/finance-and-economics, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

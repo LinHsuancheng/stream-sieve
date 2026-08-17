@@ -1,0 +1,5 @@
+id: scmp-china-politics
+name: SCMP China Politics
+discovery: {type: browser, url: https://www.scmp.com/news/china/politics, wait: 8, scroll: 0, include_url_regex: "^https://www\\.scmp\\.com/(?:news/china|news/asia|economy|business)/[^/?#]+/article/[0-9]+/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

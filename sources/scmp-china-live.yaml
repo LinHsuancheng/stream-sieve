@@ -1,0 +1,5 @@
+id: scmp-china-live
+name: SCMP China Live
+discovery: {type: browser, url: https://www.scmp.com/news/china, wait: 8, scroll: 0, include_url_regex: "^https://www\\.scmp\\.com/news/china/[^/?#]+/article/[0-9]+/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

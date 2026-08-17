@@ -1,0 +1,5 @@
+id: barrons-up-down-wall-street
+name: Barron's Up and Down Wall Street
+discovery: {type: browser, url: https://www.barrons.com/topics/up-and-down-wall-street, wait: 8, scroll: 0, include_url_regex: "^https://www\\.barrons\\.com/articles/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

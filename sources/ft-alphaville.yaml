@@ -1,5 +1,0 @@
-id: ft-alphaville
-name: FT Alphaville
-discovery: {type: browser, url: https://www.ft.com/alphaville, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

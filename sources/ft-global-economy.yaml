@@ -1,5 +1,0 @@
-id: ft-global-economy
-name: Financial Times Global Economy
-discovery: {type: browser, url: https://www.ft.com/global-economy, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

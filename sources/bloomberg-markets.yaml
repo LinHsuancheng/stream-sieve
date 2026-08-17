@@ -1,0 +1,5 @@
+id: bloomberg-markets
+name: Bloomberg Markets
+discovery: {type: browser, url: https://www.bloomberg.com/markets, wait: 8, scroll: 0, include_url_regex: "^https://www\\.bloomberg\\.com/(?:news/articles|opinion|us-politics|asia-politics|economics|markets|businessweek)/[^?#]+"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

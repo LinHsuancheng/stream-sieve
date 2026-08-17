@@ -1,0 +1,5 @@
+id: nyt-asia-pacific
+name: New York Times Asia Pacific
+discovery: {type: browser, url: https://www.nytimes.com/section/world/asia, wait: 8, scroll: 0, include_url_regex: "^https://www\\.nytimes\\.com/[0-9]{4}/[0-9]{2}/[0-9]{2}/[^/?#]+/[^/?#]+\\.html$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

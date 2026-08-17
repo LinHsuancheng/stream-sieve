@@ -1,0 +1,5 @@
+id: nikkei-politics-live
+name: Nikkei Asia Politics Live
+discovery: {type: browser, url: https://asia.nikkei.com/Politics, wait: 8, scroll: 0, include_url_regex: "^https://asia\\.nikkei\\.com/politics/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

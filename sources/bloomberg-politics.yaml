@@ -1,5 +1,0 @@
-id: bloomberg-politics
-name: Bloomberg Politics
-discovery: {type: browser, url: https://www.bloomberg.com/politics, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

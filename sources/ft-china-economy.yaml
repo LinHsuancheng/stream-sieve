@@ -1,5 +1,0 @@
-id: ft-china-economy
-name: Financial Times China Economy
-discovery: {type: browser, url: https://www.ft.com/china, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

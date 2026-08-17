@@ -13,13 +13,10 @@ sources:
   reddit-china-irl-new: {name: China_irl New, briefing_category: society, tier: T3, source_type: social_forum}
   reuters-china-politics: {name: Reuters China, briefing_category: politics, tier: T1, source_type: professional_editorial}
   reuters-asia-pacific-politics: {name: Reuters Asia Pacific, briefing_category: politics, tier: T1, source_type: professional_editorial}
-  ft-china-politics: {name: Financial Times China, briefing_category: politics, tier: T1, source_type: professional_editorial}
-  ft-us-politics-policy: {name: Financial Times US Politics and Policy, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-china-live: {name: Reuters China Live, briefing_category: politics, tier: T1, source_type: professional_editorial}
   wsj-china-politics: {name: WSJ China, briefing_category: politics, tier: T1, source_type: professional_editorial}
   wsj-asia-politics: {name: WSJ Asia, briefing_category: politics, tier: T1, source_type: professional_editorial}
   wsj-politics: {name: WSJ Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
-  bloomberg-politics: {name: Bloomberg Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
-  economist-china-politics: {name: The Economist China, briefing_category: politics, tier: T1, source_type: professional_editorial}
   foreign-affairs-china: {name: Foreign Affairs China, briefing_category: politics, tier: T1, source_type: magazine}
   sinocism: {name: Sinocism, briefing_category: politics, tier: T2, source_type: specialist_newsletter}
   china-media-project-politics: {name: China Media Project, briefing_category: politics, tier: T2, source_type: specialist_research}
@@ -31,18 +28,69 @@ sources:
   china-power: {name: CSIS ChinaPower, briefing_category: politics, tier: T1, source_type: think_tank}
   cfr-china: {name: Council on Foreign Relations China, briefing_category: politics, tier: T1, source_type: think_tank}
   diplomat-china-power: {name: The Diplomat China Power, briefing_category: politics, tier: T2, source_type: specialist_editorial}
+  caixin-politics: {name: Caixin Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  caixin-world: {name: Caixin World, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  caixin-weekly: {name: Caixin Weekly, briefing_categories: [politics, economy], briefing_category: politics, tier: T1, source_type: professional_editorial}
+  caixin-opinion: {name: Caixin Opinion, briefing_categories: [politics, economy], briefing_category: politics, tier: T1, source_type: professional_editorial}
   reuters-business-economy: {name: Reuters Business, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-markets-economy: {name: Reuters Markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
-  ft-global-economy: {name: Financial Times Global Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
-  ft-alphaville: {name: FT Alphaville, briefing_category: economy, tier: T1, source_type: specialist_editorial}
+  barrons-cover-live: {name: Barron's Cover Live, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-us-politics: {name: Bloomberg US Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  bloomberg-asia-politics: {name: Bloomberg Asia Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  bloomberg-opinion-politics-policy: {name: Bloomberg Opinion Politics & Policy, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  bloomberg-economics: {name: Bloomberg Economics, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-economics-trade: {name: Bloomberg Economics Trade, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-economics-central-banks: {name: Bloomberg Economics Central Banks, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-markets: {name: Bloomberg Markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-markets-fixed-income: {name: Bloomberg Markets Fixed Income, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-opinion-economics: {name: Bloomberg Opinion Economics, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-businessweek: {name: Bloomberg Businessweek, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  bloomberg-money-stuff: {name: Bloomberg Money Stuff, briefing_category: economy, tier: T1, source_type: newsletter}
+  reuters-china: {name: Reuters china, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-us: {name: Reuters us, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-asia-pacific: {name: Reuters asia-pacific, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-europe: {name: Reuters europe, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-middle-east: {name: Reuters middle-east, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-government-regulation: {name: Reuters government-regulation, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-breakingviews: {name: Reuters breakingviews, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  wsj-china: {name: WSJ china, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  wsj-asia: {name: WSJ asia, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  wsj-world: {name: WSJ world, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  wsj-capital-account: {name: WSJ capital-account, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  wsj-review-outlook: {name: WSJ review-outlook, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nyt-politics: {name: New York Times politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nyt-world: {name: New York Times world, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nyt-asia-pacific: {name: New York Times asia-pacific, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nikkei-politics: {name: Nikkei Asia politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nikkei-economy: {name: Nikkei Asia economy, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nikkei-business: {name: Nikkei Asia business, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  scmp-china: {name: SCMP china, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  scmp-china-politics: {name: SCMP china-politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  scmp-asia: {name: SCMP asia, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  reuters-econ-world: {name: Reuters econ-world, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-markets: {name: Reuters markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-asian-markets: {name: Reuters asian-markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-currencies: {name: Reuters currencies, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-rates-bonds: {name: Reuters rates-bonds, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-finance: {name: Reuters finance, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-business: {name: Reuters business, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  wsj-heard-on-the-street: {name: WSJ heard-on-the-street, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  wsj-capital-account-econ: {name: WSJ capital-account-econ, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  nyt-business: {name: New York Times business, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  nyt-dealbook: {name: New York Times dealbook, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  scmp-economy: {name: SCMP economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  scmp-business: {name: SCMP business, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  barrons-cover: {name: Barron's cover, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  barrons-up-down-wall-street: {name: Barron's up-down-wall-street, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  nyt-politics-live: {name: New York Times Politics Live, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  nikkei-politics-live: {name: Nikkei Asia Politics Live, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  scmp-china-live: {name: SCMP China Live, briefing_category: politics, tier: T1, source_type: professional_editorial}
   wsj-economy: {name: WSJ Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
-  economist-finance-economics: {name: The Economist Finance and Economics, briefing_category: economy, tier: T1, source_type: magazine}
   piie-economic-outlook: {name: PIIE Economic Outlook, briefing_category: economy, tier: T1, source_type: think_tank}
   piie-trade-investment: {name: PIIE Trade and Investment, briefing_category: economy, tier: T1, source_type: think_tank}
   imf-weo: {name: IMF World Economic Outlook, briefing_category: economy, tier: T0, source_type: institution}
   world-bank-global-economic-prospects: {name: World Bank Global Economic Prospects, briefing_category: economy, tier: T0, source_type: institution}
   reuters-china-economy: {name: Reuters China Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
-  ft-china-economy: {name: Financial Times China Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
   wsj-china-economy: {name: WSJ China Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
   piie-china-economy: {name: PIIE China Economy, briefing_category: economy, tier: T1, source_type: think_tank}
   rhodium-china-economy: {name: Rhodium China Economy, briefing_category: economy, tier: T1, source_type: think_tank}
@@ -51,6 +99,8 @@ sources:
   imf-china-economy: {name: IMF China, briefing_category: economy, tier: T0, source_type: institution}
   merics-industrial-policy: {name: MERICS Industrial Policy and Technology, briefing_category: economy, tier: T1, source_type: think_tank}
   wire-china-economy: {name: The Wire China Economy, briefing_category: economy, tier: T2, source_type: specialist_editorial}
+  caixin-economy: {name: Caixin Economy, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  caixin-finance: {name: Caixin Finance, briefing_category: economy, tier: T1, source_type: professional_editorial}
   qbitai-feed: {name: 量子位, briefing_category: ai_news, tier: T2, source_type: news}
   smol-ai-news: {name: AINews / smol.ai, briefing_category: ai_news, tier: T2, source_type: newsletter}
   hf-paper-rss: {name: Hugging Face Trending Papers, briefing_category: ai_news, tier: T2, source_type: research}

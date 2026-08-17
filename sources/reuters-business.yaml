@@ -1,0 +1,5 @@
+id: reuters-business
+name: Reuters Business
+discovery: {type: browser, url: https://www.reuters.com/business/, wait: 8, scroll: 0, include_url_regex: "^https://www\\.reuters\\.com/(?:world|legal|commentary|markets|business)/[^/?#]+(?:/[^/?#]+)*-[0-9]{4}-[0-9]{2}-[0-9]{2}/?$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

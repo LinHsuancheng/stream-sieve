@@ -1,0 +1,5 @@
+id: wsj-heard-on-the-street
+name: WSJ Heard on the Street
+discovery: {type: browser, url: https://www.wsj.com/news/types/heard-on-the-street, wait: 8, scroll: 0, include_url_regex: "^https://www\\.wsj\\.com/(?:politics|world|economy|business|finance|news/types)/[^/?#]+-[a-z0-9]{8}(?:\\?.*)?$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

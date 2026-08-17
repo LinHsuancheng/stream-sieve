@@ -10,36 +10,72 @@ run:
     url: about:blank
     startup_wait_seconds: 5
   sources:
-  - {id: qbitai-feed, path: sources/qbitai-feed.yaml, sync_limit: 12}
-  - {id: smol-ai-news, path: sources/smol-ai-news.yaml, sync_limit: 12}
-  - {id: news-last-week-in-ai, path: sources/news-last-week-in-ai.yaml, sync_limit: 12}
-  - {id: blog-hugging-face-blog, path: sources/blog-hugging-face-blog.yaml, sync_limit: 12}
-  - {id: hf-paper-rss, path: sources/hf-paper-rss.yaml, sync_limit: 12}
-  - {id: github-trending-daily, path: sources/github-trending-daily.yaml, sync_limit: 12}
-  - {id: hackernews-best, path: sources/hackernews-best.yaml, sync_limit: 12}
+  - {id: qbitai-feed, path: sources/qbitai-feed.yaml, sync_limit: 15}
+  - {id: smol-ai-news, path: sources/smol-ai-news.yaml, sync_limit: 15}
+  - {id: news-last-week-in-ai, path: sources/news-last-week-in-ai.yaml, sync_limit: 14}
+  - {id: blog-hugging-face-blog, path: sources/blog-hugging-face-blog.yaml, sync_limit: 14}
+  - {id: hf-paper-rss, path: sources/hf-paper-rss.yaml, sync_limit: 14}
+  - {id: github-trending-daily, path: sources/github-trending-daily.yaml, sync_limit: 14}
+  - {id: hackernews-best, path: sources/hackernews-best.yaml, sync_limit: 14}
   - {id: hackernews-tech, path: sources/hackernews-tech.yaml, sync_limit: 20}
   - {id: simon-willison-blog, path: sources/simon-willison-blog.yaml, sync_limit: 20}
   - {id: news-latent-space, path: sources/news-latent-space.yaml, sync_limit: 20}
   - {id: inkandswitch-blog, path: sources/inkandswitch-blog.yaml, sync_limit: 20}
   - {id: thesephist-blog, path: sources/thesephist-blog.yaml, sync_limit: 20}
-  - {id: reuters-asia-pacific-politics, path: sources/reuters-asia-pacific-politics.yaml, sync_limit: 20}
-  - {id: reuters-china-politics, path: sources/reuters-china-politics.yaml, sync_limit: 100}
-  - {id: wsj-china-politics, path: sources/wsj-china-politics.yaml, sync_limit: 100}
-  - {id: reuters-europe-politics, path: sources/reuters-europe-politics.yaml, sync_limit: 20}
-  - {id: wsj-politics, path: sources/wsj-politics.yaml, sync_limit: 20}
-  - {id: wsj-asia-politics, path: sources/wsj-asia-politics.yaml, sync_limit: 20}
-  - {id: wsj-europe-politics, path: sources/wsj-europe-politics.yaml, sync_limit: 20}
-  - {id: reuters-business-economy, path: sources/reuters-business-economy.yaml, sync_limit: 34}
-  - {id: reuters-markets-economy, path: sources/reuters-markets-economy.yaml, sync_limit: 33}
-  - {id: reuters-china-economy, path: sources/reuters-china-economy.yaml, sync_limit: 100}
-  - {id: wsj-economy, path: sources/wsj-economy.yaml, sync_limit: 33}
-  - {id: wsj-china-economy, path: sources/wsj-china-economy.yaml, sync_limit: 100}
-  - {id: x-yantanzhang, path: sources/x-yantanzhang.yaml, sync_limit: 12}
-  - {id: x-gulag-bot, path: sources/x-gulag-bot.yaml, sync_limit: 12}
-  - {id: x-sager-rgyalpo, path: sources/x-sager-rgyalpo.yaml, sync_limit: 12}
-  - {id: x-toronto-bigface, path: sources/x-toronto-bigface.yaml, sync_limit: 12}
-  - {id: x-wangjupaian, path: sources/x-wangjupaian.yaml, sync_limit: 12}
-  - {id: zhihu-hot, path: sources/zhihu-hot.yaml, sync_limit: 12}
+  - {id: reuters-china, path: sources/reuters-china.yaml, sync_limit: 14}
+  - {id: caixin-politics, path: sources/caixin-politics.yaml, sync_limit: 13}
+  - {id: caixin-world, path: sources/caixin-world.yaml, sync_limit: 13}
+  - {id: caixin-weekly, path: sources/caixin-weekly.yaml, sync_limit: 10}
+  - {id: caixin-opinion, path: sources/caixin-opinion.yaml, sync_limit: 10}
+  - {id: wsj-china, path: sources/wsj-china.yaml, sync_limit: 13}
+  - {id: scmp-china, path: sources/scmp-china.yaml, sync_limit: 13}
+  - {id: scmp-china-politics, path: sources/scmp-china-politics.yaml, sync_limit: 14}
+  - {id: reuters-us, path: sources/reuters-us.yaml, sync_limit: 7}
+  - {id: reuters-asia-pacific, path: sources/reuters-asia-pacific.yaml, sync_limit: 7}
+  - {id: reuters-europe, path: sources/reuters-europe.yaml, sync_limit: 6}
+  - {id: reuters-middle-east, path: sources/reuters-middle-east.yaml, sync_limit: 6}
+  - {id: reuters-government-regulation, path: sources/reuters-government-regulation.yaml, sync_limit: 6}
+  - {id: reuters-breakingviews, path: sources/reuters-breakingviews.yaml, sync_limit: 6}
+  - {id: wsj-politics, path: sources/wsj-politics.yaml, sync_limit: 6}
+  - {id: wsj-asia, path: sources/wsj-asia.yaml, sync_limit: 6}
+  - {id: wsj-world, path: sources/wsj-world.yaml, sync_limit: 6}
+  - {id: wsj-capital-account, path: sources/wsj-capital-account.yaml, sync_limit: 6}
+  - {id: wsj-review-outlook, path: sources/wsj-review-outlook.yaml, sync_limit: 6}
+  - {id: nyt-politics, path: sources/nyt-politics.yaml, sync_limit: 6}
+  - {id: nyt-world, path: sources/nyt-world.yaml, sync_limit: 6}
+  - {id: nyt-asia-pacific, path: sources/nyt-asia-pacific.yaml, sync_limit: 6}
+  - {id: nikkei-politics, path: sources/nikkei-politics.yaml, sync_limit: 7}
+  - {id: scmp-asia, path: sources/scmp-asia.yaml, sync_limit: 7}
+  - {id: reuters-china-economy, path: sources/reuters-china-economy.yaml, sync_limit: 10}
+  - {id: wsj-china-economy, path: sources/wsj-china-economy.yaml, sync_limit: 10}
+  - {id: caixin-economy, path: sources/caixin-economy.yaml, sync_limit: 10}
+  - {id: caixin-finance, path: sources/caixin-finance.yaml, sync_limit: 10}
+  - {id: nikkei-economy, path: sources/nikkei-economy.yaml, sync_limit: 10}
+  - {id: nikkei-business, path: sources/nikkei-business.yaml, sync_limit: 10}
+  - {id: scmp-economy, path: sources/scmp-economy.yaml, sync_limit: 10}
+  - {id: scmp-business, path: sources/scmp-business.yaml, sync_limit: 10}
+  - {id: reuters-econ-world, path: sources/reuters-econ-world.yaml, sync_limit: 7}
+  - {id: reuters-markets, path: sources/reuters-markets.yaml, sync_limit: 7}
+  - {id: reuters-asian-markets, path: sources/reuters-asian-markets.yaml, sync_limit: 7}
+  - {id: reuters-currencies-fx, path: sources/reuters-currencies-fx.yaml, sync_limit: 7}
+  - {id: reuters-rates-bonds, path: sources/reuters-rates-bonds.yaml, sync_limit: 6}
+  - {id: reuters-finance, path: sources/reuters-finance.yaml, sync_limit: 6}
+  - {id: reuters-business, path: sources/reuters-business.yaml, sync_limit: 6}
+  - {id: wsj-economy, path: sources/wsj-economy.yaml, sync_limit: 6}
+  - {id: wsj-heard-on-the-street, path: sources/wsj-heard-on-the-street.yaml, sync_limit: 6}
+  - {id: wsj-capital-account-econ, path: sources/wsj-capital-account-econ.yaml, sync_limit: 6}
+  - {id: nyt-business, path: sources/nyt-business.yaml, sync_limit: 6}
+  - {id: nyt-dealbook, path: sources/nyt-dealbook.yaml, sync_limit: 6}
+  - {id: barrons-cover, path: sources/barrons-cover.yaml, sync_limit: 6}
+  - {id: barrons-up-down-wall-street, path: sources/barrons-up-down-wall-street.yaml, sync_limit: 6}
+  - {id: bloomberg-businessweek, path: sources/bloomberg-businessweek.yaml, sync_limit: 6}
+  - {id: bloomberg-money-stuff, path: sources/bloomberg-money-stuff.yaml, sync_limit: 6}
+  - {id: x-yantanzhang, path: sources/x-yantanzhang.yaml, sync_limit: 17}
+  - {id: x-gulag-bot, path: sources/x-gulag-bot.yaml, sync_limit: 17}
+  - {id: x-sager-rgyalpo, path: sources/x-sager-rgyalpo.yaml, sync_limit: 17}
+  - {id: x-toronto-bigface, path: sources/x-toronto-bigface.yaml, sync_limit: 17}
+  - {id: x-wangjupaian, path: sources/x-wangjupaian.yaml, sync_limit: 16}
+  - {id: zhihu-hot, path: sources/zhihu-hot.yaml, sync_limit: 16}
   - {id: zhihu-home, path: sources/zhihu-home.yaml, sync_limit: 50}
   - {id: zhihu-follow, path: sources/zhihu-follow.yaml, sync_limit: 50}
   scoring:
@@ -109,7 +145,7 @@ run:
       profile: 关注软件、硬件、系统、基础设施、开发工具、工程实践和技术研究。优先真正改变性能、成本、能力、可靠性或工程方法的新技术、架构、工具、论文、benchmark 和实现经验。过滤营销、小版本更新和没有技术含量的科技新闻。
     politics-china:
       category: politics
-      sources: [reuters-china-politics, wsj-china-politics]
+      sources: [reuters-china, caixin-politics, caixin-world, caixin-weekly, caixin-opinion, wsj-china, scmp-china, scmp-china-politics]
       mode: stream
       horizon: 3d
       target_items: 20
@@ -120,7 +156,7 @@ run:
       profile: 关注中国的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     politics-global:
       category: politics
-      sources: [reuters-asia-pacific-politics, reuters-europe-politics, wsj-politics, wsj-asia-politics, wsj-europe-politics]
+      sources: [reuters-us, reuters-asia-pacific, reuters-europe, reuters-middle-east, reuters-government-regulation, reuters-breakingviews, wsj-politics, wsj-asia, wsj-world, wsj-capital-account, wsj-review-outlook, nyt-politics, nyt-world, nyt-asia-pacific, nikkei-politics, scmp-asia]
       mode: stream
       horizon: 3d
       target_items: 20
@@ -131,7 +167,7 @@ run:
       profile: 关注美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化，特别关注国际关系、中美关系、联盟体系、大国竞争、战争、冲突、制裁和外交博弈。覆盖对外关系、贸易、供应链、移民、教育、科研、科技、金融、法律、监管、任命和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     economy-china:
       category: economy
-      sources: [reuters-china-economy, wsj-china-economy]
+      sources: [reuters-china-economy, wsj-china-economy, caixin-economy, caixin-finance, caixin-weekly, caixin-opinion, nikkei-economy, nikkei-business, scmp-economy, scmp-business]
       mode: slow_stream
       horizon: 7d
       target_items: 20
@@ -142,7 +178,7 @@ run:
       profile: 关注中国经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     economy-global:
       category: economy
-      sources: [reuters-business-economy, reuters-markets-economy, wsj-economy]
+      sources: [reuters-econ-world, reuters-markets, reuters-asian-markets, reuters-currencies-fx, reuters-rates-bonds, reuters-finance, reuters-business, wsj-economy, wsj-heard-on-the-street, wsj-capital-account-econ, nyt-business, nyt-dealbook, barrons-cover, barrons-up-down-wall-street, bloomberg-businessweek, bloomberg-money-stuff]
       mode: slow_stream
       horizon: 7d
       target_items: 20

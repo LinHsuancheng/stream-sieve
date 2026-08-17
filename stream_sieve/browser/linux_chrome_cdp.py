@@ -26,15 +26,20 @@ class LinuxChromeCdpBackend(BrowserBackend):
         return self._run_playwright(["attach", f"--cdp={self.cdp_endpoint}", f"--session={self.session}"], timeout=120)
 
     def goto(self, url: str) -> BrowserResult:
-        # Some feeds keep connections open indefinitely.  Commit is enough for
-        # discovery; the configured wait/scroll steps let the page populate.
-        code = f"async page => {{ await page.goto({json.dumps(url)}, {{ waitUntil: 'commit', timeout: 30000 }}); }}"
-        result = self._run_playwright(["run-code", code], timeout=45)
+        # News pages often keep network requests open forever.  Start the
+        # navigation but do not wait for the page-load event; discovery and
+        # extraction read the DOM after their configured wait.
+        code = (
+            f"async page => {{ page.goto({json.dumps(url)}, "
+            "{ waitUntil: 'commit', timeout: 10000 }).catch(() => undefined); "
+            "await page.waitForTimeout(500); }"
+        )
+        result = self._run_playwright(["run-code", code], timeout=20)
         if session_lost(result.output):
             attach = self.attach()
             if not attach.ok:
                 return attach
-            result = self._run_playwright(["run-code", code], timeout=45)
+            result = self._run_playwright(["run-code", code], timeout=20)
         return result
 
     def snapshot(self) -> BrowserResult:
@@ -81,9 +86,10 @@ class LinuxChromeCdpBackend(BrowserBackend):
         return self._run_playwright(["detach"], timeout=30)
 
     def close_tab(self) -> BrowserResult:
-        # Keep one reusable tab alive during a multi-source sync; the pipeline
-        # terminates Chrome after the run, so no browser window remains.
-        return self._run_playwright(["goto", "about:blank"], timeout=30)
+        # Keep the attached tab on its current page.  Navigating to about:blank
+        # here can hang on some news sites and is unnecessary because the
+        # pipeline owns the browser lifecycle.
+        return BrowserResult(0, "tab kept for reuse")
 
     def _run_playwright(self, args: list[str], *, raw: bool = False, timeout: int = 60) -> BrowserResult:
         playwright = shutil.which("playwright-cli") or "/mnt/c/Users/33301/AppData/Roaming/npm/playwright-cli"

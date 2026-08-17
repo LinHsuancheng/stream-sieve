@@ -1,0 +1,5 @@
+id: barrons-cover-live
+name: Barron's Cover Live
+discovery: {type: browser, url: https://www.barrons.com/topics/cover, wait: 8, scroll: 0, include_url_regex: "^https://www\\.barrons\\.com/articles/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

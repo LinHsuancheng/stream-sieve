@@ -1,5 +1,0 @@
-id: economist-china-politics
-name: The Economist China
-discovery: {type: browser, url: https://www.economist.com/china, wait: 1, scroll: 1}
-acquire: {type: browser, wait: 1}
-extract: {type: trafilatura}

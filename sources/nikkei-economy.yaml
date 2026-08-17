@@ -1,0 +1,5 @@
+id: nikkei-economy
+name: Nikkei Asia Economy
+discovery: {type: browser, url: https://asia.nikkei.com/Economy, wait: 8, scroll: 0, include_url_regex: "^https://asia\\.nikkei\\.com/(?:Politics|Economy|Business)/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}

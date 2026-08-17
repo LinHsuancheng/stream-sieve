@@ -1,0 +1,5 @@
+id: scmp-economy
+name: SCMP Economy
+discovery: {type: browser, url: https://www.scmp.com/economy, wait: 8, scroll: 0, include_url_regex: "^https://www\\.scmp\\.com/(?:news/china|news/asia|economy|business)/[^/?#]+/article/[0-9]+/[^/?#]+$"}
+acquire: {type: browser, wait: 8}
+extract: {type: trafilatura}
