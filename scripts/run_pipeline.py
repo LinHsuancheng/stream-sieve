@@ -63,11 +63,12 @@ def main(argv: list[str] | None = None) -> int:
     unknown_types = requested_types - set(fields)
     if unknown_types:
         raise ValueError(f"unknown type(s): {', '.join(sorted(unknown_types))}; configured types: {', '.join(fields)}")
-    field_limits = {
-        field: need(field_config, "target_items")
-        for field, field_config in fields.items()
-        if not requested_types or field in requested_types
-    }
+    field_limits: dict[str, int] = {}
+    for field, field_config in fields.items():
+        if requested_types and field not in requested_types:
+            continue
+        category = str(field_config.get("category") or field)
+        field_limits[category] = field_limits.get(category, 0) + need(field_config, "target_items")
     field_runs = [
         run for run in build_field_runs(fields, source_pool_data)
         if not requested_types or run[0] in requested_types
@@ -127,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
             "--sample-chars",
             str(need(scoring, "sample_chars")),
             "--categories",
-            ",".join([field] if field else need(scoring, "categories")),
+            ",".join([str(field_config.get("category") or field)] if field else need(scoring, "categories")),
             "--source-pool",
             source_pool,
             "--batch-size",
@@ -378,13 +379,14 @@ def set_sieve_cdp_endpoint(commands: list[list[str]], cdp_endpoint: str) -> None
 def build_field_runs(fields: dict, source_pool: dict) -> list[tuple[str, dict, list[str]]]:
     runs = []
     for field, config in fields.items():
+        category = str(config.get("category") or field)
         source_ids = list(config.get("sources") or [])
         if not source_ids:
             source_ids = [
                 source_id
                 for source_id, meta in source_pool.items()
                 if isinstance(meta, dict)
-                and field in (meta.get("briefing_categories") or [meta.get("briefing_category")])
+                and category in (meta.get("briefing_categories") or [meta.get("briefing_category")])
             ]
         if source_ids:
             runs.append((str(field), config, source_ids))

@@ -24,12 +24,14 @@ run:
   - {id: thesephist-blog, path: sources/thesephist-blog.yaml, sync_limit: 20}
   - {id: reuters-asia-pacific-politics, path: sources/reuters-asia-pacific-politics.yaml, sync_limit: 20}
   - {id: reuters-china-politics, path: sources/reuters-china-politics.yaml, sync_limit: 100}
+  - {id: wsj-china-politics, path: sources/wsj-china-politics.yaml, sync_limit: 100}
   - {id: reuters-europe-politics, path: sources/reuters-europe-politics.yaml, sync_limit: 20}
   - {id: wsj-politics, path: sources/wsj-politics.yaml, sync_limit: 20}
   - {id: wsj-asia-politics, path: sources/wsj-asia-politics.yaml, sync_limit: 20}
   - {id: wsj-europe-politics, path: sources/wsj-europe-politics.yaml, sync_limit: 20}
   - {id: reuters-business-economy, path: sources/reuters-business-economy.yaml, sync_limit: 34}
   - {id: reuters-markets-economy, path: sources/reuters-markets-economy.yaml, sync_limit: 33}
+  - {id: reuters-china-economy, path: sources/reuters-china-economy.yaml, sync_limit: 100}
   - {id: wsj-economy, path: sources/wsj-economy.yaml, sync_limit: 33}
   - {id: wsj-china-economy, path: sources/wsj-china-economy.yaml, sync_limit: 100}
   - {id: x-yantanzhang, path: sources/x-yantanzhang.yaml, sync_limit: 12}
@@ -105,8 +107,9 @@ run:
       prefilter_scan_limit: 100
       prefilter_min_score: 0
       profile: 关注软件、硬件、系统、基础设施、开发工具、工程实践和技术研究。优先真正改变性能、成本、能力、可靠性或工程方法的新技术、架构、工具、论文、benchmark 和实现经验。过滤营销、小版本更新和没有技术含量的科技新闻。
-    politics:
-      sources: [reuters-asia-pacific-politics, reuters-china-politics, reuters-europe-politics, wsj-politics, wsj-asia-politics, wsj-europe-politics]
+    politics-china:
+      category: politics
+      sources: [reuters-china-politics, wsj-china-politics]
       mode: stream
       horizon: 3d
       target_items: 20
@@ -114,9 +117,21 @@ run:
       analyze_limit: 20
       prefilter_scan_limit: 100
       prefilter_min_score: 0
-      profile: 关注中国、美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、政策、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
-    economy:
-      sources: [reuters-business-economy, reuters-markets-economy, wsj-economy, wsj-china-economy]
+      profile: 关注中国的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
+    politics-global:
+      category: politics
+      sources: [reuters-asia-pacific-politics, reuters-europe-politics, wsj-politics, wsj-asia-politics, wsj-europe-politics]
+      mode: stream
+      horizon: 3d
+      target_items: 20
+      score_limit: 100
+      analyze_limit: 20
+      prefilter_scan_limit: 100
+      prefilter_min_score: 0
+      profile: 关注美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化，特别关注国际关系、中美关系、联盟体系、大国竞争、战争、冲突、制裁和外交博弈。覆盖对外关系、贸易、供应链、移民、教育、科研、科技、金融、法律、监管、任命和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
+    economy-china:
+      category: economy
+      sources: [reuters-china-economy, wsj-china-economy]
       mode: slow_stream
       horizon: 7d
       target_items: 20
@@ -124,7 +139,18 @@ run:
       analyze_limit: 20
       prefilter_scan_limit: 100
       prefilter_min_score: 0
-      profile: 关注中国、美国、欧洲和全球经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
+      profile: 关注中国经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
+    economy-global:
+      category: economy
+      sources: [reuters-business-economy, reuters-markets-economy, wsj-economy]
+      mode: slow_stream
+      horizon: 7d
+      target_items: 20
+      score_limit: 100
+      analyze_limit: 20
+      prefilter_scan_limit: 100
+      prefilter_min_score: 0
+      profile: 关注美国、欧洲和亚太及全球经济中会改变财富、就业、投资、融资、购买力和未来选择的变化，特别关注国际经济关系、中美经贸、贸易冲突、制裁、供应链、产业转移和跨境资本流动。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     society:
       sources: [x-yantanzhang, x-gulag-bot, x-sager-rgyalpo, x-toronto-bigface, x-wangjupaian, zhihu-hot]
       mode: watchlist
