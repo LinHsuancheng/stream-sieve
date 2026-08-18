@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--env-file", default=".env")
     parser.add_argument(
         "--stage",
-        choices=("all", "sieve", "sync", "send-email"),
+        choices=("all", "sieve", "sieve-extraction", "sieve-score", "sieve-analysis", "send", "send-email"),
         default="all",
         help="Run the full pipeline or one independent project stage.",
     )
@@ -31,7 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--reset-scores",
         action="store_true",
-        help="For sync only: delete all saved scores and analyses before rescoring.",
+        help="Delete all saved scores and analyses before rescoring.",
     )
     parser.add_argument(
         "--type",
@@ -41,8 +41,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if args.reset_scores and args.stage != "sync":
-        parser.error("--reset-scores is only valid with --stage sync")
+    if args.reset_scores and args.stage not in {"all", "sieve", "sieve-score"}:
+        parser.error("--reset-scores is only valid with all, sieve, or sieve-score")
     if args.reset_scores and args.types:
         parser.error("--reset-scores clears the whole evaluation store; do not combine it with --type")
 
@@ -136,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
             command.extend(["--source-ids", ",".join(source_ids)])
         if need(scoring, "nonthink"):
             command.append("--nonthink")
-        if args.stage == "sync":
+        if args.stage == "sieve-score":
             command.append("--all-unscored")
         commands.append(command)
 
@@ -212,16 +212,20 @@ def main(argv: list[str] | None = None) -> int:
     if args.stage != "all":
         # `sieve` is the content side of the project: collect, score, and
         # optionally analyze. `send-email` is deliberately delivery-only.
-        if args.stage == "send-email":
+        if args.stage in {"send", "send-email"}:
             allowed = {"send-email"}
-        elif args.stage == "sync":
-            allowed = {"score", "analyze", "status"}
+        elif args.stage == "sieve-extraction":
+            allowed = {"sieve"}
+        elif args.stage == "sieve-score":
+            allowed = {"score", "status"}
+        elif args.stage == "sieve-analysis":
+            allowed = {"analyze", "status"}
         else:
             allowed = {"sieve", "score", "analyze"}
         commands = [command for command in commands if command[3] in allowed]
 
     if args.dry_run:
-        if boot_command and args.stage in {"all", "sieve"}:
+        if boot_command and args.stage in {"all", "sieve", "sieve-extraction"}:
             print(shlex.join(boot_command))
         for command in commands:
             print(shlex.join(command))
@@ -237,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
 
     chrome_proc: subprocess.Popen | None = None
     chrome_log = None
-    if boot_command and args.stage in {"all", "sieve"}:
+    if boot_command and args.stage in {"all", "sieve", "sieve-extraction"}:
         print("== browser_boot ==", flush=True)
         port = int(need(config.get("browser_boot") or {}, "remote_debugging_port"))
         if is_chrome_cdp_ready(port):
