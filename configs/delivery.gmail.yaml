@@ -1,0 +1,8 @@
+delivery:
+  type: gmail_api
+  from: "Stream Sieve <heyhsuanchenglin@gmail.com>"
+  to:
+    - heyhsuanchenglin@gmail.com
+  gmail_api:
+    token_file: auth/gmail/token.json
+    timeout: 30
