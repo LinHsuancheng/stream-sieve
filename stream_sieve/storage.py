@@ -102,10 +102,12 @@ class FeedStore:
             );
             """
         )
-        # Field taxonomy migration: regional politics/economy remain useful
-        # in source profiles, but are now delivered as two unified fields.
-        self.conn.execute("update article_scores set category = 'politics' where category in ('politics_global', 'politics_china')")
-        self.conn.execute("update article_scores set category = 'economy' where category in ('economy_global', 'economy_china')")
+        # Normalize the old underscore spelling; new scores use the eight
+        # canonical field/category names directly.
+        self.conn.execute("update article_scores set category = 'politics-global' where category = 'politics_global'")
+        self.conn.execute("update article_scores set category = 'politics-china' where category = 'politics_china'")
+        self.conn.execute("update article_scores set category = 'economy-global' where category = 'economy_global'")
+        self.conn.execute("update article_scores set category = 'economy-china' where category = 'economy_china'")
         self.conn.commit()
 
     def seen_url(self, source_id: str, url: str) -> bool:
@@ -259,8 +261,10 @@ class FeedStore:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.total_score desc, s.scored_at desc limit ?"
-        params.append(limit)
+        sql += " order by s.total_score desc, s.scored_at desc"
+        if limit > 0:
+            sql += " limit ?"
+            params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
     def save_analyses(self, analyses: list[dict[str, Any]], model: str) -> int:
@@ -304,8 +308,10 @@ class FeedStore:
         if source_id:
             sql += " where a.source_id = ?"
             params.append(source_id)
-        sql += " order by s.total_score desc, s.scored_at desc limit ?"
-        params.append(limit)
+        sql += " order by s.total_score desc, s.scored_at desc"
+        if limit > 0:
+            sql += " limit ?"
+            params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
     def recent_analyses(self, source_id: str | None = None, limit: int = 20) -> list[dict[str, Any]]:

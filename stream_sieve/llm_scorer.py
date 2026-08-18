@@ -10,7 +10,10 @@ import httpx
 
 
 SCORE_PROMPT_TEMPLATE = (Path(__file__).resolve().parents[1] / "prompts" / "score.md").read_text(encoding="utf-8")
-ALLOWED_CATEGORIES = {"ai_news", "tech", "politics", "economy", "society", "cognition"}
+ALLOWED_CATEGORIES = {
+    "ai_news", "tech", "politics-china", "politics-global",
+    "economy-china", "economy-global", "society", "cognition",
+}
 
 
 def score_batch(

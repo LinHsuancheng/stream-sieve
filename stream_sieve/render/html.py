@@ -8,8 +8,10 @@ from typing import Any
 FIELD_LABELS = {
     "ai_news": "AI & Computing",
     "tech": "Technology",
-    "economy": "Economy",
-    "politics": "Politics",
+    "politics-china": "Politics · China",
+    "politics-global": "Politics · Global",
+    "economy-china": "Economy · China",
+    "economy-global": "Economy · Global",
     "society": "Society",
     "cognition": "Cognition & Growth",
 }

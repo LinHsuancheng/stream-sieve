@@ -38,6 +38,7 @@ sources:
   bloomberg-us-politics: {name: Bloomberg US Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
   bloomberg-asia-politics: {name: Bloomberg Asia Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
   bloomberg-opinion-politics-policy: {name: Bloomberg Opinion Politics & Policy, briefing_category: politics, tier: T1, source_type: professional_editorial}
+  bloomberg-politics: {name: Bloomberg Politics, briefing_category: politics, tier: T1, source_type: professional_editorial}
   bloomberg-economics: {name: Bloomberg Economics, briefing_category: economy, tier: T1, source_type: professional_editorial}
   bloomberg-economics-trade: {name: Bloomberg Economics Trade, briefing_category: economy, tier: T1, source_type: professional_editorial}
   bloomberg-economics-central-banks: {name: Bloomberg Economics Central Banks, briefing_category: economy, tier: T1, source_type: professional_editorial}
@@ -71,6 +72,7 @@ sources:
   reuters-markets: {name: Reuters markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-asian-markets: {name: Reuters asian-markets, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-currencies: {name: Reuters currencies, briefing_category: economy, tier: T1, source_type: professional_editorial}
+  reuters-currencies-fx: {name: Reuters Currencies FX, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-rates-bonds: {name: Reuters rates-bonds, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-finance: {name: Reuters finance, briefing_category: economy, tier: T1, source_type: professional_editorial}
   reuters-business: {name: Reuters business, briefing_category: economy, tier: T1, source_type: professional_editorial}

@@ -46,6 +46,7 @@ run:
   - {id: nyt-asia-pacific, path: sources/nyt-asia-pacific.yaml, sync_limit: 6}
   - {id: nikkei-politics, path: sources/nikkei-politics.yaml, sync_limit: 7}
   - {id: scmp-asia, path: sources/scmp-asia.yaml, sync_limit: 7}
+  - {id: bloomberg-politics, path: sources/bloomberg-politics.yaml, sync_limit: 6}
   - {id: reuters-china-economy, path: sources/reuters-china-economy.yaml, sync_limit: 10}
   - {id: wsj-china-economy, path: sources/wsj-china-economy.yaml, sync_limit: 10}
   - {id: caixin-economy, path: sources/caixin-economy.yaml, sync_limit: 10}
@@ -89,8 +90,10 @@ run:
     categories:
     - ai_news
     - tech
-    - politics
-    - economy
+    - politics-china
+    - politics-global
+    - economy-china
+    - economy-global
     - society
     - cognition
     nonthink: false
@@ -100,7 +103,7 @@ run:
   analysis:
     model: null
     base_url: null
-    min_score: 1
+    min_score: 3
     limit: 40
     content_chars: 4000
     batch_size: 5
@@ -113,11 +116,25 @@ run:
     category_limits:
       ai_news: 20
       tech: 20
-      politics: 20
-      economy: 20
+      politics-china: 20
+      politics-global: 20
+      economy-china: 20
+      economy-global: 20
       society: 20
       cognition: 20
     excerpt_chars: 200
+    recency:
+      enabled: true
+      floor: 0.1
+      half_life_days:
+        ai_news: 1
+        tech: 7
+        politics-china: 3
+        politics-global: 3
+        economy-china: 7
+        economy-global: 7
+        society: 7
+        cognition: null
     output: /tmp/stream-sieve-daily-brief.md
   delivery:
     config: configs/delivery.gmail.yaml
@@ -144,7 +161,6 @@ run:
       prefilter_min_score: 0
       profile: 关注软件、硬件、系统、基础设施、开发工具、工程实践和技术研究。优先真正改变性能、成本、能力、可靠性或工程方法的新技术、架构、工具、论文、benchmark 和实现经验。过滤营销、小版本更新和没有技术含量的科技新闻。
     politics-china:
-      category: politics
       sources: [reuters-china, caixin-politics, caixin-world, caixin-weekly, caixin-opinion, wsj-china, scmp-china, scmp-china-politics]
       mode: stream
       horizon: 3d
@@ -155,8 +171,7 @@ run:
       prefilter_min_score: 0
       profile: 关注中国的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     politics-global:
-      category: politics
-      sources: [reuters-us, reuters-asia-pacific, reuters-europe, reuters-middle-east, reuters-government-regulation, reuters-breakingviews, wsj-politics, wsj-asia, wsj-world, wsj-capital-account, wsj-review-outlook, nyt-politics, nyt-world, nyt-asia-pacific, nikkei-politics, scmp-asia]
+      sources: [reuters-us, reuters-asia-pacific, reuters-europe, reuters-middle-east, reuters-government-regulation, reuters-breakingviews, wsj-politics, wsj-asia, wsj-world, wsj-capital-account, wsj-review-outlook, nyt-politics, nyt-world, nyt-asia-pacific, nikkei-politics, scmp-asia, bloomberg-politics]
       mode: stream
       horizon: 3d
       target_items: 20
@@ -166,7 +181,6 @@ run:
       prefilter_min_score: 0
       profile: 关注美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化，特别关注国际关系、中美关系、联盟体系、大国竞争、战争、冲突、制裁和外交博弈。覆盖对外关系、贸易、供应链、移民、教育、科研、科技、金融、法律、监管、任命和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     economy-china:
-      category: economy
       sources: [reuters-china-economy, wsj-china-economy, caixin-economy, caixin-finance, caixin-weekly, caixin-opinion, nikkei-economy, nikkei-business, scmp-economy, scmp-business]
       mode: slow_stream
       horizon: 7d
@@ -177,7 +191,6 @@ run:
       prefilter_min_score: 0
       profile: 关注中国经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     economy-global:
-      category: economy
       sources: [reuters-econ-world, reuters-markets, reuters-asian-markets, reuters-currencies-fx, reuters-rates-bonds, reuters-finance, reuters-business, wsj-economy, wsj-heard-on-the-street, wsj-capital-account-econ, nyt-business, nyt-dealbook, barrons-cover, barrons-up-down-wall-street, bloomberg-businessweek, bloomberg-money-stuff]
       mode: slow_stream
       horizon: 7d

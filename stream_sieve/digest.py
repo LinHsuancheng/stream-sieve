@@ -64,8 +64,10 @@ def render_digest_markdown(digest: dict[str, Any], rows: list[dict[str, Any]]) -
 FIELD_LABELS = {
     "ai_news": "AI News",
     "tech": "Tech",
-    "economy": "Economy",
-    "politics": "Politics",
+    "politics-china": "Politics · China",
+    "politics-global": "Politics · Global",
+    "economy-china": "Economy · China",
+    "economy-global": "Economy · Global",
     "society": "Society",
     "cognition": "Cognition",
 }

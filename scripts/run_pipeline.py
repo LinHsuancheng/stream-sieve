@@ -63,12 +63,6 @@ def main(argv: list[str] | None = None) -> int:
     unknown_types = requested_types - set(fields)
     if unknown_types:
         raise ValueError(f"unknown type(s): {', '.join(sorted(unknown_types))}; configured types: {', '.join(fields)}")
-    field_limits: dict[str, int] = {}
-    for field, field_config in fields.items():
-        if requested_types and field not in requested_types:
-            continue
-        category = str(field_config.get("category") or field)
-        field_limits[category] = field_limits.get(category, 0) + need(field_config, "target_items")
     field_runs = [
         run for run in build_field_runs(fields, source_pool_data)
         if not requested_types or run[0] in requested_types
@@ -209,10 +203,10 @@ def main(argv: list[str] | None = None) -> int:
         need(delivery, "subject"),
         "--category-limits",
         json.dumps(need(brief, "category_limits"), ensure_ascii=False),
-        "--field-limits",
-        json.dumps(field_limits or need(brief, "category_limits"), ensure_ascii=False),
         "--source-pool",
         source_pool,
+        "--recency",
+        json.dumps(need(brief, "recency"), ensure_ascii=False),
     ]
     send_command.extend(["--delivery-key", delivery_key])
     if delivery.get("resend"):
@@ -227,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.stage == "send-email":
             allowed = {"send-email"}
         elif args.stage == "sync":
-            allowed = {"score", "status"}
+            allowed = {"score", "analyze", "status"}
         else:
             allowed = {"sieve", "score", "analyze"}
         commands = [command for command in commands if command[3] in allowed]

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 import time
+from typing import Any
 
 import httpx
 import yaml
@@ -16,6 +17,7 @@ from stream_sieve.digest import render_digest_markdown
 from stream_sieve.llm_scorer import build_prompt, score_batch, total_score
 from stream_sieve.pipeline import article_markdown, acquire, discover, extract_article, load_source, run_once, sync_source, sync_sources
 from stream_sieve.relevance import rank_articles
+from stream_sieve.recency import apply_recency
 from stream_sieve.render.html import markdown_to_html, render_digest_html
 from stream_sieve.source_pool import DEFAULT_SOURCE_POOL, enrich_rows, load_source_pool
 from stream_sieve.storage import DEFAULT_DB, FeedStore
@@ -464,13 +466,12 @@ def command_brief(args: argparse.Namespace) -> int:
     store = FeedStore(args.db)
     try:
         if args.delivery_key:
-            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, args.delivery_key, parse_csv(args.source_ids))
+            rows = store.undelivered_brief_articles(args.source, args.min_score, 0, args.delivery_key, parse_csv(args.source_ids))
         else:
-            rows = store.brief_articles(args.source, args.min_score, 500, parse_csv(args.source_ids))
+            rows = store.brief_articles(args.source, args.min_score, 0, parse_csv(args.source_ids))
         rows = enrich_rows(rows, source_pool)
-        rows = select_field_limits(rows, args.field_limits, args.limit)
-        if not args.field_limits:
-            rows = select_category_limits(rows, args.category_limits, args.limit)
+        rows = apply_recency(rows, parse_json_object(args.recency))
+        rows = select_category_limits(rows, args.category_limits, args.limit)
     finally:
         store.close()
     digest = build_local_digest(rows)
@@ -491,13 +492,12 @@ def command_send(args: argparse.Namespace) -> int:
     store = FeedStore(args.db)
     try:
         if args.resend:
-            rows = store.brief_articles(args.source, args.min_score, 500, parse_csv(args.source_ids))
+            rows = store.brief_articles(args.source, args.min_score, 0, parse_csv(args.source_ids))
         else:
-            rows = store.undelivered_brief_articles(args.source, args.min_score, 500, delivery_key, parse_csv(args.source_ids))
+            rows = store.undelivered_brief_articles(args.source, args.min_score, 0, delivery_key, parse_csv(args.source_ids))
         rows = enrich_rows(rows, source_pool)
-        rows = select_field_limits(rows, args.field_limits, args.limit)
-        if not args.field_limits:
-            rows = select_category_limits(rows, args.category_limits, args.limit)
+        rows = apply_recency(rows, parse_json_object(args.recency))
+        rows = select_category_limits(rows, args.category_limits, args.limit)
         if not rows:
             print("delivered: skipped")
             print("reason: no undelivered scored articles matched the threshold")
@@ -604,6 +604,15 @@ def parse_csv(value: str | None) -> list[str] | None:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def parse_json_object(value: str | None) -> dict[str, Any] | None:
+    if not value:
+        return None
+    parsed = json.loads(value)
+    if not isinstance(parsed, dict):
+        raise ValueError("expected a JSON object")
+    return parsed
+
+
 def field_context(args: argparse.Namespace) -> dict[str, object] | None:
     if not getattr(args, "field", None):
         return None
@@ -633,29 +642,6 @@ def select_category_limits(rows: list[dict[str, object]], spec: str | None, limi
         if int(row["id"]) not in used:
             selected.append(row)
             used.add(int(row["id"]))
-    return selected[:limit]
-
-
-def select_field_limits(rows: list[dict[str, object]], spec: str | None, limit: int) -> list[dict[str, object]]:
-    if not spec:
-        return rows[:limit]
-    limits = json.loads(spec)
-    selected: list[dict[str, object]] = []
-    used: set[int] = set()
-    for field, count in limits.items():
-        for row in rows:
-            source_meta = row.get("source_meta") if isinstance(row.get("source_meta"), dict) else {}
-            categories = source_meta.get("briefing_categories") or [source_meta.get("briefing_category")]
-            if field not in categories:
-                continue
-            if len([
-                item for item in selected
-                if field in ((item.get("source_meta") or {}).get("briefing_categories") or [(item.get("source_meta") or {}).get("briefing_category")])
-            ]) >= int(count):
-                break
-            if int(row["id"]) not in used:
-                selected.append(row)
-                used.add(int(row["id"]))
     return selected[:limit]
 
 
@@ -826,7 +812,7 @@ def build_parser() -> argparse.ArgumentParser:
     brief_cmd.add_argument("--retries", type=int, default=1)
     brief_cmd.add_argument("--delivery-key", default=None)
     brief_cmd.add_argument("--category-limits", default=None)
-    brief_cmd.add_argument("--field-limits", default=None)
+    brief_cmd.add_argument("--recency", default=None)
     add_source_pool_arg(brief_cmd)
     brief_cmd.add_argument("--output", default=None)
     brief_cmd.set_defaults(func=command_brief)
@@ -848,7 +834,7 @@ def build_parser() -> argparse.ArgumentParser:
     send_cmd.add_argument("--body-file", default=None)
     send_cmd.add_argument("--no-synthesis", action="store_true", help="Build the report deterministically from saved scores/analyses without an LLM call.")
     send_cmd.add_argument("--category-limits", default=None)
-    send_cmd.add_argument("--field-limits", default=None)
+    send_cmd.add_argument("--recency", default=None)
     add_source_pool_arg(send_cmd)
     send_cmd.add_argument("--delivery-key", default=None)
     send_cmd.add_argument("--resend", action="store_true")
@@ -878,7 +864,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Build the report deterministically from saved scores/analyses without an LLM call.",
     )
     send_email_cmd.add_argument("--category-limits", default=None)
-    send_email_cmd.add_argument("--field-limits", default=None)
+    send_email_cmd.add_argument("--recency", default=None)
     add_source_pool_arg(send_email_cmd)
     send_email_cmd.add_argument("--delivery-key", default=None)
     send_email_cmd.add_argument("--resend", action="store_true")
