@@ -24,4 +24,8 @@ def deliver(config: dict, subject: str, html: str, text: str | None = None) -> s
         return filesystem.send(config, subject, html, text)
     if kind == "smtp":
         return smtp.send(config, subject, html, text)
+    if kind == "gmail_api":
+        from stream_sieve.delivery import gmail_api
+
+        return gmail_api.send(config, subject, html, text)
     raise ValueError(f"unsupported delivery.type: {kind}")

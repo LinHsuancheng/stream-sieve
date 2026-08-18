@@ -2,3 +2,4 @@ feedparser
 httpx
 trafilatura
 pyyaml
+google-auth

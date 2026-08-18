@@ -8,5 +8,6 @@ configs/delivery.gmail.yaml
 *.auth.json
 profiles/
 secrets/
+auth/gmail/*.json
 *.sqlite
 .playwright-cli/
