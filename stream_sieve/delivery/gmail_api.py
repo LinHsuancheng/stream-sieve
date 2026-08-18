@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import base64
-from email.message import EmailMessage
 from pathlib import Path
 
 from google.auth.transport.requests import AuthorizedSession, Request
 from google.oauth2.credentials import Credentials
+
+from stream_sieve.delivery.smtp import build_message
 
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
@@ -21,12 +22,7 @@ def send(config: dict, subject: str, html: str, text: str | None = None) -> str:
     if not credentials.valid:
         raise RuntimeError(f"invalid Gmail OAuth credentials: {token_file}")
 
-    message = EmailMessage()
-    message["Subject"] = subject
-    message["From"] = config["from"]
-    message["To"] = ", ".join(config["to"])
-    message.set_content(text or "Stream Sieve report")
-    message.add_alternative(html, subtype="html")
+    message = build_message(config, subject, html)
     raw = base64.urlsafe_b64encode(message.as_bytes()).decode("ascii")
     response = AuthorizedSession(credentials).post(
         "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
