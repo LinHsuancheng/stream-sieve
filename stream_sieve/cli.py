@@ -14,9 +14,8 @@ from stream_sieve.analyze import analyze_batch
 from stream_sieve.browser.linux_chrome_cdp import LinuxChromeCdpBackend
 from stream_sieve.delivery.config import deliver, load_delivery
 from stream_sieve.digest import render_digest_markdown
-from stream_sieve.llm_scorer import build_prompt, score_batch, total_score
+from stream_sieve.llm_scorer import build_prompt, score_batch
 from stream_sieve.pipeline import article_markdown, acquire, discover, extract_article, load_source, run_once, sync_source, sync_sources
-from stream_sieve.relevance import rank_articles
 from stream_sieve.recency import apply_recency
 from stream_sieve.render.html import markdown_to_html, render_digest_html
 from stream_sieve.source_pool import DEFAULT_SOURCE_POOL, enrich_rows, load_source_pool
@@ -244,58 +243,20 @@ def command_articles(args: argparse.Namespace) -> int:
     return 0
 
 
-def command_rank(args: argparse.Namespace) -> int:
-    store = FeedStore(args.db)
-    try:
-        rows = store.recent_articles(args.source, args.scan_limit)
-    finally:
-        store.close()
-    for item in rank_articles(rows, args.interests)[: args.limit]:
-        row = item.article
-        if item.score < args.min_score:
-            continue
-        print(f"score: {item.score}")
-        print(f"title: {row['title']}")
-        print(f"source: {row['source_id']}")
-        print(f"author: {row['author'] or ''}")
-        print(f"published_at: {row['published_at'] or ''}")
-        print(f"matched: {', '.join(item.matched)}")
-        print(f"ignored: {', '.join(item.ignored)}")
-        print(f"url: {row['url']}")
-        print()
-    return 0
-
-
 def command_score(args: argparse.Namespace) -> int:
-    interests = args.field_profile or Path(args.interests).read_text(encoding="utf-8")
     source_pool = load_source_pool(args.source_pool)
     model = _required_option(args.model, "--model")
     base_url = _required_option(args.base_url, "--base-url")
     store = FeedStore(args.db)
     try:
-        scan_limit = -1 if args.all_unscored else (args.prefilter_scan_limit or args.limit)
+        scan_limit = -1 if args.all_unscored else args.limit
         rows = store.unscored_articles(args.source, scan_limit, parse_csv(args.source_ids))
         rows = enrich_rows(rows, source_pool)
-        ignored_scores = []
-        if args.prefilter_min_score is not None:
-            ranked = rank_articles(rows, args.interests, interests)
-            selected = [item.article for item in ranked if item.score >= args.prefilter_min_score]
-            rows = selected if args.all_unscored else selected[: args.limit]
-            ignored_scores = [
-                local_prefilter_score(item.article, item.score)
-                for item in ranked
-                if item.score < args.prefilter_min_score
-            ]
-        else:
-            if not args.all_unscored:
-                rows = rows[: args.limit]
         if args.dry_run:
-            print(build_prompt(rows, interests, args.sample_chars, parse_csv(args.categories), field_context(args)))
+            print(build_prompt(rows, args.sample_chars, parse_csv(args.categories), field_context(args), args.prompt))
             return 0
-        ignored = store.save_scores(ignored_scores, model) if ignored_scores else 0
         if not rows:
             print("articles: 0")
-            print(f"prefilter_ignored: {ignored}")
             print("scores_saved: 0")
             return 0
         scores = []
@@ -305,12 +266,12 @@ def command_score(args: argparse.Namespace) -> int:
             try:
                 batch_scores = score_batch(
                     batch,
-                    interests,
                     model=model,
                     base_url=base_url,
                     sample_chars=args.sample_chars,
                     categories=parse_csv(args.categories),
                     field_context=field_context(args),
+                    prompt_path=args.prompt,
                     nonthink=args.nonthink,
                     timeout=args.timeout,
                     retries=args.retries,
@@ -321,7 +282,6 @@ def command_score(args: argparse.Namespace) -> int:
                 print(f"score batch skipped: ids={ids}: {type(exc).__name__}: {exc}", file=sys.stderr)
                 continue
             for score in batch_scores:
-                score["total_score"] = total_score(score)
                 score["raw_json"] = json.dumps(score, ensure_ascii=False)
             saved += store.save_scores(batch_scores, model)
             scores.extend(batch_scores)
@@ -329,19 +289,15 @@ def command_score(args: argparse.Namespace) -> int:
         store.close()
     print(f"model: {model}")
     print(f"articles: {len(rows)}")
-    print(f"prefilter_ignored: {ignored}")
     print(f"batches_skipped: {skipped_batches}")
     print(f"scores_saved: {saved}")
-    for score in sorted(scores, key=lambda item: item["total_score"], reverse=True):
+    for score in sorted(scores, key=lambda item: item["score"], reverse=True):
         row = next((row for row in rows if row["id"] == score["id"]), {})
         title = row.get("title", "")
         print()
-        print(f"score: {score['total_score']}")
+        print(f"score: {score['score']}")
         print(f"title: {title}")
         print(f"source: {row.get('source_id', '')}")
-        print(f"personal_relevance: {score['relevance']}")
-        print(f"information_value: {score['importance']}")
-        print(f"timeliness: {score['novelty']}")
         print(f"category: {score['category']}")
         print(f"reason: {score['reason']}")
         print(f"url: {row.get('url', '')}")
@@ -353,19 +309,6 @@ def chunks(items: list[dict[str, object]], size: int) -> list[list[dict[str, obj
     return [items[index : index + size] for index in range(0, len(items), size)]
 
 
-def local_prefilter_score(row: dict[str, object], score: int) -> dict[str, object]:
-    return {
-        "id": int(row["id"]),
-        "relevance": 0,
-        "importance": 0,
-        "novelty": 0,
-        "total_score": 0,
-        "category": "other",
-        "reason": f"local prefilter score {score} below threshold",
-        "raw_json": json.dumps({"id": row["id"], "local_prefilter_score": score}, ensure_ascii=False),
-    }
-
-
 def command_scores(args: argparse.Namespace) -> int:
     store = FeedStore(args.db)
     try:
@@ -373,13 +316,10 @@ def command_scores(args: argparse.Namespace) -> int:
     finally:
         store.close()
     for row in rows:
-        print(f"score: {row['total_score']}")
+        print(f"score: {row['score']}")
         print(f"title: {row['title']}")
         print(f"source: {row['source_id']}")
         print(f"category: {row['category']}")
-        print(f"personal_relevance: {row['relevance']}")
-        print(f"information_value: {row['importance']}")
-        print(f"timeliness: {row['novelty']}")
         print(f"reason: {row['reason']}")
         print(f"url: {row['url']}")
         print()
@@ -398,7 +338,7 @@ def command_analyze(args: argparse.Namespace) -> int:
             for row in rows:
                 print(f"id: {row['id']}")
                 print(f"title: {row['title']}")
-                print(f"score: {row['total_score']}")
+                print(f"score: {row['score']}")
                 print()
             return 0
         if not rows:
@@ -450,7 +390,7 @@ def command_analyses(args: argparse.Namespace) -> int:
     for row in rows:
         print(f"title: {row['title']}")
         print(f"source: {row['source_id']}")
-        print(f"score: {row['total_score'] or ''}")
+        print(f"score: {row['score'] or ''}")
         print(f"category: {row['category'] or ''}")
         print(f"one_liner: {row['one_liner']}")
         print(f"topics: {row['topics_json']}")
@@ -732,15 +672,6 @@ def build_parser() -> argparse.ArgumentParser:
     articles_cmd.add_argument("--limit", type=int, default=10)
     articles_cmd.set_defaults(func=command_articles)
 
-    rank_cmd = subparsers.add_parser("rank", help="Rank saved articles with local interests.md keywords.")
-    rank_cmd.add_argument("--db", default=DEFAULT_DB)
-    rank_cmd.add_argument("--source", default=None)
-    rank_cmd.add_argument("--interests", default="interests.md")
-    rank_cmd.add_argument("--limit", type=int, default=10)
-    rank_cmd.add_argument("--scan-limit", type=int, default=100)
-    rank_cmd.add_argument("--min-score", type=int, default=-999)
-    rank_cmd.set_defaults(func=command_rank)
-
     score_cmd = subparsers.add_parser("score", help="Score unscored articles with an OpenAI-compatible LLM.")
     score_cmd.add_argument("--db", default=DEFAULT_DB)
     score_cmd.add_argument("--source", default=None)
@@ -749,10 +680,8 @@ def build_parser() -> argparse.ArgumentParser:
     score_cmd.add_argument("--field-mode", default=None)
     score_cmd.add_argument("--field-horizon", default=None)
     score_cmd.add_argument("--field-profile", default=None)
-    score_cmd.add_argument("--interests", default="interests.md")
+    score_cmd.add_argument("--prompt", default=None, help="Override the score prompt file.")
     score_cmd.add_argument("--limit", type=int, default=10)
-    score_cmd.add_argument("--prefilter-scan-limit", type=int, default=None)
-    score_cmd.add_argument("--prefilter-min-score", type=int, default=None)
     score_cmd.add_argument("--model", default=None)
     score_cmd.add_argument("--base-url", default=None)
     score_cmd.add_argument("--sample-chars", type=int, default=50)

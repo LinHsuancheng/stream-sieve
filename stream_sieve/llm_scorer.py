@@ -18,7 +18,6 @@ ALLOWED_CATEGORIES = {
 
 def score_batch(
     rows: list[dict[str, Any]],
-    interests: str,
     *,
     model: str,
     base_url: str,
@@ -29,6 +28,7 @@ def score_batch(
     nonthink: bool = False,
     timeout: float = 180,
     retries: int = 1,
+    prompt_path: str | None = None,
 ) -> list[dict[str, Any]]:
     if not isinstance(model, str) or not model.strip():
         raise ValueError("missing LLM model: set scoring.model in config or pass --model")
@@ -42,7 +42,7 @@ def score_batch(
         "model": model,
         "messages": [
             {"role": "system", "content": "你为单个用户评分文章。只返回 JSON。"},
-            {"role": "user", "content": build_prompt(rows, interests, sample_chars, categories, field_context)},
+            {"role": "user", "content": build_prompt(rows, sample_chars, categories, field_context, prompt_path)},
         ],
         "response_format": {"type": "json_object"},
     }
@@ -69,10 +69,10 @@ def score_batch(
 
 def build_prompt(
     rows: list[dict[str, Any]],
-    interests: str,
     sample_chars: int = 50,
     categories: list[str] | None = None,
     field_context: dict[str, Any] | None = None,
+    prompt_path: str | None = None,
 ) -> str:
     items = []
     for row in rows:
@@ -86,8 +86,12 @@ def build_prompt(
             }
         )
     allowed_categories = categories or ["ai_news", "tech", "politics", "economy", "society", "cognition"]
-    return SCORE_PROMPT_TEMPLATE.format(
-        interests=interests.strip(),
+    template = (
+        Path(prompt_path).read_text(encoding="utf-8")
+        if prompt_path
+        else SCORE_PROMPT_TEMPLATE
+    )
+    return template.format(
         field_context=format_field_context(field_context),
         categories=json.dumps(allowed_categories, ensure_ascii=False),
         example_category=json.dumps(allowed_categories[0], ensure_ascii=False),
@@ -138,27 +142,22 @@ def parse_scores(content: str) -> list[dict[str, Any]]:
         raise ValueError("LLM response must contain an items list")
     out = []
     for item in items:
+        if set(item) != {"id", "score", "category", "reason"}:
+            raise ValueError("score item must contain exactly id, score, category, reason")
         category = str(item.get("category") or "").strip()
         if category not in ALLOWED_CATEGORIES:
             raise ValueError(f"invalid score category: {category!r}")
+        if not str(item["reason"]).strip():
+            raise ValueError("score reason must not be empty")
         out.append(
             {
                 "id": int(item["id"]),
-                "score": _score(item.get("score", item.get("total_score", item.get("importance", 0)))),
-                "relevance": _score(item.get("personal_relevance", item.get("relevance", item.get("score", 0)))),
-                "importance": _score(item.get("information_value", item.get("importance", item.get("score", 0)))),
-                "novelty": _score(item.get("timeliness", item.get("novelty", 0))),
+                "score": _score(item["score"]),
                 "category": category,
-                "reason": str(item.get("reason") or ""),
+                "reason": str(item["reason"]),
             }
         )
     return out
-
-
-def total_score(score: dict[str, Any]) -> float:
-    if "score" in score:
-        return round(_score(score["score"]), 2)
-    return round(_score(score.get("importance", 0)), 2)
 
 
 def _score(value: Any) -> float:
@@ -175,10 +174,10 @@ def _api_key() -> str | None:
 
 
 def _demo() -> None:
-    content = '{"items":[{"id":1,"score":8,"personal_relevance":7,"information_value":8,"timeliness":6,"category":"ai_news","reason":"x"}]}'
+    content = '{"items":[{"id":1,"score":8,"category":"ai_news","reason":"x"}]}'
     scores = parse_scores(content)
     assert scores[0]["id"] == 1
-    assert total_score(scores[0]) == 8
+    assert scores[0]["score"] == 8
     assert content_sample("  a\n\nbcdef  ", 4) == "a bc"
 
 

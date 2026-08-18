@@ -87,7 +87,7 @@ def _analysis_items(rows: list[dict[str, Any]], content_chars: int) -> list[dict
             "source_meta": compact_source_meta(row.get("source_meta")),
             "author": row.get("author"),
             "published_at": row.get("published_at"),
-            "score": row.get("total_score"),
+            "score": row.get("score"),
             "category": row.get("category"),
             "score_reason": row.get("reason"),
             "content": " ".join(str(row.get("content") or "").split())[:content_chars],

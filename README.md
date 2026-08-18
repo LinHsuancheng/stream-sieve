@@ -53,7 +53,6 @@ stream_sieve/
   digest.py               确定性简报数据和 Markdown 输出
   render/html.py          固定 HTML 模板和渲染器
   source_pool.py          来源质量、字段和标签元数据
-  relevance.py            本地关键词预筛选
   browser/                Chrome CDP 浏览器后端
   delivery/               SMTP 和本地文件发送后端
 
@@ -158,7 +157,6 @@ STREAM_SIEVE_LLM_API_KEY=...
 .venv/bin/python -m stream_sieve.cli score \
   --db ~/.stream-sieve/stream-sieve.db \
   --limit 50 \
-  --interests interests.md
 ```
 
 项目也支持使用 `--field`、`--field-profile`、`--categories` 和来源池对不同领域分别评分。评分规则在 [prompts/score.md](prompts/score.md)，输出协议必须保持英文 JSON 字段，因为代码会直接解析这些字段。
@@ -294,7 +292,6 @@ all         执行完整流程
 - `configs/delivery.gmail.example.yaml`：SMTP/Gmail 示例
 - `sourcepool.yaml`：正式来源池
 - `sourcepool.debug.yaml`：调试来源池
-- `interests.md`：用户偏好和长期关注方向
 - `prompts/*.md`：评分、分析和简报 prompt
 
 需要登录的来源使用独立 Chrome profile。`config.yaml` 中的 `browser_boot.user_data_dir` 指向该 profile；不要把 profile、cookie 或认证文件放入 Git。
@@ -313,7 +310,6 @@ all         执行完整流程
 .venv/bin/python -m stream_sieve.cli analyses --limit 20
 
 # 本地关键词预筛选
-.venv/bin/python -m stream_sieve.cli rank --interests interests.md
 
 # 浏览器诊断
 .venv/bin/python -m stream_sieve.cli browser inspect --url https://www.zhihu.com

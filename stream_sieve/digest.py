@@ -129,8 +129,8 @@ def _article_meta(row: dict[str, Any]) -> str:
         f"{words} words",
         f"{minutes} min",
     ]
-    if row.get("total_score") is not None:
-        bits.append(f"score {row.get('total_score')}")
+    if row.get("score") is not None:
+        bits.append(f"score {row.get('score')}")
     return " · ".join(bit for bit in bits if bit)
 
 
@@ -171,7 +171,7 @@ def render_legacy_markdown(rows: list[dict[str, Any]]) -> str:
 
 
 def _demo() -> None:
-    rows = [{"id": 1, "title": "T", "source_id": "s", "author": "a", "url": "u", "total_score": 8, "content": "hello " * 10}]
+    rows = [{"id": 1, "title": "T", "source_id": "s", "author": "a", "url": "u", "score": 8, "content": "hello " * 10}]
     digest = {
         "headline": "H",
         "highlights": [{"title": "x", "article_ids": [1], "description": "d"}],

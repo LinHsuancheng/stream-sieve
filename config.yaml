@@ -80,12 +80,9 @@ run:
   - {id: zhihu-home, path: sources/zhihu-home.yaml, sync_limit: 50}
   - {id: zhihu-follow, path: sources/zhihu-follow.yaml, sync_limit: 50}
   scoring:
-    interests: interests.md
     model: gpt-5.6-luna
     base_url: https://api.openlux.ai/v1/chat/completions
     limit: 50
-    prefilter_scan_limit: 500
-    prefilter_min_score: 1
     sample_chars: 200
     categories:
     - ai_news
@@ -147,8 +144,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注 AI 模型、研究、产品、公司、算力、芯片、基础设施、API、价格、开源生态和监管的最新变化，几乎总是优先最近 1 天内的信息。超过 1 天的信息只有在具有重大长期信息价值时才保留。强力去重，过滤普通融资、宣传采访和重复报道。
     tech:
       sources: [hackernews-tech, simon-willison-blog, news-latent-space, inkandswitch-blog, thesephist-blog]
@@ -157,8 +152,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注软件、硬件、系统、基础设施、开发工具、工程实践和技术研究。优先真正改变性能、成本、能力、可靠性或工程方法的新技术、架构、工具、论文、benchmark 和实现经验。过滤营销、小版本更新和没有技术含量的科技新闻。
     politics-china:
       sources: [reuters-china, caixin-politics, caixin-world, caixin-weekly, caixin-opinion, wsj-china, scmp-china, scmp-china-politics]
@@ -167,8 +160,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注中国的权力、制度、规则、资源分配和利益结构变化。覆盖党政体制、对外关系、台海、政策语言、媒体控制、法律、监管、任命、国际关系、移民、教育、科研、科技、金融和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     politics-global:
       sources: [reuters-us, reuters-asia-pacific, reuters-europe, reuters-middle-east, reuters-government-regulation, reuters-breakingviews, wsj-politics, wsj-asia, wsj-world, wsj-capital-account, wsj-review-outlook, nyt-politics, nyt-world, nyt-asia-pacific, nikkei-politics, scmp-asia, bloomberg-politics]
@@ -177,8 +168,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注美国、欧洲和亚太的权力、制度、规则、资源分配和利益结构变化，特别关注国际关系、中美关系、联盟体系、大国竞争、战争、冲突、制裁和外交博弈。覆盖对外关系、贸易、供应链、移民、教育、科研、科技、金融、法律、监管、任命和资本流动。优先具体事实、政策决定、可信报道和会改变现实机会或风险的内容。过滤党派口水、人物八卦、象征性争议和空洞表态。
     economy-china:
       sources: [reuters-china-economy, wsj-china-economy, caixin-economy, caixin-finance, caixin-weekly, caixin-opinion, nikkei-economy, nikkei-business, scmp-economy, scmp-business]
@@ -187,8 +176,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注中国经济中会改变财富、就业、投资、融资、购买力和未来选择的变化。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     economy-global:
       sources: [reuters-econ-world, reuters-markets, reuters-asian-markets, reuters-currencies-fx, reuters-rates-bonds, reuters-finance, reuters-business, wsj-economy, wsj-heard-on-the-street, wsj-capital-account-econ, nyt-business, nyt-dealbook, barrons-cover, barrons-up-down-wall-street, bloomberg-businessweek, bloomberg-money-stuff]
@@ -197,8 +184,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注美国、欧洲和亚太及全球经济中会改变财富、就业、投资、融资、购买力和未来选择的变化，特别关注国际经济关系、中美经贸、贸易冲突、制裁、供应链、产业转移和跨境资本流动。覆盖增长、消费、房地产、信贷、金融系统、贸易、产业政策和外部需求。优先货币政策、利率、通胀、就业、信用、流动性、房地产、银行、汇率、资本流动、产业结构、具体数据和政策变化。过滤日常行情噪声、泛泛评论和无证据预测。
     society:
       sources: [x-yantanzhang, x-gulag-bot, x-sager-rgyalpo, x-toronto-bigface, x-wangjupaian, zhihu-hot]
@@ -207,8 +192,6 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注中国社会现状及其高信号讨论，包括激烈矛盾、群体冲突、制度摩擦、利益不对称、生活处境、行为变化和思潮变化。重点关注男女矛盾、婚恋、彩礼、离婚、财产、生育、性指控争议、诬告争议、司法或机构处理差异，以及男性去责任化、退出婚姻、性别不信任等社会思潮。过滤娱乐和网红八卦，除非它们反映更大的社会矛盾。
     cognition:
       sources: [zhihu-home, zhihu-follow]
@@ -217,6 +200,4 @@ run:
       target_items: 20
       score_limit: 100
       analyze_limit: 20
-      prefilter_scan_limit: 100
-      prefilter_min_score: 0
       profile: 关注能长期改善思考、判断、学习、策略、自我认知和理解人性的内容。优先 mental models、概率、博弈、激励、行为经济学、谈判、权力、策略、学习方法、职业资本和可复用的人性机制。旧文章只要信息价值高，完全可以高于当天新内容。

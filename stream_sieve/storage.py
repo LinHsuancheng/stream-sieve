@@ -67,10 +67,7 @@ class FeedStore:
 
             create table if not exists article_scores (
                 article_id integer primary key,
-                relevance real not null,
-                importance real not null,
-                novelty real not null,
-                total_score real not null,
+                score real not null,
                 category text not null,
                 reason text not null,
                 scorer_model text not null,
@@ -102,6 +99,9 @@ class FeedStore:
             );
             """
         )
+        score_columns = {row[1] for row in self.conn.execute("pragma table_info(article_scores)")}
+        if "total_score" in score_columns or "relevance" in score_columns:
+            raise RuntimeError("outdated score database schema; recreate or convert the database before running")
         # Normalize the old underscore spelling; new scores use the eight
         # canonical field/category names directly.
         self.conn.execute("update article_scores set category = 'politics-global' where category = 'politics_global'")
@@ -218,16 +218,13 @@ class FeedStore:
             cur = self.conn.execute(
                 """
                 insert or replace into article_scores (
-                    article_id, relevance, importance, novelty, total_score,
+                    article_id, score,
                     category, reason, scorer_model, scored_at, raw_json
-                ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) values (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     score["id"],
-                    score["relevance"],
-                    score["importance"],
-                    score["novelty"],
-                    score["total_score"],
+                    score["score"],
                     score["category"],
                     score["reason"],
                     model,
@@ -249,19 +246,19 @@ class FeedStore:
         sql = """
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
-                s.relevance, s.importance, s.novelty, s.total_score,
+                s.score,
                 s.category, s.reason
             from article_scores s
             join articles a on a.id = s.article_id
             left join article_analysis aa on aa.article_id = a.id
-            where s.total_score >= ? and aa.article_id is null
+            where s.score >= ? and aa.article_id is null
         """
         params: list[Any] = [min_score]
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.total_score desc, s.scored_at desc"
+        sql += " order by s.score desc, s.scored_at desc"
         if limit > 0:
             sql += " limit ?"
             params.append(limit)
@@ -299,7 +296,7 @@ class FeedStore:
         sql = """
             select
                 a.source_id, a.title, a.author, a.published_at, a.url,
-                s.relevance, s.importance, s.novelty, s.total_score,
+                s.score,
                 s.category, s.reason, s.scorer_model, s.scored_at
             from article_scores s
             join articles a on a.id = s.article_id
@@ -308,7 +305,7 @@ class FeedStore:
         if source_id:
             sql += " where a.source_id = ?"
             params.append(source_id)
-        sql += " order by s.total_score desc, s.scored_at desc"
+        sql += " order by s.score desc, s.scored_at desc"
         if limit > 0:
             sql += " limit ?"
             params.append(limit)
@@ -318,7 +315,7 @@ class FeedStore:
         sql = """
             select
                 a.source_id, a.title, a.author, a.published_at, a.url,
-                s.total_score, s.category,
+                s.score, s.category,
                 aa.one_liner, aa.summary, aa.key_points_json,
                 aa.topics_json, aa.entities_json, aa.why_care,
                 aa.analyzer_model, aa.analyzed_at
@@ -344,21 +341,21 @@ class FeedStore:
         sql = """
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
-                s.relevance, s.importance, s.novelty, s.total_score,
+                s.score,
                 s.category, s.reason,
                 aa.one_liner, aa.summary, aa.key_points_json,
                 aa.topics_json, aa.entities_json, aa.why_care
             from article_scores s
             join articles a on a.id = s.article_id
             left join article_analysis aa on aa.article_id = a.id
-            where s.total_score >= ?
+            where s.score >= ?
         """
         params: list[Any] = [min_score]
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.total_score desc, s.scored_at desc limit ?"
+        sql += " order by s.score desc, s.scored_at desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
@@ -373,7 +370,7 @@ class FeedStore:
         sql = """
             select
                 a.id, a.source_id, a.title, a.author, a.published_at, a.first_seen_at, a.url, a.content,
-                s.relevance, s.importance, s.novelty, s.total_score,
+                s.score,
                 s.category, s.reason,
                 aa.one_liner, aa.summary, aa.key_points_json,
                 aa.topics_json, aa.entities_json, aa.why_care
@@ -381,14 +378,14 @@ class FeedStore:
             join articles a on a.id = s.article_id
             left join article_analysis aa on aa.article_id = a.id
             left join article_deliveries d on d.article_id = a.id and d.delivery_key = ?
-            where s.total_score >= ? and d.article_id is null
+            where s.score >= ? and d.article_id is null
         """
         params: list[Any] = [delivery_key, min_score]
         if source_id:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.total_score desc, s.scored_at desc limit ?"
+        sql += " order by s.score desc, s.scored_at desc limit ?"
         params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 

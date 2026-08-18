@@ -26,13 +26,13 @@ def apply_recency(rows: list[dict[str, Any]], spec: dict[str, Any] | None = None
     for row in rows:
         age_days = article_age_days(row)
         factor = recency_factor(age_days, half_lives.get(str(row.get("category") or "")), floor)
-        raw_score = float(row.get("total_score") or 0.0)
+        raw_score = float(row.get("score") or 0.0)
         ranked_row = dict(row)
         ranked_row["age_days"] = round(age_days, 2)
         ranked_row["recency_factor"] = round(factor, 4)
         ranked_row["effective_score"] = round(raw_score * factor, 4)
         ranked.append(ranked_row)
-    return sorted(ranked, key=lambda item: (item["effective_score"], float(item.get("total_score") or 0.0)), reverse=True)
+    return sorted(ranked, key=lambda item: (item["effective_score"], float(item.get("score") or 0.0)), reverse=True)
 
 
 def article_age_days(row: dict[str, Any], now: datetime | None = None) -> float:

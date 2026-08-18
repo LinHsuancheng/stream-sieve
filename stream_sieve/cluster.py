@@ -64,7 +64,7 @@ def cluster_item(row: dict[str, Any]) -> dict[str, Any]:
         "title": row["title"],
         "source": row["source_id"],
         "source_meta": row.get("source_meta"),
-        "score": row.get("total_score"),
+        "score": row.get("score"),
         "category": row.get("category"),
         "one_liner": row.get("one_liner") or "",
         "summary": row.get("summary") or "",

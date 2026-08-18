@@ -97,7 +97,7 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
                 f'<div class="article-number">{section_index:02d}.{article_index:02d}</div>',
                 f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
                 *([f'<p class="article-dek">{escape(dek)}</p>'] if dek else []),
-                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{_word_count(row)} words</span><span>{escape(_short_date(row))}</span><span>{_reading_minutes(row)} min</span><span>{escape(str(row.get("total_score") or ""))}</span></div>',
+                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{_word_count(row)} words</span><span>{escape(_short_date(row))}</span><span>{_reading_minutes(row)} min</span><span>{escape(str(row.get("score") or ""))}</span></div>',
                 '<div class="article-body">',
                 *[f"<p>{escape(paragraph)}</p>" for paragraph in paragraphs],
                 "</div>",
@@ -153,7 +153,7 @@ def render_digest_html(digest: dict[str, Any], rows: list[dict[str, Any]]) -> st
                 f'<div class="article-number">+.{index:02d}</div>',
                 f'<h3><a href="{escape(str(row.get("url") or ""), quote=True)}">{escape(str(row.get("title") or ""))}</a></h3>',
                 f'<p class="article-dek">{escape(summary)}</p>',
-                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{escape(str(row.get("total_score") or ""))}</span></div>',
+                f'<div class="article-meta"><span>{escape(_source_name(row))}</span><span>{escape(str(row.get("score") or ""))}</span></div>',
                 '</article>',
             ])
         body.extend(["</div>", "</section>"])
