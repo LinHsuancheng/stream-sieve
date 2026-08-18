@@ -1,5 +1,5 @@
 id: wsj-asia-politics
 name: WSJ Asia
-discovery: {type: browser, url: https://www.wsj.com/world/asia, wait: 1, scroll: 5, scroll_wait: 1, include_url_regex: "^https://www\\.wsj\\.com/world\\/asia\\/[^/?#]+-[a-z0-9]{8}(?:\\?.*)?$", exclude_url_regex: "^https://www\\.wsj\\.com/video/|/video/" }
+discovery: {type: browser, url: https://www.wsj.com/world/asia, wait: 1, scroll: 5, scroll_wait: 1, include_url_regex: "^https://www\\.wsj\\.com/world\\/asia\\/[^/?#]+-(?=[a-z0-9]*[0-9])[a-z0-9]{8}(?:\\?.*)?$", exclude_url_regex: "^https://www\\.wsj\\.com/video/|/video/" }
 acquire: {type: browser, wait: 1}
 extract: {type: trafilatura}

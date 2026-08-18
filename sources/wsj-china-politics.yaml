@@ -1,5 +1,5 @@
 id: wsj-china-politics
 name: WSJ China
-discovery: {type: browser, url: https://www.wsj.com/world/china, wait: 1, scroll: 1, include_url_regex: "^https://www\\.wsj\\.com/world\\/china\\/[^/?#]+-[a-z0-9]{8}(?:\\?.*)?$", exclude_url_regex: "^https://www\\.wsj\\.com/video/|/video/" }
+discovery: {type: browser, url: https://www.wsj.com/world/china, wait: 1, scroll: 1, include_url_regex: "^https://www\\.wsj\\.com/world\\/china\\/[^/?#]+-(?=[a-z0-9]*[0-9])[a-z0-9]{8}(?:\\?.*)?$", exclude_url_regex: "^https://www\\.wsj\\.com/video/|/video/" }
 acquire: {type: browser, wait: 1}
 extract: {type: trafilatura}

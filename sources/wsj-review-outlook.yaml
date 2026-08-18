@@ -1,5 +1,5 @@
 id: wsj-review-outlook
 name: WSJ Review & Outlook
-discovery: {type: browser, url: https://www.wsj.com/news/types/review-outlook-u-s, wait: 8, scroll: 0, include_url_regex: "^https://www\\.wsj\\.com/(?:politics|world|economy|business|finance|news/types)/[^/?#]+-[a-z0-9]{8}(?:\\?.*)?$"}
+discovery: {type: browser, url: https://www.wsj.com/news/types/review-outlook-u-s, wait: 8, scroll: 0, include_url_regex: "^https://www\\.wsj\\.com/(?:politics|world|economy|business|finance|news/types)/[^/?#]+-(?=[a-z0-9]*[0-9])[a-z0-9]{8}(?:\\?.*)?$"}
 acquire: {type: browser, wait: 8}
 extract: {type: trafilatura}
