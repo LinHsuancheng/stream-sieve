@@ -355,8 +355,10 @@ class FeedStore:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.score desc, s.scored_at desc limit ?"
-        params.append(limit)
+        sql += " order by s.score desc, s.scored_at desc"
+        if limit > 0:
+            sql += " limit ?"
+            params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
     def undelivered_brief_articles(
@@ -385,8 +387,10 @@ class FeedStore:
             sql += " and a.source_id = ?"
             params.append(source_id)
         sql, params = add_source_ids_filter(sql, params, "a.source_id", source_ids)
-        sql += " order by s.score desc, s.scored_at desc limit ?"
-        params.append(limit)
+        sql += " order by s.score desc, s.scored_at desc"
+        if limit > 0:
+            sql += " limit ?"
+            params.append(limit)
         return [dict(row) for row in self.conn.execute(sql, params)]
 
     def mark_delivered(self, rows: list[dict[str, Any]], delivery_key: str = "default") -> int:
